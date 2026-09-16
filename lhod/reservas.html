@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reservar — La House of Demons</title>
+<meta name="description" content="Reserva tu mesa, un evento o un cumpleaños en La House of Demons, bar de rock y metal en Laureles, Medellín. Tres pasos, sin salir del sitio.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/lhod.css">
+</head>
+<body>
+
+<div class="demobar">
+  <div class="wrap">
+    <span>Demo de propuesta · 16 Ball Creations para La House of Demons</span>
+    <span>·</span>
+    <span>Nada de lo que envíes aquí sale del navegador</span>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a class="nav__mark" href="index.html">
+      <svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="12.5" fill="none" stroke="#D4103C" stroke-width="1.4"/><path d="M14 4.6 17.2 22.4 4.9 11.3h18.2L10.8 22.4Z" fill="none" stroke="#D4103C" stroke-width="1.1" stroke-linejoin="round"/></svg>
+      La House of Demons
+    </a>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="navLinks">Menú</button>
+    <nav class="nav__links" id="navLinks" aria-label="Principal">
+      <a href="index.html">Inicio</a>
+      <a href="agenda.html">Agenda</a>
+      <a href="la-casa.html">La casa</a>
+      <a href="entrenamiento.html">Entrenamiento</a>
+      <a href="finca-metalera.html">Finca Metalera</a>
+      <a href="visitanos.html">Visítanos</a>
+      <a href="reservas.html" aria-current="page">Reservar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="band band--cine band--tight">
+    <div class="wrap">
+      <p class="eyebrow">Reservas</p>
+      <h1 class="h1" style="margin:8px 0 16px">Tres pasos<br>y listo</h1>
+      <p class="lede">Sin salir del sitio, sin crear cuenta y sin escribir a nadie para preguntar si hay campo. Lo que elijas aquí llega directo al WhatsApp del bar.</p>
+    </div>
+  </section>
+
+  <section class="band band--cine" style="padding-top:0">
+    <div class="wrap split">
+
+      <form class="wizard" data-wizard novalidate>
+        <ol class="wizard__steps">
+          <li data-n="1" aria-current="step">Qué</li>
+          <li data-n="2">Cuándo</li>
+          <li data-n="3">Quién</li>
+          <li data-n="4">Confirmar</li>
+        </ol>
+
+        <!-- Paso 1 -->
+        <fieldset class="step" style="border:0;padding:0;margin:0">
+          <legend class="sr-only">Paso 1: qué quieres reservar</legend>
+          <h2 class="h3 step__title">¿Qué vas a reservar?</h2>
+          <ul class="choices">
+            <li><label class="choice">
+              <input type="radio" name="plan" value="Mesa" data-requerido checked>
+              <span>Mesa<small>Una noche cualquiera de las que abrimos.</small></span>
+            </label></li>
+            <li><label class="choice">
+              <input type="radio" name="plan" value="Evento">
+              <span>Evento<small>Open mic, taller, cata, noche temática.</small></span>
+            </label></li>
+            <li><label class="choice">
+              <input type="radio" name="plan" value="Cumpleaños">
+              <span>Cumpleaños<small>Celebración con show y menú.</small></span>
+            </label></li>
+            <li><label class="choice">
+              <input type="radio" name="plan" value="Entrenamiento">
+              <span>Entrenamiento<small>Metal Cycling, Roll o Run Fuckk3r.</small></span>
+            </label></li>
+          </ul>
+          <p class="field__error" data-error-paso hidden>Elige una opción para continuar.</p>
+          <div class="wizard__nav">
+            <button type="button" class="btn btn--red" data-siguiente>Continuar</button>
+          </div>
+        </fieldset>
+
+        <!-- Paso 2 -->
+        <fieldset class="step" style="border:0;padding:0;margin:0" hidden>
+          <legend class="sr-only">Paso 2: cuándo</legend>
+          <h2 class="h3 step__title">¿Cuándo te esperamos?</h2>
+          <div class="grid-2">
+            <div class="field">
+              <label for="fecha">Fecha</label>
+              <input type="date" id="fecha" name="fecha" data-requerido>
+              <p class="field__hint" data-aviso-fecha>Abrimos jueves, viernes y sábado.</p>
+            </div>
+            <div class="field">
+              <label for="hora">Hora</label>
+              <select id="hora" name="hora" data-requerido>
+                <option value="">Elegir…</option>
+                <option>14:00</option><option>16:00</option><option>17:00</option>
+                <option>18:00</option><option>19:00</option><option>20:00</option>
+                <option>21:00</option><option>22:00</option><option>23:00</option>
+              </select>
+              <p class="field__hint">Jueves hasta medianoche; viernes y sábado hasta las 2:00.</p>
+            </div>
+          </div>
+          <div class="field" style="max-width:220px">
+            <label for="personas">Cuántos son</label>
+            <input type="number" id="personas" name="personas" min="1" max="40" value="2" data-requerido>
+            <p class="field__hint">Más de 10, escríbenos y lo organizamos.</p>
+          </div>
+          <p class="field__error" data-error-paso hidden>Falta la fecha o la hora.</p>
+          <div class="wizard__nav">
+            <button type="button" class="btn btn--sm" data-atras>Atrás</button>
+            <button type="button" class="btn btn--red" data-siguiente>Continuar</button>
+          </div>
+        </fieldset>
+
+        <!-- Paso 3 -->
+        <fieldset class="step" style="border:0;padding:0;margin:0" hidden>
+          <legend class="sr-only">Paso 3: tus datos</legend>
+          <h2 class="h3 step__title">¿A nombre de quién?</h2>
+          <div class="grid-2">
+            <div class="field">
+              <label for="nombre">Nombre</label>
+              <input type="text" id="nombre" name="nombre" autocomplete="name" data-requerido>
+            </div>
+            <div class="field">
+              <label for="whatsapp">WhatsApp</label>
+              <input type="tel" id="whatsapp" name="whatsapp" inputmode="tel" autocomplete="tel" placeholder="300 000 0000" data-requerido>
+            </div>
+          </div>
+          <div class="field">
+            <label for="nota">Algo que debamos saber (opcional)</label>
+            <input type="text" id="nota" name="nota" placeholder="Cumpleaños, alergias, llegamos tarde…">
+          </div>
+          <p class="field__error" data-error-paso hidden>Necesitamos tu nombre y un WhatsApp.</p>
+          <div class="wizard__nav">
+            <button type="button" class="btn btn--sm" data-atras>Atrás</button>
+            <button type="button" class="btn btn--red" data-siguiente>Ver resumen</button>
+          </div>
+        </fieldset>
+
+        <!-- Paso 4 -->
+        <fieldset class="step" style="border:0;padding:0;margin:0" hidden>
+          <legend class="sr-only">Paso 4: confirmar</legend>
+          <h2 class="h3 step__title">Revisa y confirma</h2>
+          <div class="summary">
+            <dl>
+              <dt>Plan</dt><dd data-resumen="plan">—</dd>
+              <dt>Fecha</dt><dd data-resumen="fecha">—</dd>
+              <dt>Hora</dt><dd data-resumen="hora">—</dd>
+              <dt>Personas</dt><dd data-resumen="personas">—</dd>
+              <dt>Nombre</dt><dd data-resumen="nombre">—</dd>
+              <dt>WhatsApp</dt><dd data-resumen="whatsapp">—</dd>
+            </dl>
+          </div>
+          <p class="muted" style="font-size:16px;margin:0">Este es el mensaje que llegaría al bar:</p>
+          <p class="msg-preview" data-mensaje></p>
+          <div class="wizard__nav" style="margin-top:24px">
+            <button type="button" class="btn btn--sm" data-atras>Atrás</button>
+            <a class="btn btn--red" href="#" data-wa>Enviar por WhatsApp</a>
+          </div>
+          <p class="field__hint" data-envio-aviso hidden style="margin-top:16px">
+            Esto es una demostración, así que no se envió nada. En el sitio real este botón abre
+            WhatsApp con el mensaje ya escrito, y una copia queda registrada para el bar.
+          </p>
+        </fieldset>
+      </form>
+
+      <aside>
+        <h2 class="h3">Por qué cambiarlo</h2>
+        <div class="prose" style="margin-top:16px">
+          <p class="muted">Hoy las reservas salen del sitio hacia un bot alojado en <span class="mono">typebot.co</span>. Lo revisamos el 15 de septiembre de 2026 y esto es lo que encontramos.</p>
+        </div>
+        <div class="facts" style="margin-top:24px">
+          <div class="facts__row"><span>Primera pregunta</span><span>¿Salir de la Matrix?</span></div>
+          <div class="facts__row"><span>Eventos ofrecidos</span><span>Jul y ago</span></div>
+          <div class="facts__row"><span>Desactualizado</span><span>+ de 1 mes</span></div>
+          <div class="facts__row"><span>Dominio</span><span>typebot.co</span></div>
+          <div class="facts__row"><span>Medición</span><span>Ninguna</span></div>
+        </div>
+        <div class="prose" style="margin-top:24px">
+          <p class="muted">El visitante que quiere una mesa un jueves cualquiera no encuentra esa opción: solo ve cuatro eventos que ya pasaron. Y si el bot no se actualiza, la reserva se pierde.</p>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+  <section class="band band--ceniza">
+    <div class="wrap">
+      <div class="band__head">
+        <h2 class="h2">Lo de hoy contra lo propuesto</h2>
+        <p class="eyebrow">Comparación</p>
+      </div>
+      <div class="scroller">
+        <table class="compare">
+          <thead>
+            <tr><th>Punto</th><th>Bot actual</th><th>Propuesta</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Reservar mesa</td>
+              <td>No existe la opción. Solo se listan eventos.</td>
+              <td>Es la primera opción, porque es lo que más se pide.</td>
+            </tr>
+            <tr>
+              <td>Contenido al día</td>
+              <td>Alguien debe editar el bot a mano cada mes. Hoy muestra eventos de julio.</td>
+              <td>Los eventos salen de la agenda del sitio: se publican una vez y aparecen solos.</td>
+            </tr>
+            <tr>
+              <td>Días cerrados</td>
+              <td>Se puede pedir un lunes, que el bar está cerrado.</td>
+              <td>El calendario avisa en el momento: solo jueves, viernes y sábado.</td>
+            </tr>
+            <tr>
+              <td>Dónde ocurre</td>
+              <td>En un dominio ajeno. El visitante sale del sitio.</td>
+              <td>En la propia página, con la identidad del bar.</td>
+            </tr>
+            <tr>
+              <td>Medición</td>
+              <td>No se sabe cuántos empiezan ni cuántos abandonan.</td>
+              <td>Cada paso es un evento medible: se ve dónde se cae la gente.</td>
+            </tr>
+            <tr>
+              <td>Datos del cliente</td>
+              <td>Quedan en un servicio de terceros.</td>
+              <td>Llegan al WhatsApp del bar y a su propia base.</td>
+            </tr>
+            <tr>
+              <td>Accesibilidad</td>
+              <td>Chat que obliga a responder en orden, difícil de revisar.</td>
+              <td>Formulario navegable con teclado y con resumen antes de enviar.</td>
+            </tr>
+            <tr>
+              <td>Confirmación</td>
+              <td>No queda constancia para el cliente.</td>
+              <td>El cliente ve el resumen y se lleva el mensaje en su WhatsApp.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:24px;max-width:70ch;font-size:16px">
+        El bot no es mala herramienta; el problema es que depende de que alguien lo mantenga
+        y vive fuera del sitio. Esta propuesta no necesita mantenimiento aparte: se alimenta
+        de la misma agenda que ya se publica.
+      </p>
+    </div>
+  </section>
+
+  <section class="band band--sangre band--tight">
+    <div class="wrap split split--center">
+      <div>
+        <h2 class="h2">¿Prefieres escribirnos?</h2>
+        <p class="lede" style="margin-top:12px">También funciona. El WhatsApp del bar es el mismo de siempre.</p>
+      </div>
+      <div class="facts">
+        <div class="facts__row"><span>WhatsApp</span><span>317 512 21 55</span></div>
+        <div class="facts__row"><span>Jueves</span><span>16:00 – 24:00</span></div>
+        <div class="facts__row"><span>Viernes</span><span>16:00 – 02:00</span></div>
+        <div class="facts__row"><span>Sábado</span><span>14:00 – 02:00</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__cols">
+      <div>
+        <h4 class="h4">La House of Demons</h4>
+        <p class="muted" style="font-size:16px;margin:0">Bar de rock y metal en Laureles. Pub, cocina, entrenamiento y un festival propio.</p>
+      </div>
+      <div>
+        <h4 class="h4">Secciones</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="agenda.html">Agenda</a></li>
+          <li><a href="la-casa.html">La casa</a></li>
+          <li><a href="entrenamiento.html">Entrenamiento</a></li>
+          <li><a href="finca-metalera.html">Finca Metalera</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="h4">Visítanos</h4>
+        <ul>
+          <li><a href="visitanos.html">Cra. 80 #33-41, Laureles</a></li>
+          <li><a href="visitanos.html">Jue 16–24 · Vie 16–02 · Sáb 14–02</a></li>
+          <li><a href="visitanos.html">317 512 21 55</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot__legal">
+      <span>Demo · 16 Ball Creations</span>
+      <span>Datos tomados de sus publicaciones</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/lhod.js"></script>
+</body>
+</html>
