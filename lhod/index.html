@@ -3,229 +3,143 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bar de Rock y Metal en Laureles, Medellín — La House of Demons</title>
-<meta name="description" content="Pub de rock y metal en Laureles con cocina, opción sin alcohol, entrenamiento y eventos en vivo. 4,7 estrellas con 517 reseñas. Jueves a sábado.">
+<title>La House of Demons — Dos propuestas de web</title>
+<meta name="description" content="Dos direcciones de diseño para la web de La House of Demons, sobre el mismo contenido real del negocio.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/lhod.css">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;700&family=Newsreader:opsz,wght@6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fondo:#0C090E; --sup:#15111806; --sup-1:#171219; --linea:#2C2530;
+  --hueso:#F2ECE8; --humo:#ADA3A6; --sangre:#D4103C; --rosa:#FFC9CE;
+  --display:"Saira Condensed","Arial Narrow",Arial,sans-serif;
+  --read:"Newsreader",Georgia,serif;
+  --data:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.001ms!important}}
+body{margin:0;background:var(--fondo);color:var(--hueso);font-family:var(--read);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--sangre);outline-offset:3px}
+
+.top{border-bottom:1px solid var(--linea);padding:clamp(28px,5vw,56px) 0 clamp(24px,4vw,40px)}
+.mark{display:flex;align-items:center;gap:10px;font-family:var(--data);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--humo);margin:0 0 clamp(20px,4vw,32px)}
+.mark svg{width:26px;height:26px;flex:none}
+h1{font-family:var(--display);font-weight:700;text-transform:uppercase;font-size:clamp(38px,7vw,78px);line-height:.92;letter-spacing:.03em;margin:0 0 var(--s3,16px);text-wrap:balance}
+h1 span{color:var(--sangre)}
+.lede{font-size:clamp(17px,1.9vw,20px);max-width:56ch;color:var(--humo);margin:18px 0 0}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(20px,3vw,32px);padding:clamp(36px,6vw,64px) 0}
+.opt{display:flex;flex-direction:column;background:var(--sup-1);border:1px solid var(--linea);border-radius:14px;overflow:hidden;text-decoration:none;transition:border-color .18s ease,transform .18s ease}
+.opt:hover,.opt:focus-visible{border-color:var(--sangre);transform:translateY(-3px)}
+.opt__vista{height:132px;position:relative;display:grid;place-items:center;border-bottom:1px solid var(--linea)}
+/* Miniatura v1: bandas alternas, contenida */
+.v1 .opt__vista{background:linear-gradient(180deg,#151018 0%,#151018 62%,#E7E3E4 62%,#E7E3E4 100%);align-content:start;padding-top:26px}
+.v1 .swatch{font-family:var(--display);font-weight:500;font-size:27px;letter-spacing:.08em;text-transform:uppercase;color:#F2ECE8;line-height:1}
+/* Miniatura v2: canvas unico, display rojo */
+.v2 .opt__vista{background:#110D13}
+.v2 .swatch{font-family:var(--display);font-weight:700;font-size:46px;letter-spacing:.05em;line-height:.78;text-transform:uppercase;color:#D4103C;text-align:center}
+.v2 .swatch em{display:block;font-style:normal;font-size:19px;color:#FFC9CE;letter-spacing:.04em}
+
+.opt__cuerpo{padding:clamp(20px,3vw,28px);display:flex;flex-direction:column;gap:12px;flex:1}
+.num{font-family:var(--data);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--sangre)}
+.opt h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,36px);text-transform:uppercase;letter-spacing:.03em;line-height:1;margin:0}
+.opt p{margin:0;font-size:16.5px;line-height:1.55;color:var(--humo)}
+.rasgos{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.rasgos li{font-family:var(--data);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--rosa);border:1px solid var(--linea);border-radius:999px;padding:4px 10px}
+.ir{margin-top:auto;padding-top:18px;font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--hueso);display:flex;align-items:center;gap:7px}
+.opt:hover .ir,.opt:focus-visible .ir{color:var(--sangre)}
+
+.tabla{padding:0 0 clamp(40px,6vw,72px)}
+.tabla h3{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.6vw,26px);text-transform:uppercase;letter-spacing:.06em;margin:0 0 20px;color:var(--hueso)}
+.scroller{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:16px;min-width:520px}
+th{font-family:var(--data);font-size:10.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--humo);text-align:left;padding:0 16px 10px 0;border-bottom:1px solid var(--linea)}
+td{padding:14px 16px 14px 0;border-bottom:1px solid var(--linea);vertical-align:top;color:var(--humo)}
+td:first-child{font-family:var(--display);font-weight:500;font-size:16px;text-transform:uppercase;letter-spacing:.05em;color:var(--hueso);white-space:nowrap}
+
+.nota{border-top:1px solid var(--linea);padding:clamp(28px,4vw,44px) 0 clamp(40px,6vw,72px)}
+.nota p{max-width:70ch;font-size:16px;color:var(--humo);margin:0 0 14px}
+.nota p:last-child{margin-bottom:0}
+.nota b{color:var(--hueso);font-weight:400}
+.docs{margin-top:22px;font-family:var(--data);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.docs a{color:var(--rosa);text-underline-offset:3px}
+</style>
 </head>
 <body>
 
-<div class="demobar">
+<header class="top">
   <div class="wrap">
-    <span>Demo de propuesta · 16 Ball Creations para La House of Demons</span>
-    <span>·</span>
-    <span>Contenido tomado de sus propias publicaciones</span>
-  </div>
-</div>
-
-<header class="nav">
-  <div class="wrap nav__inner">
-    <a class="nav__mark" href="index.html">
+    <p class="mark">
       <svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="12.5" fill="none" stroke="#D4103C" stroke-width="1.4"/><path d="M14 4.6 17.2 22.4 4.9 11.3h18.2L10.8 22.4Z" fill="none" stroke="#D4103C" stroke-width="1.1" stroke-linejoin="round"/></svg>
-      La House of Demons
-    </a>
-    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="navLinks">Menú</button>
-    <nav class="nav__links" id="navLinks" aria-label="Principal">
-      <a href="index.html" aria-current="page">Inicio</a>
-      <a href="agenda.html">Agenda</a>
-      <a href="la-casa.html">La casa</a>
-      <a href="entrenamiento.html">Entrenamiento</a>
-      <a href="finca-metalera.html">Finca Metalera</a>
-      <a href="visitanos.html">Visítanos</a>
-      <a href="reservas.html">Reservar</a>
-    </nav>
+      16 Ball Creations · La House of Demons
+    </p>
+    <h1>Dos propuestas<br><span>para la misma casa</span></h1>
+    <p class="lede">Las dos usan exactamente el mismo contenido real del negocio. Lo que cambia es la dirección de diseño. Ábrelas en pestañas distintas y compáralas.</p>
   </div>
 </header>
 
 <main>
+  <div class="wrap">
+    <div class="grid">
 
-  <!-- 1 · Portada -->
-  <section class="hero">
-    <p class="hero__note">Foto pendiente · barra de noche, luz de vela roja</p>
-    <div class="wrap">
-      <p class="eyebrow">Laureles · Medellín · Hackeamos la Matrix</p>
-      <h1 class="h1">Bar de rock<br>y metal</h1>
-      <p class="lede">Música pesada, café y sodas hechas a mano, hamburguesas que no te tumban y cerveza para quien la quiera. Entrenamos, celebramos y montamos un festival.</p>
-      <div class="actions">
-        <a class="btn btn--red" href="reservas.html">Reservar mesa</a>
-        <a class="btn" href="agenda.html">Ver agenda</a>
-      </div>
-      <p class="status" data-estado>
-        <span><i class="dot"></i><span data-estado-texto><b>Jue 16–24 · Vie 16–02 · Sáb 14–02</b></span></span>
-        <span>Cra. 80 #33-41</span>
-        <span>317 512 21 55</span>
-      </p>
-    </div>
-  </section>
-
-  <!-- 2 · Esta semana -->
-  <section class="band band--ceniza">
-    <div class="wrap">
-      <div class="band__head">
-        <h2 class="h2">Lo que viene</h2>
-        <p class="eyebrow">Eventos reales de su calendario</p>
-      </div>
-      <ul class="tickets">
-        <li class="ticket">
-          <p class="ticket__date">Jue<b>06</b>Ago</p>
-          <div>
-            <h3 class="ticket__name">Roll Fuckk3r Roll #7</h3>
-            <p class="ticket__meta">Roller Metal Night Trip. Salimos en patines y rematamos en el bar.</p>
-            <p class="ticket__tags"><span class="tag tag--free">Gratis</span><span class="tag">Inscripción previa</span></p>
-          </div>
-          <p class="ticket__side"><span class="ticket__price">20:00</span><a class="btn btn--sm btn--dark" href="reservas.html">Reservar</a></p>
-        </li>
-        <li class="ticket">
-          <p class="ticket__date">Jue<b>06</b>Ago</p>
-          <div>
-            <h3 class="ticket__name">IPA Day</h3>
-            <p class="ticket__meta">Dos días dedicados a la cerveza amarga, con la carta acompañando.</p>
-            <p class="ticket__tags"><span class="tag">6 y 7 de agosto</span></p>
-          </div>
-          <p class="ticket__side"><span class="ticket__price">16:00</span><a class="btn btn--sm btn--dark" href="reservas.html">Reservar</a></p>
-        </li>
-        <li class="ticket">
-          <p class="ticket__date">Vie<b>07</b>Ago</p>
-          <div>
-            <h3 class="ticket__name">Exhibición Jeep Metalero</h3>
-            <p class="ticket__meta">Fierros afuera, metal adentro. Exhibición abierta en la puerta del bar.</p>
-            <p class="ticket__tags"><span class="tag tag--free">Entrada libre</span></p>
-          </div>
-          <p class="ticket__side"><span class="ticket__price">17:00</span><a class="btn btn--sm btn--dark" href="reservas.html">Reservar</a></p>
-        </li>
-      </ul>
-      <div class="actions" style="margin-top:32px">
-        <a class="btn btn--dark" href="agenda.html">Toda la agenda</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3 · Cuatro pilares -->
-  <section class="band band--cine">
-    <div class="wrap">
-      <div class="band__head">
-        <h2 class="h2">Cuatro cosas bajo el mismo techo</h2>
-        <p class="eyebrow">Pub · Metal · Entrenamiento · Bienestar</p>
-      </div>
-      <div class="cards cards--4">
-        <a class="card" href="la-casa.html">
-          <div class="card__media"><img src="https://i0.wp.com/lahouseofdemons.com/wp-content/uploads/2026/04/twoo-moon-feed-1.png?w=520&ssl=1" alt="Hamburguesa Two Mooon servida entre calaveras y velas" loading="lazy" width="520" height="520"></div>
-          <h3 class="h3">Pub</h3>
-          <p>Hamburguesas, café de filtro, sodas artesanales y cerveza. Con y sin alcohol.</p>
-        </a>
-        <a class="card" href="agenda.html">
-          <div class="card__media"><img src="https://i0.wp.com/lahouseofdemons.com/wp-content/uploads/2026/04/GLAM-MAYO-F-1.png?w=520&ssl=1" alt="Cartel de la noche Glam Saturday Night" loading="lazy" width="520" height="520"></div>
-          <h3 class="h3">Metal</h3>
-          <p>Noches temáticas, open mic, catas y bandas. Casi siempre con entrada libre.</p>
-        </a>
-        <a class="card" href="entrenamiento.html">
-          <div class="card__media"><img src="https://i0.wp.com/lahouseofdemons.com/wp-content/uploads/2026/01/RUN-FUCKKER-RUN-BIO.png?w=520&ssl=1" alt="Cartel de Run Fuckk3r Run, salida nocturna a correr" loading="lazy" width="520" height="520"></div>
-          <h3 class="h3">Entrenamiento</h3>
-          <p>Salir a correr o a patinar con banda sonora pesada, y volver al bar.</p>
-        </a>
-        <a class="card" href="agenda.html">
-          <div class="card__media"><img src="https://i0.wp.com/lahouseofdemons.com/wp-content/uploads/2026/01/MANIFESTACION-CUANTICA-BIO.png?w=520&ssl=1" alt="Cartel del taller Manifestación Cuántica" loading="lazy" width="520" height="520"></div>
-          <h3 class="h3">Bienestar</h3>
-          <p>Charlas y talleres: defensa personal, neurodivergencias, mecánica, dibujo.</p>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4 · Finca Metalera -->
-  <section class="band band--sangre">
-    <div class="wrap split">
-      <div>
-        <p class="eyebrow" style="color:rgba(255,255,255,.8)">El festival de la casa</p>
-        <h2 class="h2" style="margin:12px 0 16px">Finca Metalera<span class="bl">&nbsp;II</span></h2>
-        <p class="lede">Dos días de metal en un hotel de San Jerónimo, a 39 km de Medellín. Bandas en vivo, pool party, cuatro comidas y habitación. La primera edición llenó.</p>
-        <div class="actions" style="margin-top:28px">
-          <a class="btn" href="finca-metalera.html">Ver paquetes</a>
+      <a class="opt v1" href="v1/index.html">
+        <div class="opt__vista" aria-hidden="true"><span class="swatch">Bar de rock</span></div>
+        <div class="opt__cuerpo">
+          <p class="num">Propuesta 1</p>
+          <h2>Editorial</h2>
+          <p>Bandas oscuras de cine para seducir y bandas claras de lectura para informar. Un solo acento rojo, casi siempre ausente. Esquinas rectas.</p>
+          <ul class="rasgos">
+            <li>Sobria</li><li>Fácil de leer</li><li>Contenida</li>
+          </ul>
+          <p class="ir">Ver la propuesta 1 &rsaquo;</p>
         </div>
-      </div>
-      <div class="facts">
-        <div class="facts__row"><span>Fechas</span><span>30–31 ene 2027</span></div>
-        <div class="facts__row"><span>Dónde</span><span>San Jerónimo</span></div>
-        <div class="facts__row"><span>Preventa</span><span>Abierta</span></div>
-        <div class="facts__row"><span>Desde</span><span>$825.000</span></div>
-        <div class="facts__row"><span>Hab. privada</span><span>Agotada</span></div>
-      </div>
-    </div>
-  </section>
+      </a>
 
-  <!-- 5 · Reseñas -->
-  <section class="band band--cine">
-    <div class="wrap proof">
-      <p class="proof__score">4,7<small>517 reseñas en Google</small></p>
-      <div>
-        <blockquote>“Muy buen ambiente, eventos, música metal, buena comida y cerveza.”</blockquote>
-        <cite>Reseña publicada en Google · pendiente de permiso para citar con nombre</cite>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6 · Visítanos -->
-  <section class="band band--ceniza">
-    <div class="wrap split">
-      <div>
-        <p class="eyebrow">Cómo llegar</p>
-        <h2 class="h2" style="margin:12px 0 20px">Estamos en Laureles</h2>
-        <div class="prose">
-          <p>Cra. 80 #33-41, Medellín. Abrimos de jueves a sábado; el resto de la semana el local descansa.</p>
-          <p class="muted">Si vienes en grupo de más de diez, escríbenos antes por WhatsApp y te guardamos el espacio.</p>
+      <a class="opt v2" href="v2/index.html">
+        <div class="opt__vista" aria-hidden="true"><span class="swatch">Metal<em>(sin resaca)</em></span></div>
+        <div class="opt__cuerpo">
+          <p class="num">Propuesta 2</p>
+          <h2>Manifiesto</h2>
+          <p>Un solo canvas oscuro y titulares enormes. El rojo pasa a ser la voz principal y el diferenciador del bar deja de ser un párrafo para ser el titular.</p>
+          <ul class="rasgos">
+            <li>Impactante</li><li>Declarativa</li><li>Pastillas 15px</li>
+          </ul>
+          <p class="ir">Ver la propuesta 2 &rsaquo;</p>
         </div>
-        <div class="actions" style="margin-top:28px">
-          <a class="btn btn--dark" href="visitanos.html">Ver mapa y horario</a>
-        </div>
-      </div>
-      <div class="facts">
-        <div class="facts__row"><span>Jueves</span><span>16:00 – 24:00</span></div>
-        <div class="facts__row"><span>Viernes</span><span>16:00 – 02:00</span></div>
-        <div class="facts__row"><span>Sábado</span><span>14:00 – 02:00</span></div>
-        <div class="facts__row"><span>Dom a mié</span><span>Cerrado</span></div>
-        <div class="facts__row"><span>WhatsApp</span><span>317 512 21 55</span></div>
-      </div>
-    </div>
-  </section>
+      </a>
 
+    </div>
+
+    <section class="tabla">
+      <h3>En qué se diferencian</h3>
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th scope="col">&nbsp;</th><th scope="col">Propuesta 1 · Editorial</th><th scope="col">Propuesta 2 · Manifiesto</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fondo</td><td>Bandas oscuras y claras alternadas</td><td>Un solo canvas oscuro, sin descanso</td></tr>
+            <tr><td>Titulares</td><td>42–86 px</td><td>64–190 px, interlineado 0,75</td></tr>
+            <tr><td>El rojo</td><td>Un acento, casi siempre ausente</td><td>La voz principal</td></tr>
+            <tr><td>Esquinas</td><td>Rectas en todo</td><td>Pastillas de 15 px</td></tr>
+            <tr><td>Tipografía</td><td>Serif para leer, condensada para titular</td><td>La condensada carga casi todo</td></tr>
+            <tr><td>Fotografía</td><td>Rectangular, en tarjetas</td><td>Máscaras irregulares flotando</td></tr>
+            <tr><td>Portada dice</td><td>«Bar de rock y metal»</td><td>«Metal (sin resaca)»</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="nota">
+      <p><b>Las dos comparten el mismo contenido y las mismas carencias.</b> Los datos salen de las publicaciones del propio negocio y no se inventó ningún precio; lo que no se pudo confirmar sigue marcado como «por confirmar».</p>
+      <p>Ninguna de las dos usa fotografía del interior del bar, <b>porque hoy no existe</b>. Los huecos aparecen marcados en ambas a propósito: así se comparan por diseño y no por el material que cada una tuviera a mano. La sesión fotográfica sigue siendo el trabajo que más cambiaría el resultado.</p>
+      <p class="docs"><a href="docs/index.html">Documentación del proyecto: auditoría, plan y propuesta</a></p>
+    </section>
+  </div>
 </main>
 
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot__cols">
-      <div>
-        <h4 class="h4">La House of Demons</h4>
-        <p class="muted" style="font-size:16px;margin:0">Bar de rock y metal en Laureles. Pub, cocina, entrenamiento y un festival propio.</p>
-      </div>
-      <div>
-        <h4 class="h4">Secciones</h4>
-        <ul>
-          <li><a href="agenda.html">Agenda</a></li>
-          <li><a href="la-casa.html">La casa</a></li>
-          <li><a href="entrenamiento.html">Entrenamiento</a></li>
-          <li><a href="finca-metalera.html">Finca Metalera</a></li>
-          <li><a href="reservas.html">Reservar</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="h4">Visítanos</h4>
-        <ul>
-          <li><a href="visitanos.html">Cra. 80 #33-41, Laureles</a></li>
-          <li><a href="visitanos.html">Jue 16–24 · Vie 16–02 · Sáb 14–02</a></li>
-          <li><a href="visitanos.html">317 512 21 55</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="foot__legal">
-      <span>Demo · 16 Ball Creations</span>
-      <span>Datos tomados de sus publicaciones</span>
-    </div>
-  </div>
-</footer>
-
-<script src="assets/js/lhod.js"></script>
 </body>
 </html>

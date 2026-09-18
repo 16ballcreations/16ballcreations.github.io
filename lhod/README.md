@@ -1,102 +1,64 @@
-# La House of Demons — demo de propuesta
+# La House of Demons — dos propuestas de web
 
-Demo navegable de la web propuesta para **La House of Demons**, bar de rock y metal en
-Laureles (Medellín). Hecha por **16 Ball Creations** para enseñársela al dueño.
+Demos navegables de la web propuesta para **La House of Demons**, bar de rock y metal
+en Laureles (Medellín). Hechas por **16 Ball Creations** para enseñárselas al dueño.
 
 Se publica en `https://16ballcreations.github.io/lhod/`.
 
-## Qué es y qué no es
+## Estructura
 
-- **Es** una maqueta funcional en HTML, CSS y JavaScript, sin frameworks ni build.
-- **No es** el sitio real ni está conectado a nada: el formulario de reservas no
-  envía datos a ningún servidor. Todas las páginas llevan `noindex` para que no
-  compitan en buscadores con el sitio real del bar.
-
-## Páginas
-
-| Archivo | Qué resuelve |
+| Ruta | Qué es |
 |---|---|
-| `index.html` | Portada: qué es la casa, qué pasa esta semana, festival, reseñas, horario |
-| `agenda.html` | Todos los eventos con nombre, fecha, hora y precio **en texto**, con filtros |
-| `la-casa.html` | El concepto de pub sobrio híbrido y lo que se sabe de la carta |
-| `entrenamiento.html` | Roll Fuckk3r Roll, Run Fuckk3r Run, Metal Cycling y Diabolus in Training |
-| `finca-metalera.html` | El festival: paquetes, precios reales y qué incluye |
-| `reservas.html` | Propuesta de reserva en cuatro pasos + comparación con el bot actual |
-| `visitanos.html` | Dirección, horario completo, mapa y preguntas frecuentes |
+| `index.html` | **Selector**: punto de entrada para presentar, con la comparación entre ambas |
+| `v1/` | Propuesta 1 · **Editorial** — bandas oscuras y claras, acento contenido |
+| `v2/` | Propuesta 2 · **Manifiesto** — canvas único, display enorme, el rojo como voz |
+| `docs/` | Auditoría, plan de ejecución y propuesta de diseño |
 
-## Sistema visual
+Cada versión es autónoma: tiene sus siete páginas, su CSS, su JS y su propio README
+con el detalle de su sistema visual.
 
-Bandas oscuras de cine para seducir, bandas claras de lectura para informar.
-Un solo acento. Esquinas rectas, sin sombras.
+## Las dos propuestas
 
-| Token | Valor | Origen |
+Ambas responden al mismo encargo —*«impactante, sobria, fácil de leer y sexy»*— y usan
+**exactamente el mismo contenido real** del negocio. Lo que cambia es el reparto entre
+esas cuatro palabras.
+
+La Propuesta 1 se inclina a **sobria** y **fácil de leer**. La Propuesta 2 se inclina a
+**impactante**, y responde a una puerta que la propia Propuesta 1 dejó abierta por escrito:
+
+> «Si el dueño quiere que la provocación sea el centro, cambia la portada entera.»
+
+| | Propuesta 1 | Propuesta 2 |
 |---|---|---|
-| Hollín | `#110D13` | Muestreado de la única foto interior del bar |
-| Ceniza | `#E7E3E4` | Banda de lectura |
-| Hueso | `#F2ECE8` | Texto sobre oscuro |
-| Sangre | `#D4103C` | Muestreado de las velas rojas del bar |
-| Sangre seca | `#9E0B2C` | Rojo legible sobre fondo claro |
+| Fondo | Bandas oscuras y claras alternadas | Un solo canvas oscuro |
+| Titulares | 42–86 px | 64–190 px, interlineado 0,75 |
+| El rojo | Un acento, casi siempre ausente | La voz principal |
+| Esquinas | Rectas en todo | Pastillas de 15 px |
+| Portada dice | «Bar de rock y metal» | «Metal (sin resaca)» |
 
-Tipografías (Google Fonts): **Saira Condensed** para titulares en mayúsculas espaciadas,
-**Newsreader** para lectura, **JetBrains Mono** para fechas y precios, y
-**UnifrakturMaguntia** solo para numerales de edición.
+La paleta es la misma en las dos: se muestreó del propio local (Hollín de su oscuridad,
+Sangre de sus velas rojas). La Propuesta 2 solo añade **Ceniza rosa `#FFC9CE`** como
+contrapunto tonal. Cambia cómo se usan los colores, no de dónde salen.
 
-El rojo puro del sello (`#F80000`) queda reservado al sello y nunca se usa en la interfaz.
+## Qué comparten
 
-## De dónde sale el contenido
-
-Todo lo que se ve son datos reales del negocio, recogidos el 15 de septiembre de 2026:
-
-- **Eventos**: leídos de los flyers publicados en sus redes y en la mediateca de
-  `lahouseofdemons.com` (enero a agosto de 2026), más los cuatro que ofrece su bot de reservas.
-- **Precios del festival**: de su tienda WooCommerce.
-- **Reseñas**: 4,7 con 517 reseñas en Google.
-- **Horario, dirección y teléfono**: de directorios de terceros y de sus propios flyers.
-  **Faltan por confirmar con el dueño.**
-
-Lo que no se pudo confirmar aparece marcado como «por confirmar» en la propia página.
-No se inventó ningún precio.
-
-## Pendientes conocidos
-
-- No existe fotografía profesional del interior del bar. La portada usa un degradado
-  con una nota visible donde iría la foto. Es el trabajo que más cambiaría el resultado.
-- La carta completa con precios.
-- El calendario real de los próximos meses: los eventos mostrados son los publicados
-  entre enero y agosto.
-- Decidir el nombre: los flyers dicen «La House of Forks» y el dominio dice
-  «La House of Demons».
-
-## Sobre el bot de reservas actual
-
-Las reservas del bar salen hoy hacia `typebot.co/reservas-lhod`. Revisado el 15 de
-septiembre de 2026: la primera pregunta es «¿Estás listo para salir de la Matrix?» y
-ofrece cuatro eventos de julio y agosto, todos pasados. No hay opción de reservar
-una mesa normal. `reservas.html` propone el reemplazo y explica por qué.
+- **Los datos**: de las publicaciones del propio negocio. No se inventó ningún precio.
+  Lo que no se pudo confirmar sigue marcado como «por confirmar».
+- **La carencia**: ninguna usa fotografía del interior del bar, porque hoy no existe.
+  Los huecos van marcados en ambas a propósito, para que se comparen por diseño y no
+  por el material que cada una tuviera a mano.
+- **El alcance**: son maquetas en HTML, CSS y JavaScript, sin frameworks ni build. El
+  formulario de reservas no envía datos a ningún servidor. Todas las páginas llevan
+  `noindex`.
 
 ## Desarrollo
-
-No hay build. Se abre `index.html` en el navegador o se sirve la carpeta con
-cualquier servidor estático:
 
 ```bash
 python -m http.server 8080
 ```
 
-Las imágenes se cargan desde el CDN del propio sitio del bar (`i0.wp.com`), así que
-la demo necesita conexión.
+## Documentación
 
-## Documentación del proyecto
-
-La base de conocimiento completa vive en [`docs/`](docs/):
-
-| Documento | Qué contiene |
-|---|---|
-| `docs/auditoria.html` | Auditoría del sitio actual: 23 hallazgos, medición técnica, indexación, redes y competencia |
-| `docs/plan-ejecucion.html` | 47 tareas por fases, decisiones del dueño, configuración de Rank Math y plan de reversión |
-| `docs/propuesta-web.html` | Dirección de diseño, arquitectura, inventario de material y fases de construcción |
-| `docs/index.html` | Índice de los tres, con el orden sugerido de lectura |
-
-Toda la carpeta lleva `noindex` y **no está enlazada desde las páginas de la demo**: la
-auditoría es un diagnóstico duro del sitio que el cliente ya tiene, y conviene presentarlo
-en persona antes de que lo encuentre por su cuenta.
+La base de conocimiento vive en [`docs/`](docs/) y **no está enlazada desde las demos**:
+la auditoría es un diagnóstico duro del sitio que el cliente ya tiene, y conviene
+presentarlo en persona.
