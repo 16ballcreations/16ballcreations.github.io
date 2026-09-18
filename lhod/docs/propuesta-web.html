@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Propuesta Web LHOD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Saira+Condensed:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&family=UnifrakturMaguntia&display=swap">
+
+<style>
+/* ---------- Document chrome: same system as the audit and the execution plan ---------- */
+:root{
+  --paper:#EFF1F3; --surface:#FCFCFD; --surface-2:#E7EAEE;
+  --ink:#14171C; --ink-2:#3D444E; --ink-3:#6B727C;
+  --rule:#D2D7DE; --rule-2:#BFC6CF;
+  --blood:#8C1C2A; --blood-soft:#F2E2E4;
+  --teal:#0D6660; --teal-soft:#DDEBE9;
+  --amber:#8A5A00; --amber-soft:#F2E8D5;
+  --slate:#3A4A5C;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --measure:66ch; --pad:clamp(18px,4vw,56px);
+
+  /* Proposed LHOD system (specimen only) — deliberately single-theme */
+  --lh-hollin:#110D13; --lh-hollin-2:#1B161D; --lh-linea:#2C2530;
+  --lh-hueso:#F2ECE8; --lh-humo:#ADA3A6;
+  --lh-ceniza:#E7E3E4; --lh-grafito:#5E5559;
+  --lh-sangre:#D4103C; --lh-sangre-seca:#9E0B2C;
+  --lh-display:"Saira Condensed","Arial Narrow",Arial,sans-serif;
+  --lh-read:"Newsreader",Georgia,"Times New Roman",serif;
+  --lh-data:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --lh-black:"UnifrakturMaguntia","Old English Text MT",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101317; --surface:#171B20; --surface-2:#1F242A;
+    --ink:#E6E9ED; --ink-2:#B3BAC3; --ink-3:#868E99;
+    --rule:#2A3038; --rule-2:#3A424C;
+    --blood:#E4697A; --blood-soft:#33191E;
+    --teal:#4FBDB2; --teal-soft:#12292A;
+    --amber:#D9A247; --amber-soft:#2B2415; --slate:#93A6BA;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101317; --surface:#171B20; --surface-2:#1F242A;
+  --ink:#E6E9ED; --ink-2:#B3BAC3; --ink-3:#868E99;
+  --rule:#2A3038; --rule-2:#3A424C;
+  --blood:#E4697A; --blood-soft:#33191E;
+  --teal:#4FBDB2; --teal-soft:#12292A;
+  --amber:#D9A247; --amber-soft:#2B2415; --slate:#93A6BA;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 var(--pad) 96px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.14}
+p{margin:0}
+a{color:var(--blood);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--blood);outline-offset:3px}
+.eyebrow{font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.lede{font-size:19.5px;line-height:1.55;color:var(--ink-2);max-width:var(--measure)}
+.body{max-width:var(--measure)}
+.mono{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums}
+.small{font-size:14px;color:var(--ink-2);line-height:1.5}
+.stack{display:flex;flex-direction:column;gap:18px}
+
+.masthead{border-bottom:2px solid var(--ink);padding:clamp(30px,6vw,60px) 0 22px;display:flex;flex-direction:column;gap:16px}
+.masthead h1{font-size:clamp(34px,6.4vw,64px);font-weight:800;letter-spacing:-.025em;text-transform:uppercase}
+.masthead h1 span{display:block;color:var(--blood)}
+
+section{padding-top:clamp(42px,6vw,68px)}
+.sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--rule-2);padding-bottom:9px;margin-bottom:24px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(20px,3vw,26px);font-weight:700;letter-spacing:-.015em}
+.sec-head .num{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--blood);letter-spacing:.08em;flex:none}
+.sec-head .tail{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase}
+
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:0 12px 8px 0;border-bottom:1px solid var(--rule-2);white-space:nowrap}
+td{padding:10px 12px 10px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td.k{font-family:var(--f-display);font-weight:600;font-size:14.5px}
+td.v{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip{display:inline-block;font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;white-space:nowrap;border:1px solid}
+.c-bad{color:var(--blood);border-color:var(--blood);background:var(--blood-soft)}
+.c-ok{color:var(--teal);border-color:var(--teal);background:var(--teal-soft)}
+.c-warn{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+
+.note{border:1px dashed var(--rule-2);background:var(--surface);padding:17px 19px;display:flex;flex-direction:column;gap:8px}
+.note h3{font-size:15px;font-weight:700}
+.note p{font-size:15px;color:var(--ink-2);max-width:74ch}
+
+/* Brief → principles */
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2px;background:var(--rule);border:1px solid var(--rule);list-style:none;margin:0;padding:0}
+.principles li{background:var(--surface);padding:18px 20px;display:flex;flex-direction:column;gap:8px}
+.principles .word{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blood);font-weight:600}
+.principles h3{font-size:16.5px;font-weight:700}
+.principles p{font-size:14.5px;color:var(--ink-2);line-height:1.5}
+
+/* References */
+.refs{display:flex;flex-direction:column;gap:2px}
+.ref{background:var(--surface);border-left:3px solid var(--rule-2);padding:18px clamp(16px,2.4vw,24px);display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.ref-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.ref-top h3{font-size:17px;font-weight:700}
+.ref-top .mono{color:var(--ink-3)}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 28px}
+.ref-grid p{font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.lbl{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:4px}
+.take .lbl{color:var(--teal)}
+.leave .lbl{color:var(--blood)}
+
+/* Decisions */
+.decision{background:var(--surface);border:1px solid var(--rule-2);border-left:4px solid var(--blood);padding:18px 20px;display:flex;flex-direction:column;gap:9px}
+.decision + .decision{margin-top:2px}
+.decision h3{font-size:16.5px;font-weight:700}
+.decision p{font-size:15px;color:var(--ink-2);max-width:74ch}
+
+/* Swatches */
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:var(--rule);border:1px solid var(--rule)}
+.sw{background:var(--surface);display:flex;flex-direction:column}
+.sw i{display:block;height:64px;border-bottom:1px solid var(--rule)}
+.sw div{padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.sw b{font-family:var(--f-display);font-size:14px}
+.sw span{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3)}
+.sw em{font-style:normal;font-size:13px;color:var(--ink-2);line-height:1.4}
+
+/* ---------- SPECIMEN: the proposed LHOD system, painted explicitly ---------- */
+.specimen{margin-top:4px;border:1px solid var(--rule-2);overflow:hidden;background:var(--lh-hollin);color:var(--lh-hueso)}
+.specimen *{box-sizing:border-box}
+.lh-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(16px,3vw,32px);border-bottom:1px solid var(--lh-linea)}
+.lh-mark{display:flex;align-items:center;gap:10px;font-family:var(--lh-data);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+.lh-mark svg{width:28px;height:28px;flex:none}
+.lh-links{display:flex;gap:clamp(12px,2.4vw,28px);font-family:var(--lh-data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--lh-humo);flex-wrap:wrap;justify-content:flex-end}
+
+.lh-hero{position:relative;min-height:clamp(340px,52vw,520px);display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(20px,4vw,48px);
+  background:
+    radial-gradient(ellipse 36% 46% at 18% 30%, rgba(212,16,60,.42), transparent 70%),
+    radial-gradient(ellipse 22% 30% at 72% 22%, rgba(236,28,84,.30), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0,0,0,.85), transparent 70%),
+    linear-gradient(180deg,#1A1219 0%,#110D13 60%,#0B080C 100%);}
+.lh-photo-tag{position:absolute;top:14px;right:14px;font-family:var(--lh-data);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--lh-humo);border:1px dashed #4A3F47;padding:6px 9px;max-width:60%}
+.lh-eyebrow{font-family:var(--lh-data);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--lh-humo)}
+.lh-h1{font-family:var(--lh-display);font-weight:500;text-transform:uppercase;letter-spacing:.06em;line-height:.98;font-size:clamp(40px,7.4vw,84px);margin:10px 0 14px;text-wrap:balance}
+.lh-lede{font-family:var(--lh-read);font-size:clamp(17px,1.8vw,20px);line-height:1.5;color:var(--lh-hueso);max-width:46ch;opacity:.92}
+.lh-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.lh-btn{font-family:var(--lh-data);font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:15px 22px;border:1px solid var(--lh-hueso);color:var(--lh-hueso);background:transparent;text-decoration:none;line-height:1}
+.lh-btn.red{background:var(--lh-sangre);border-color:var(--lh-sangre);color:#fff}
+.lh-status{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;padding-top:14px;border-top:1px solid var(--lh-linea);font-family:var(--lh-data);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--lh-humo)}
+.lh-status b{color:var(--lh-hueso);font-weight:500}
+.lh-dot{display:inline-block;width:7px;height:7px;background:var(--lh-sangre);margin-right:8px;vertical-align:1px}
+
+.lh-read{background:var(--lh-ceniza);color:var(--lh-hollin);padding:clamp(22px,4vw,48px)}
+.lh-read-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #C9C2C5;padding-bottom:12px}
+.lh-h2{font-family:var(--lh-display);font-weight:500;text-transform:uppercase;letter-spacing:.08em;font-size:clamp(26px,3.6vw,38px);line-height:1}
+.lh-example{font-family:var(--lh-data);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--lh-grafito);border:1px dashed #A79EA2;padding:4px 8px}
+.lh-tickets{list-style:none;margin:0;padding:0}
+.lh-ticket{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid #C9C2C5}
+.lh-date{font-family:var(--lh-data);font-size:12px;letter-spacing:.1em;text-transform:uppercase;line-height:1.35;color:var(--lh-grafito)}
+.lh-date b{display:block;font-family:var(--lh-display);font-weight:500;font-size:30px;letter-spacing:.02em;color:var(--lh-hollin);line-height:1}
+.lh-t-name{font-family:var(--lh-display);font-weight:500;font-size:22px;text-transform:uppercase;letter-spacing:.06em;line-height:1.1}
+.lh-t-meta{font-family:var(--lh-read);font-size:15.5px;color:var(--lh-grafito);margin-top:3px}
+.lh-t-side{display:flex;align-items:center;gap:14px;font-family:var(--lh-data);font-size:12.5px;letter-spacing:.06em;white-space:nowrap}
+.lh-t-link{color:var(--lh-sangre-seca);text-decoration:none;border-bottom:1px solid currentColor;text-transform:uppercase;letter-spacing:.14em;font-size:11px}
+
+.lh-livery{background:var(--lh-sangre);color:#fff;padding:clamp(24px,4.4vw,52px);display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:clamp(18px,4vw,48px);align-items:end}
+.lh-livery h3{font-family:var(--lh-display);font-weight:500;text-transform:uppercase;letter-spacing:.06em;font-size:clamp(34px,5.2vw,58px);line-height:.95}
+.lh-livery h3 .bl{font-family:var(--lh-black);text-transform:none;letter-spacing:0;font-weight:400;margin-left:.12em}
+.lh-livery p{font-family:var(--lh-read);font-size:17px;line-height:1.5;margin-top:10px;max-width:40ch}
+.lh-facts{display:flex;flex-direction:column;border-top:1px solid rgba(255,255,255,.45)}
+.lh-facts div{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.45);font-family:var(--lh-data);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.lh-facts .lh-btn{margin-top:16px;align-self:flex-start;border-color:#fff;color:#fff}
+
+.lh-proof{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(16px,4vw,48px);align-items:center;padding:clamp(22px,4vw,44px);border-top:1px solid var(--lh-linea)}
+.lh-score{font-family:var(--lh-display);font-weight:500;font-size:clamp(54px,8vw,92px);line-height:.9;letter-spacing:.01em}
+.lh-score small{display:block;font-family:var(--lh-data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--lh-humo);margin-top:8px}
+.lh-proof blockquote{margin:0;font-family:var(--lh-read);font-size:clamp(18px,2.2vw,23px);line-height:1.45;max-width:44ch}
+.lh-proof cite{display:block;margin-top:10px;font-style:normal;font-family:var(--lh-data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--lh-humo)}
+
+@media (max-width:640px){
+  .lh-links span:nth-child(n+3){display:none}
+  .lh-ticket{grid-template-columns:70px minmax(0,1fr)}
+  .lh-t-side{grid-column:2}
+  .lh-livery{grid-template-columns:1fr}
+  .lh-proof{grid-template-columns:1fr}
+}
+
+/* Type role table */
+.type-sample{font-size:22px;line-height:1.2;color:var(--ink)}
+
+footer{margin-top:70px;padding-top:20px;border-top:2px solid var(--ink);display:flex;flex-direction:column;gap:12px}
+footer p{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);letter-spacing:.03em;max-width:72ch;line-height:1.7}
+</style>
+<style>
+/* Reset mínimo: estos informes se escribieron para incrustarse. */
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">La House of Demons · Propuesta de nueva web · 15 de septiembre de 2026</p>
+  <h1>Una casa oscura <span>que se lee de día</span></h1>
+  <p class="lede">Plan para construir la nueva web del bar. La idea visual es sencilla: bandas de cine para seducir y bandas de lectura para informar. Un solo rojo, sin adornos. Todo lo que el visitante necesita decidir —qué pasa esta semana, a qué hora abren, cuánto cuesta el festival— se lee en tres segundos.</p>
+</header>
+
+<section id="encargo">
+  <div class="sec-head"><span class="num">01</span><h2>El encargo, traducido a reglas</h2><span class="tail">Brief</span></div>
+  <p class="body" style="margin-bottom:20px">Se pidió una web impactante, sobria, fácil de leer y sexy. Si esas cuatro palabras no se convierten en reglas comprobables, cada diseñador las interpreta a su manera. Esta es la interpretación que propongo:</p>
+  <ul class="principles">
+    <li><span class="word">Impactante</span><h3>La primera pantalla es una fotografía, no un menú</h3><p>Imagen a sangre de la barra de noche, titular grande y dos acciones. Nada más compite con ella.</p></li>
+    <li><span class="word">Sobria</span><h3>Un solo color de acento, casi siempre ausente</h3><p>El rojo aparece en el botón principal, en el sello y en la banda del festival. En ningún sitio más: si todo es rojo, nada lo es.</p></li>
+    <li><span class="word">Fácil de leer</span><h3>La información vive en bandas claras</h3><p>Agenda, horarios, precios y cómo llegar se leen sobre fondo claro, con tipografía de lectura a 18 px y líneas de menos de 65 caracteres.</p></li>
+    <li><span class="word">Sexy</span><h3>Contención, luz de vela y mayúsculas con aire</h3><p>La sensualidad sale de lo que se calla: negro con tinte violeta, titulares espaciados de peso medio y fotografía con luz roja real del bar.</p></li>
+  </ul>
+</section>
+
+<section id="material">
+  <div class="sec-head"><span class="num">02</span><h2>Con qué material contamos</h2><span class="tail">Inventario real</span></div>
+  <div class="stack">
+    <p class="body">Revisé la mediateca pública del sitio: 125 archivos. La conclusión condiciona todo el plan: <strong>no existe ni una fotografía profesional del bar</strong>. Sin ella, el adjetivo "sexy" se queda en promesa.</p>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Tipo de archivo</th><th>Cantidad</th><th>Utilidad para la nueva web</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Stock y restos del tema de demostración</td><td class="v">32</td><td class="small">Fotos de Pexels, avatares y fondos de la plantilla BuddyX. Se descartan todas.</td><td><span class="chip c-bad">Descartar</span></td></tr>
+        <tr><td class="k">Flyers y gráficas de eventos</td><td class="v">27</td><td class="small">Sirven como adjunto de cada evento, nunca como imagen principal. Texto incrustado, cuadradas, hasta 1,17 MB.</td><td><span class="chip c-warn">Secundario</span></td></tr>
+        <tr><td class="k">Fotos de WhatsApp</td><td class="v">31</td><td class="small">Calidad de móvil y en su mayoría cuadradas. Útiles solo para galerías pequeñas.</td><td><span class="chip c-warn">Secundario</span></td></tr>
+        <tr><td class="k">Descargas de Instagram</td><td class="v">11</td><td class="small">Recomprimidas por Instagram, la mayoría de 500 px. Hay que pedir los originales.</td><td><span class="chip c-warn">Pedir originales</span></td></tr>
+        <tr><td class="k">Fotografía profesional del hotel del festival</td><td class="v">9</td><td class="small">Buena calidad, pero diurna y de resort familiar: piscina, habitaciones, un cartel de "Familia". Valen para la página de la Finca con un tratamiento de color oscuro, no para la marca.</td><td><span class="chip c-ok">Solo Finca</span></td></tr>
+        <tr><td class="k">Fotografía del interior del bar</td><td class="v">1</td><td class="small">Una foto de móvil. Aun así, confirma la atmósfera real: negro violáceo y velas rojas, que es exactamente la paleta propuesta.</td><td><span class="chip c-bad">Sesión necesaria</span></td></tr>
+        <tr><td class="k">Logotipos</td><td class="v">3</td><td class="small">Sello pentagrama "LHOD" en rojo puro <span class="mono">#F80000</span>; wordmark "La House of Forks" blanco sobre transparente con un rojo distinto, <span class="mono">#FC200C</span>; logo de Diabolus in Training en gótica. No hay archivos vectoriales.</td><td><span class="chip c-warn">Pedir vectores</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note">
+      <h3>Dato confirmado de paso</h3>
+      <p>En la mediateca hay un gráfico llamado <span class="mono">Privadas_SoldOut.jpeg</span>, subido el 31 de marzo de 2026. La habitación privada del festival está agotada de verdad: eso responde a la decisión 2 del plan de ejecución y permite plantear la lista de espera sin preguntar.</p>
+    </div>
+  </div>
+</section>
+
+<section id="referencias">
+  <div class="sec-head"><span class="num">03</span><h2>Referencias de lenguaje visual</h2><span class="tail">awesome-design-md</span></div>
+  <p class="body" style="margin-bottom:20px">Consulté la biblioteca de 74 sistemas de diseño documentados. Elegí las referencias por el tono que buscamos, no por el sector: un bar de metal sobrio se parece más a una marca de automóviles de lujo que a otro bar. De cada referencia se toma una idea estructural y se deja fuera su identidad. Nada de su marca pasa a la nuestra.</p>
+  <div class="refs">
+    <article class="ref">
+      <div class="ref-top"><h3>Ferrari</h3><span class="mono">design-md/ferrari</span></div>
+      <div class="ref-grid">
+        <div class="take"><span class="lbl">Tomamos</span><p>Un único acento usado con escasez; esquinas rectas de 0 px en botones y tarjetas; titulares de peso medio, nunca en negrita; la fotografía a sangre como protagonista de la portada.</p></div>
+        <div class="leave"><span class="lbl">Dejamos fuera</span><p>Su rojo corporativo, su tipografía propietaria y el lenguaje de automoción. El rojo de LHOD sale de las velas del propio bar.</p></div>
+      </div>
+    </article>
+    <article class="ref">
+      <div class="ref-top"><h3>Bugatti</h3><span class="mono">design-md/bugatti</span></div>
+      <div class="ref-grid">
+        <div class="take"><span class="lbl">Tomamos</span><p>El reparto en tres familias tipográficas: titulares en mayúsculas espaciadas, texto de lectura con serifa y datos en monoespaciada. Además, cero decoración y mucho aire entre secciones.</p></div>
+        <div class="leave"><span class="lbl">Dejamos fuera</span><p>La ausencia total de color —el bar necesita su rojo— y el negro puro, que en pantalla se ve plano. Usamos un negro con tinte violeta.</p></div>
+      </div>
+    </article>
+    <article class="ref">
+      <div class="ref-top"><h3>Runway</h3><span class="mono">design-md/runwayml</span></div>
+      <div class="ref-grid">
+        <div class="take"><span class="lbl">Tomamos</span><p>La alternancia entre bandas oscuras de cine y bandas claras de lectura. Es la pieza que hace compatibles "sexy" y "fácil de leer". También su renuncia total a las sombras.</p></div>
+        <div class="leave"><span class="lbl">Dejamos fuera</span><p>Su tipografía única y el interlineado apretado del texto, que en español y en móvil cansa. Nuestro texto de lectura va a 1,6.</p></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="direccion">
+  <div class="sec-head"><span class="num">04</span><h2>Dirección de diseño</h2><span class="tail">Muestra del sistema propuesto</span></div>
+  <p class="body" style="margin-bottom:18px">Esto no es la web: es una muestra del sistema aplicado a tres piezas de la portada. Las fechas de la agenda son de ejemplo y están marcadas como tal. El festival, las reseñas y el horario usan datos reales de la auditoría.</p>
+
+  <div class="specimen" role="img" aria-label="Muestra del sistema visual propuesto para La House of Demons: portada con fotografía nocturna, agenda en banda clara, banda roja del festival y reseñas.">
+    <div class="lh-nav">
+      <span class="lh-mark">
+        <svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="12.5" fill="none" stroke="#D4103C" stroke-width="1.4"/><path d="M14 4.6 17.2 22.4 4.9 11.3h18.2L10.8 22.4Z" fill="none" stroke="#D4103C" stroke-width="1.1" stroke-linejoin="round"/></svg>
+        La House of Demons
+      </span>
+      <span class="lh-links"><span>Agenda</span><span>La casa</span><span>Finca Metalera</span><span>Entrenamiento</span><span>Visítanos</span></span>
+    </div>
+
+    <div class="lh-hero">
+      <span class="lh-photo-tag">Foto pendiente · barra de noche, luz de vela roja · 3:2 y 4:5</span>
+      <span class="lh-eyebrow">Laureles · Medellín · Hackeamos la Matrix</span>
+      <div class="lh-h1">Bar de rock<br>y metal</div>
+      <p class="lh-lede">Música pesada, café y sodas hechas a mano, hamburguesas que no te tumban y cerveza para quien la quiera. Entrenamos, celebramos y montamos un festival.</p>
+      <div class="lh-cta"><span class="lh-btn red">Reservar mesa</span><span class="lh-btn">Ver agenda</span></div>
+      <div class="lh-status"><span><i class="lh-dot"></i><b>Jue 16–24 · Vie 16–02 · Sáb 14–02</b></span><span>Cra. 80 #33-41</span><span>Dom a mié cerrado</span></div>
+    </div>
+
+    <div class="lh-read">
+      <div class="lh-read-head"><div class="lh-h2">Esta semana</div><span class="lh-example">Fechas de ejemplo</span></div>
+      <ul class="lh-tickets">
+        <li class="lh-ticket">
+          <div class="lh-date">Jue<b>18</b>Sep</div>
+          <div><div class="lh-t-name">Metal Cycling</div><div class="lh-t-meta">Indoor cycling con banda sonora pesada. 45 minutos, cupos limitados.</div></div>
+          <div class="lh-t-side"><span>19:00</span><a class="lh-t-link" href="#direccion">Reservar</a></div>
+        </li>
+        <li class="lh-ticket">
+          <div class="lh-date">Vie<b>19</b>Sep</div>
+          <div><div class="lh-t-name">Open Mic</div><div class="lh-t-meta">Tu banda, tu riff, cinco minutos de escenario. Inscripción en barra.</div></div>
+          <div class="lh-t-side"><span>21:00</span><a class="lh-t-link" href="#direccion">Reservar</a></div>
+        </li>
+        <li class="lh-ticket">
+          <div class="lh-date">Sáb<b>20</b>Sep</div>
+          <div><div class="lh-t-name">Roll Fuckker Roll</div><div class="lh-t-meta">Noche temática. Descripción pendiente de confirmar con el dueño.</div></div>
+          <div class="lh-t-side"><span>20:00</span><a class="lh-t-link" href="#direccion">Reservar</a></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="lh-livery">
+      <div>
+        <h3>Finca Metalera<span class="bl">II</span></h3>
+        <p>Dos días de metal en un hotel de San Jerónimo, a 39 km de Medellín. Bandas en vivo, pool party, cuatro comidas y habitación.</p>
+      </div>
+      <div class="lh-facts">
+        <div><span>Fechas</span><span>30–31 ene 2027</span></div>
+        <div><span>Preventa</span><span>Abierta</span></div>
+        <div><span>Desde</span><span>$825.000 COP</span></div>
+        <div><span>Hab. privada</span><span>Agotada</span></div>
+        <span class="lh-btn">Ver paquetes</span>
+      </div>
+    </div>
+
+    <div class="lh-proof">
+      <div class="lh-score">4,7<small>517 reseñas en Google</small></div>
+      <blockquote>"Muy buen ambiente, eventos, música metal, buena comida y cerveza."<cite>Reseña real · Google · pedir permiso para citar con nombre</cite></blockquote>
+    </div>
+  </div>
+
+  <div class="stack" style="margin-top:28px">
+    <p class="eyebrow">Paleta · nombres del propio lugar</p>
+    <div class="swatches">
+      <div class="sw"><i style="background:#110D13"></i><div><b>Hollín</b><span>#110D13</span><em>Fondo. Muestreado de la oscuridad real del bar (#100C14).</em></div></div>
+      <div class="sw"><i style="background:#1B161D"></i><div><b>Hollín alto</b><span>#1B161D</span><em>Superficies elevadas y paneles sobre fondo oscuro.</em></div></div>
+      <div class="sw"><i style="background:#F2ECE8"></i><div><b>Hueso</b><span>#F2ECE8</span><em>Texto principal sobre oscuro.</em></div></div>
+      <div class="sw"><i style="background:#ADA3A6"></i><div><b>Humo</b><span>#ADA3A6</span><em>Texto secundario sobre oscuro. Contraste 7,5:1.</em></div></div>
+      <div class="sw"><i style="background:#E7E3E4"></i><div><b>Ceniza</b><span>#E7E3E4</span><em>Bandas de lectura: agenda, horarios, precios.</em></div></div>
+      <div class="sw"><i style="background:#D4103C"></i><div><b>Sangre</b><span>#D4103C</span><em>Único acento. Sale de las velas del bar. Texto blanco encima: 5,4:1.</em></div></div>
+      <div class="sw"><i style="background:#9E0B2C"></i><div><b>Sangre seca</b><span>#9E0B2C</span><em>Rojo para texto sobre Ceniza. 6,5:1.</em></div></div>
+    </div>
+
+    <p class="eyebrow" style="margin-top:10px">Tipografía · tres familias y un acento</p>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Rol</th><th>Familia</th><th>Muestra</th><th>Regla</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Titulares</td><td class="v">Saira Condensed 500</td><td><span class="type-sample" style="font-family:var(--lh-display);text-transform:uppercase;letter-spacing:.08em;font-weight:500">Esta semana</span></td><td class="small">Siempre en mayúsculas con espaciado amplio. Nunca en negrita: el peso lo da el tamaño.</td></tr>
+        <tr><td class="k">Lectura</td><td class="v">Newsreader 400</td><td><span class="type-sample" style="font-family:var(--lh-read);font-size:19px">Música pesada, café hecho a mano.</span></td><td class="small">18 px en móvil, interlineado 1,6, máximo 64 caracteres por línea.</td></tr>
+        <tr><td class="k">Datos</td><td class="v">JetBrains Mono 400</td><td><span class="type-sample" style="font-family:var(--lh-data);font-size:15px;letter-spacing:.1em">VIE 16–02 · $825.000</span></td><td class="small">Fechas, horas, precios y etiquetas. Es la voz del ticket y del setlist.</td></tr>
+        <tr><td class="k">Acento</td><td class="v">UnifrakturMaguntia</td><td><span class="type-sample" style="font-family:var(--lh-black);font-size:30px">II</span></td><td class="small">Solo numerales de edición y el sello. Como máximo una aparición por pantalla.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="note">
+      <h3>Reglas que no se negocian</h3>
+      <p>Esquinas rectas en todo: nada de pastillas ni bordes redondeados. Sin sombras, sin degradados en la interfaz y sin texturas grunge; la textura la pone la fotografía. El rojo nunca se usa como color de párrafo sobre fondo oscuro, porque su contraste (3,5:1) solo alcanza para titulares y botones. El rojo puro del sello, <span class="mono">#F80000</span>, queda reservado al propio sello y nunca se usa en la interfaz.</p>
+    </div>
+  </div>
+</section>
+
+<section id="arquitectura">
+  <div class="sec-head"><span class="num">05</span><h2>Arquitectura del sitio</h2><span class="tail">Ocho páginas</span></div>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Página</th><th>Su único trabajo</th><th>Acción principal</th><th>Contenido clave</th><th>Schema</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Inicio</td><td class="small">Que un desconocido entienda qué es el lugar y qué pasa esta semana.</td><td class="small">Reservar mesa</td><td class="small">Portada fotográfica, próximos tres eventos, cuatro pilares, festival, reseñas, horario.</td><td class="v">BarOrPub</td></tr>
+      <tr><td class="k">Agenda</td><td class="small">Elegir un evento y reservar.</td><td class="small">Reservar evento</td><td class="small">Eventos como entradas de texto con fecha, hora, precio y flyer adjunto. Pasados separados automáticamente.</td><td class="v">Event</td></tr>
+      <tr><td class="k">La casa</td><td class="small">Explicar el concepto híbrido sobrio y la carta.</td><td class="small">Ver carta</td><td class="small">Qué significa "sober rock bar", carta con precios, opciones sin alcohol, la historia.</td><td class="v">Menu</td></tr>
+      <tr><td class="k">Finca Metalera</td><td class="small">Vender el paquete del festival.</td><td class="small">Comprar paquete</td><td class="small">Fase de preventa vigente, paquetes con precio, qué incluye, cartel, preguntas frecuentes, lista de espera para lo agotado.</td><td class="v">Event + Offer</td></tr>
+      <tr><td class="k">Entrenamiento</td><td class="small">Inscribir en una clase.</td><td class="small">Reservar clase</td><td class="small">Metal Cycling, Diabolus in Training y Roll Fuckker Roll con horario y precio.</td><td class="v">Service</td></tr>
+      <tr><td class="k">Celebraciones</td><td class="small">Captar cumpleaños y grupos.</td><td class="small">Pedir cotización</td><td class="small">Paquetes, capacidad, formulario corto.</td><td class="v">—</td></tr>
+      <tr><td class="k">Visítanos</td><td class="small">Llegar sin preguntar.</td><td class="small">Cómo llegar</td><td class="small">Dirección, horario, mapa, teléfono y WhatsApp en texto.</td><td class="v">BarOrPub</td></tr>
+      <tr><td class="k">English</td><td class="small">Captar al viajero extranjero.</td><td class="small">Book a table</td><td class="small">Una página: qué es, horario, cómo llegar, agenda resumida.</td><td class="v">hreflang</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="portada">
+  <div class="sec-head"><span class="num">06</span><h2>La portada, de arriba abajo</h2><span class="tail">Orden de lectura</span></div>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Orden</th><th>Banda</th><th>Tratamiento</th><th>Qué responde al visitante</th></tr></thead>
+    <tbody>
+      <tr><td class="v">1</td><td class="k">Portada</td><td class="small">Cine: foto nocturna a sangre, titular, dos botones y franja de estado con el horario.</td><td class="small">¿Qué es esto y abren hoy?</td></tr>
+      <tr><td class="v">2</td><td class="k">Esta semana</td><td class="small">Lectura: tres filas tipo ticket con fecha, nombre, hora y reserva.</td><td class="small">¿Qué pasa si voy?</td></tr>
+      <tr><td class="v">3</td><td class="k">Cuatro pilares</td><td class="small">Cine: Pub, Metal, Entrenamiento y Bienestar, con una foto cada uno.</td><td class="small">¿Por qué es distinto de otro bar?</td></tr>
+      <tr><td class="v">4</td><td class="k">Finca Metalera</td><td class="small">La única banda roja del sitio: fechas, fase, precio desde.</td><td class="small">¿Qué es el festival y cuánto cuesta?</td></tr>
+      <tr><td class="v">5</td><td class="k">Reseñas</td><td class="small">Cine: puntuación grande y una cita real rotando.</td><td class="small">¿Es de fiar?</td></tr>
+      <tr><td class="v">6</td><td class="k">Visítanos</td><td class="small">Lectura: dirección, horario completo y enlace al mapa.</td><td class="small">¿Cómo llego?</td></tr>
+      <tr><td class="v">7</td><td class="k">Pie</td><td class="small">Hollín: sello, redes, datos legales y enlace a la versión en inglés.</td><td class="small">¿Dónde los sigo?</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="decisiones">
+  <div class="sec-head"><span class="num">07</span><h2>Decisiones de marca</h2><span class="tail">Las toma el dueño</span></div>
+  <div class="decision">
+    <h3>1 · ¿La House of Demons o La House of Forks?</h3>
+    <p>El dominio, Instagram y Google dicen "Demons"; el logo nuevo, los flyers de abril y la página de reservas dicen "Forks". Una web no puede sostener dos nombres. La propuesta asume "La House of Demons", con Forks como posible nombre de la cocina.</p>
+  </div>
+  <div class="decision">
+    <h3>2 · ¿Cuánto se enseña del sello?</h3>
+    <p>El sello pentagrama con Baphomet dice "Cult Temple of Sex-Metal-Beer-Yourself". Convive con un discurso de sobriedad, bienestar y un festival en hotel familiar. La propuesta lo usa pequeño, como firma en la navegación y el pie, y deja el tono al texto. Si el dueño quiere que la provocación sea el centro, cambia la portada entera.</p>
+  </div>
+  <div class="decision">
+    <h3>3 · ¿Qué rojo es el de la marca?</h3>
+    <p>Hoy conviven dos: <span class="mono">#F80000</span> en el sello y <span class="mono">#FC200C</span> en el wordmark. La propuesta unifica la interfaz en Sangre <span class="mono">#D4103C</span>, tomado de las velas del bar, y deja el rojo puro solo dentro del sello.</p>
+  </div>
+  <div class="decision">
+    <h3>4 · ¿La comunidad sigue?</h3>
+    <p>La red social interna (BuddyPress + Youzify) es la principal causa del peso actual del sitio. La nueva web se diseña sin ella. Si el dueño la quiere, se plantea como fase aparte, separada del sitio público.</p>
+  </div>
+</section>
+
+<section id="fotos">
+  <div class="sec-head"><span class="num">08</span><h2>Sesión fotográfica</h2><span class="tail">Requisito, no extra</span></div>
+  <p class="body" style="margin-bottom:18px">Una noche en el bar y una clase de entrenamiento cubren toda la web. Cada toma se entrega en horizontal 3:2 para escritorio y vertical 4:5 para móvil, en RAW y con al menos 3.000 px en el lado largo. La luz es la del lugar: velas y neones rojos. Sin flash frontal.</p>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Toma</th><th>Dónde se usa</th><th>Indicaciones</th></tr></thead>
+    <tbody>
+      <tr><td class="k">La barra de noche, sin gente</td><td class="small">Portada</td><td class="small">Plano abierto, luz de vela, espacio negro arriba para el titular.</td></tr>
+      <tr><td class="k">Barra con gente, noche de evento</td><td class="small">Portada alterna · Agenda</td><td class="small">Movimiento, brazos arriba, rostros con consentimiento firmado.</td></tr>
+      <tr><td class="k">Soda artesanal sirviéndose</td><td class="small">Pilar Pub · La casa</td><td class="small">Primer plano, contraluz rojo. Es la imagen del concepto sobrio.</td></tr>
+      <tr><td class="k">Hamburguesa en la mesa</td><td class="small">La casa · carta</td><td class="small">Cenital y a 45°, fondo oscuro.</td></tr>
+      <tr><td class="k">Banda en vivo</td><td class="small">Pilar Metal</td><td class="small">Desde la primera fila y desde el fondo, con humo si lo hay.</td></tr>
+      <tr><td class="k">Clase de Metal Cycling</td><td class="small">Pilar Entrenamiento</td><td class="small">Sudor, luz roja y bicicletas en fila.</td></tr>
+      <tr><td class="k">Retratos del equipo</td><td class="small">La casa</td><td class="small">Fondo negro, luz lateral única.</td></tr>
+      <tr><td class="k">Detalles: velas, sello, vinilos</td><td class="small">Transiciones entre bandas</td><td class="small">Macro, poca profundidad de campo.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note" style="margin-top:18px">
+    <h3>Para el festival no hace falta otra sesión</h3>
+    <p>Las nueve fotos profesionales del hotel sirven para la página de la Finca Metalera con un tratamiento de color frío y oscuro. Si existen fotos o vídeo de la Edición I, son más valiosas que cualquier toma del hotel vacío: hay que pedirlas.</p>
+  </div>
+</section>
+
+<section id="construccion">
+  <div class="sec-head"><span class="num">09</span><h2>Plan de construcción</h2><span class="tail">Estimaciones</span></div>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Fase</th><th>Entregable</th><th>Depende de</th><th>Estimación</th></tr></thead>
+    <tbody>
+      <tr><td class="k">1 · Sistema</td><td class="small"><span class="mono">DESIGN.md</span> de LHOD: tokens, componentes, reglas y responsive, en el mismo formato que las referencias.</td><td class="small">Decisiones 07</td><td class="v">1–2 días</td></tr>
+      <tr><td class="k">2 · Prototipo</td><td class="small">Prototipo navegable de Inicio, Agenda, Finca Metalera y Visítanos, móvil primero, con fotos provisionales marcadas. Se publica como página para enseñárselo al dueño.</td><td class="small">Fase 1</td><td class="v">3–4 días</td></tr>
+      <tr><td class="k">3 · Validación</td><td class="small">Revisión con el dueño y una ronda de cambios.</td><td class="small">Fase 2</td><td class="v">1 semana</td></tr>
+      <tr><td class="k">4 · Fotografía</td><td class="small">Sesión según la lista de la sección 08, más edición y exportación.</td><td class="small">Fase 3</td><td class="v">1–2 semanas</td></tr>
+      <tr><td class="k">5 · Construcción</td><td class="small">Tema de WordPress propio y ligero; plantillas de las ocho páginas; WooCommerce con Bold; schema con Rank Math.</td><td class="small">Fase 3</td><td class="v">2–3 semanas</td></tr>
+      <tr><td class="k">6 · Contenido</td><td class="small">Textos finales, eventos como entradas, los 26 títulos del CSV ya entregado y las redirecciones 301.</td><td class="small">Fase 5</td><td class="v">1 semana</td></tr>
+      <tr><td class="k">7 · Lanzamiento</td><td class="small">Staging, control de calidad (rendimiento, accesibilidad, compra real), publicación y medición durante 30 días.</td><td class="small">Fases 4 y 6</td><td class="v">1 semana</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small" style="margin-top:12px">Total estimado: <strong>6 a 9 semanas</strong>. Las fases 4 y 5 corren en paralelo. Son estimaciones de planificación, no un presupuesto cerrado.</p>
+
+  <div class="stack" style="margin-top:26px">
+    <p class="eyebrow">Plataforma</p>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Opción</th><th>A favor</th><th>En contra</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="k">WordPress con tema propio ligero</td><td class="small">Conserva WooCommerce, Bold, Rank Math y el panel que el equipo ya conoce. Elimina Elementor y BuddyX, que son la fuente del peso actual.</td><td class="small">Requiere desarrollo de tema. Hay que migrar las páginas hechas en Elementor.</td><td><span class="chip c-ok">Recomendada</span></td></tr>
+        <tr><td class="k">Rediseñar dentro de Elementor</td><td class="small">La más rápida de montar.</td><td class="small">Hereda las 188 peticiones y la carga de CSS/JS. La propuesta visual pierde fuerza en móvil.</td><td><span class="chip c-warn">No recomendada</span></td></tr>
+        <tr><td class="k">Sitio estático con tienda aparte</td><td class="small">El más rápido y seguro.</td><td class="small">El dueño pierde la edición sencilla de eventos; hay que montar el cobro por separado.</td><td><span class="chip c-warn">Solo si no editan</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p class="eyebrow" style="margin-top:10px">Presupuesto de rendimiento · condición de lanzamiento</p>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Métrica</th><th>Hoy</th><th>Objetivo</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Peso de la portada</td><td class="v">21,2 MB</td><td class="v">&lt; 1,5 MB</td></tr>
+        <tr><td class="k">Peticiones</td><td class="v">188</td><td class="v">&lt; 60</td></tr>
+        <tr><td class="k">LCP en móvil 4G</td><td class="v">sin medir</td><td class="v">&lt; 2,5 s</td></tr>
+        <tr><td class="k">CLS</td><td class="v">sin medir</td><td class="v">&lt; 0,1</td></tr>
+        <tr><td class="k">Fuentes</td><td class="v">Google Fonts</td><td class="v">Alojadas en el propio servidor, con solo los caracteres necesarios</td></tr>
+        <tr><td class="k">Imágenes</td><td class="v">PNG 1080 px</td><td class="v">AVIF/WebP con tamaños por dispositivo</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="note">
+      <h3>Cómo encaja con el plan de correcciones</h3>
+      <p>La fase 0 del plan de ejecución —copia de seguridad, staging, Search Console y analítica— se hace ya, con o sin web nueva. Si se aprueba la reconstrucción, las tareas ligadas al diseño actual (T10–T14, T21, T23–T25, T28 y T29) se absorben en la fase 5 y no se hacen dos veces. El contenido que ya está preparado —títulos, redirecciones, eventos como texto— se reutiliza tal cual.</p>
+    </div>
+  </div>
+</section>
+
+<section id="necesito">
+  <div class="sec-head"><span class="num">10</span><h2>Qué necesito para empezar</h2><span class="tail">Checklist</span></div>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Qué</th><th>Para qué fase</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Respuestas a las cuatro decisiones de marca</td><td class="small">Fase 1</td><td><span class="chip c-bad">Bloquea</span></td></tr>
+      <tr><td class="k">Logotipos en vector (SVG, AI o PDF)</td><td class="small">Fase 1</td><td><span class="chip c-bad">Bloquea</span></td></tr>
+      <tr><td class="k">Horario, dirección y teléfono confirmados</td><td class="small">Fase 2</td><td><span class="chip c-warn">Pendiente</span></td></tr>
+      <tr><td class="k">Carta con precios</td><td class="small">Fase 2</td><td><span class="chip c-warn">Pendiente</span></td></tr>
+      <tr><td class="k">Calendario real de septiembre a diciembre</td><td class="small">Fase 2</td><td><span class="chip c-warn">Pendiente</span></td></tr>
+      <tr><td class="k">Originales de Instagram y fotos o vídeo de la Edición I</td><td class="small">Fases 2 y 4</td><td><span class="chip c-warn">Pendiente</span></td></tr>
+      <tr><td class="k">Presupuesto y fotógrafo para la sesión</td><td class="small">Fase 4</td><td><span class="chip c-warn">Pendiente</span></td></tr>
+      <tr><td class="k">Permiso para citar reseñas con nombre</td><td class="small">Fase 6</td><td><span class="chip c-warn">Pendiente</span></td></tr>
+      <tr><td class="k">Carpeta de proyecto o repositorio definitivo</td><td class="small">Fase 1</td><td><span class="chip c-bad">Bloquea</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Fuentes.</strong> Mediateca pública del sitio vía API de WordPress (125 archivos, 15 sep 2026); colores muestreados del sello, del wordmark y de la única foto interior del bar; referencias de lenguaje visual de la biblioteca awesome-design-md (Ferrari, Bugatti, Runway), usadas como inspiración estructural sin reproducir ninguna identidad de marca.</p>
+  <p><strong>Datos.</strong> Las fechas de la agenda de la muestra son ejemplos. El horario, la dirección y los precios salen de la auditoría y deben confirmarse con el dueño antes de publicarse.</p>
+</footer>
+
+</div>
+</body>
+</html>

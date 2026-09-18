@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Auditoría House of Demons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+:root{
+  --paper:#EFF1F3;
+  --surface:#FCFCFD;
+  --surface-2:#E7EAEE;
+  --ink:#14171C;
+  --ink-2:#3D444E;
+  --ink-3:#6B727C;
+  --rule:#D2D7DE;
+  --rule-2:#BFC6CF;
+  --blood:#8C1C2A;
+  --blood-soft:#F2E2E4;
+  --teal:#0D6660;
+  --teal-soft:#DDEBE9;
+  --amber:#8A5A00;
+  --amber-soft:#F2E8D5;
+  --slate:#3A4A5C;
+
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+
+  --measure:66ch;
+  --pad:clamp(18px,4vw,56px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101317;
+    --surface:#171B20;
+    --surface-2:#1F242A;
+    --ink:#E6E9ED;
+    --ink-2:#B3BAC3;
+    --ink-3:#868E99;
+    --rule:#2A3038;
+    --rule-2:#3A424C;
+    --blood:#E4697A;
+    --blood-soft:#33191E;
+    --teal:#4FBDB2;
+    --teal-soft:#12292A;
+    --amber:#D9A247;
+    --amber-soft:#2B2415;
+    --slate:#93A6BA;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101317;
+  --surface:#171B20;
+  --surface-2:#1F242A;
+  --ink:#E6E9ED;
+  --ink-2:#B3BAC3;
+  --ink-3:#868E99;
+  --rule:#2A3038;
+  --rule-2:#3A424C;
+  --blood:#E4697A;
+  --blood-soft:#33191E;
+  --teal:#4FBDB2;
+  --teal-soft:#12292A;
+  --amber:#D9A247;
+  --amber-soft:#2B2415;
+  --slate:#93A6BA;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 var(--pad) 96px}
+
+/* ---------- typography ---------- */
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.12}
+p{margin:0}
+.eyebrow{
+  font-family:var(--f-mono);font-size:11px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+}
+.lede{font-size:20px;line-height:1.55;color:var(--ink-2);max-width:var(--measure)}
+.body{max-width:var(--measure)}
+.small{font-size:14.5px;color:var(--ink-2)}
+.mono{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums}
+a{color:var(--blood);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--blood);outline-offset:3px;border-radius:2px}
+
+/* ---------- masthead ---------- */
+.masthead{
+  border-bottom:2px solid var(--ink);
+  padding:clamp(32px,6vw,64px) 0 22px;
+  display:flex;flex-direction:column;gap:18px;
+}
+.masthead h1{
+  font-size:clamp(38px,7vw,72px);font-weight:800;letter-spacing:-.025em;
+  text-transform:uppercase;
+}
+.masthead h1 span{display:block;color:var(--blood)}
+.dossier{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));
+  gap:2px;background:var(--rule);border:1px solid var(--rule);margin-top:8px;
+}
+.dossier div{background:var(--paper);padding:11px 14px;display:flex;flex-direction:column;gap:3px}
+.dossier dt{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.dossier dd{margin:0;font-family:var(--f-display);font-size:14px;font-weight:600}
+
+/* ---------- sections ---------- */
+section{padding-top:clamp(44px,6vw,72px)}
+.sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--rule-2);padding-bottom:9px;margin-bottom:26px}
+.sec-head h2{font-size:clamp(21px,3vw,27px);font-weight:700;letter-spacing:-.015em}
+.sec-head .num{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--blood);
+  letter-spacing:.08em;flex:none;
+}
+.sec-head .tail{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase}
+
+/* ---------- verdict ---------- */
+.verdict{
+  border-left:4px solid var(--blood);
+  background:var(--surface);
+  padding:26px clamp(20px,3vw,34px);
+  display:flex;flex-direction:column;gap:14px;
+}
+.verdict p{max-width:74ch}
+.verdict .big{font-family:var(--f-display);font-size:clamp(19px,2.6vw,24px);font-weight:600;line-height:1.32;letter-spacing:-.01em}
+
+/* ---------- vitals ---------- */
+table{border-collapse:collapse;width:100%;font-size:15px}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+th{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);text-align:left;
+  padding:0 12px 8px 0;border-bottom:1px solid var(--rule-2);white-space:nowrap;
+}
+td{padding:11px 12px 11px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:14px}
+td.k{font-family:var(--f-display);font-weight:600;font-size:15px}
+.chip{
+  display:inline-block;font-family:var(--f-mono);font-size:10px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;white-space:nowrap;border:1px solid;
+}
+.c-bad{color:var(--blood);border-color:var(--blood);background:var(--blood-soft)}
+.c-ok{color:var(--teal);border-color:var(--teal);background:var(--teal-soft)}
+.c-warn{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+
+/* ---------- findings ---------- */
+.findings{display:flex;flex-direction:column;gap:2px}
+.finding{
+  background:var(--surface);
+  border-left:3px solid var(--rule-2);
+  padding:20px clamp(16px,2.4vw,26px);
+  display:grid;grid-template-columns:minmax(0,1fr);gap:11px;
+}
+.finding.sev-crit{border-left-color:var(--blood)}
+.finding.sev-alto{border-left-color:var(--amber)}
+.finding.sev-medio{border-left-color:var(--slate)}
+.f-top{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+.f-id{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.06em}
+.f-top h3{font-size:18px;font-weight:700;letter-spacing:-.01em;flex:1 1 320px;min-width:0}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 28px}
+.f-block{display:flex;flex-direction:column;gap:5px;min-width:0}
+.f-label{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.f-block p{font-size:15px;line-height:1.55;color:var(--ink-2)}
+.evidence{
+  font-family:var(--f-mono);font-size:12.5px;line-height:1.7;color:var(--ink);
+  background:var(--surface-2);padding:10px 12px;border-left:2px solid var(--rule-2);
+  overflow-x:auto;white-space:pre-wrap;word-break:break-word;
+}
+.fix{color:var(--ink);font-weight:600}
+
+/* ---------- keep list ---------- */
+.keep{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2px;background:var(--rule)}
+.keep li{background:var(--surface);padding:18px 20px;list-style:none;display:flex;flex-direction:column;gap:7px}
+.keep h3{font-size:16px;font-weight:700}
+.keep p{font-size:14.5px;color:var(--ink-2);line-height:1.5}
+ul.keep{margin:0;padding:0;border:1px solid var(--rule)}
+
+/* ---------- notes ---------- */
+.note{
+  border:1px dashed var(--rule-2);background:var(--surface);
+  padding:18px 20px;display:flex;flex-direction:column;gap:9px;
+}
+.note h3{font-size:15px;font-weight:700;font-family:var(--f-display)}
+.note p{font-size:15px;color:var(--ink-2);max-width:74ch}
+
+.stack{display:flex;flex-direction:column;gap:20px}
+.stack-s{display:flex;flex-direction:column;gap:12px}
+
+/* ---------- plan ---------- */
+.plan td.when{font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--blood);white-space:nowrap;font-weight:600}
+.plan td.eff{font-family:var(--f-mono);font-size:12.5px;white-space:nowrap;color:var(--ink-3)}
+
+footer{
+  margin-top:72px;padding-top:20px;border-top:2px solid var(--ink);
+  display:flex;flex-wrap:wrap;gap:14px 30px;align-items:baseline;
+}
+footer p{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);letter-spacing:.03em;max-width:60ch;line-height:1.7}
+
+@media (max-width:620px){
+  body{font-size:16px}
+  .f-grid{grid-template-columns:1fr}
+}
+</style>
+<style>
+/* Reset mínimo: estos informes se escribieron para incrustarse. */
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Auditoría digital independiente · 11 de septiembre de 2026</p>
+  <h1>House of<br>Demons <span>bajo revisión</span></h1>
+  <p class="lede">Un negocio físico con reputación real y una audiencia de 12.000 personas, sostenido por un sitio web que no puede medirse, no aparece en búsqueda local y no deja comprar el producto que más dinero deja.</p>
+  <dl class="dossier">
+    <div><dt>Sitio</dt><dd>lahouseofdemons.com</dd></div>
+    <div><dt>Sector</dt><dd>Pub rock/metal + eventos</dd></div>
+    <div><dt>Ubicación</dt><dd>Cra 80 #33-41, Medellín</dd></div>
+    <div><dt>Plataforma</dt><dd>WordPress + Elementor</dd></div>
+    <div><dt>Dominio desde</dt><dd>28 feb 2025</dd></div>
+    <div><dt>Hallazgos</dt><dd>7 críticos · 8 altos · 8 medios</dd></div>
+  </dl>
+</header>
+
+<section id="veredicto">
+  <div class="sec-head"><span class="num">01</span><h2>Veredicto</h2><span class="tail">Resumen ejecutivo</span></div>
+  <div class="verdict">
+    <p class="big">El problema no es el diseño. Es que el sitio no está haciendo el trabajo comercial que el negocio ya se ganó en la calle.</p>
+    <p class="body">La House of Demons tiene <strong>4,7/5 con 517 reseñas en Google</strong> y <strong>12.000 seguidores en Instagram</strong>. Eso es tracción real, difícil de construir y difícil de copiar. También tiene una propuesta genuinamente diferenciada en Medellín: es el único local que combina pub de metal, entrenamiento, bienestar y ahora un festival residencial propio. Ninguno de los competidores hace eso.</p>
+    <p class="body">El sitio web, en cambio, opera como un folleto lento. No tiene analítica instalada, así que <em>nadie sabe cuánta gente lo visita ni de dónde viene</em>. No declara dirección, teléfono ni horario en texto, así que Google no puede clasificarlo como negocio local. Publica sus eventos como imágenes sin una sola palabra indexable. Y en plena preventa del festival —su producto de mayor ticket, hasta $1.857.000 COP— la habitación privada aparece agotada y el "Día de Sol Metalero" que la página promete ni siquiera existe como producto comprable.</p>
+    <p class="body">La buena noticia: casi todo lo crítico se arregla en semanas, no en meses, y sin rehacer el sitio. Lo que sigue está ordenado por cuánto dinero cuesta no hacerlo.</p>
+  </div>
+</section>
+
+<section id="vitales">
+  <div class="sec-head"><span class="num">02</span><h2>Signos vitales</h2><span class="tail">Medido el 11–12 sep 2026</span></div>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Indicador</th><th>Valor medido</th><th>Referencia sana</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Peso de la portada</td><td class="n">21,2 MB</td><td class="n">&lt; 2 MB</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">Peticiones de red</td><td class="n">188</td><td class="n">&lt; 70</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">Imágenes en portada</td><td class="n">17,1 MB · 74 archivos</td><td class="n">&lt; 1 MB</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">Archivos CSS + JS</td><td class="n">53 + 58 (3,7 MB)</td><td class="n">&lt; 15</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">Respuesta del servidor (caché fría)</td><td class="n">3,65 s</td><td class="n">&lt; 0,6 s</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">Respuesta del servidor (caché caliente)</td><td class="n">0,40 s</td><td class="n">&lt; 0,6 s</td><td><span class="chip c-ok">Bien</span></td></tr>
+      <tr><td class="k">Analítica instalada</td><td class="n">Ninguna (solo Jetpack)</td><td class="n">GA4 + píxeles</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">URLs totales en sitemap</td><td class="n">25</td><td class="n">—</td><td><span class="chip c-warn">Escaso</span></td></tr>
+      <tr><td class="k">Artículos de blog</td><td class="n">1 (de agosto 2021)</td><td class="n">2–4 / mes</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">Marcado LocalBusiness</td><td class="n">Ausente</td><td class="n">Obligatorio</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">Imagen para compartir (og:image)</td><td class="n">Ausente</td><td class="n">Obligatoria</td><td><span class="chip c-bad">Crítico</span></td></tr>
+      <tr><td class="k">Edad del dominio</td><td class="n">18 meses</td><td class="n">—</td><td><span class="chip c-warn">Joven</span></td></tr>
+      <tr><td class="k">Reseñas en Google</td><td class="n">4,7 / 5 · 517 reseñas</td><td class="n">—</td><td><span class="chip c-ok">Excelente</span></td></tr>
+      <tr><td class="k">Seguidores en Instagram</td><td class="n">12.000 · 390 posts</td><td class="n">—</td><td><span class="chip c-ok">Fuerte</span></td></tr>
+      <tr><td class="k">Certificado HTTPS</td><td class="n">Activo</td><td class="n">Activo</td><td><span class="chip c-ok">Bien</span></td></tr>
+      <tr><td class="k">Pasarela de pago</td><td class="n">Bold (Colombia)</td><td class="n">—</td><td><span class="chip c-ok">Bien</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="fortalezas">
+  <div class="sec-head"><span class="num">03</span><h2>Lo que ya funciona</h2><span class="tail">Proteger, no tocar</span></div>
+  <ul class="keep">
+    <li>
+      <h3>La reputación offline</h3>
+      <p>4,7/5 con 517 reseñas en Google y 4,6/5 con 42 en Facebook. Es el activo más valioso del negocio y ninguna agencia puede fabricarlo.</p>
+    </li>
+    <li>
+      <h3>El diferenciador es defendible</h3>
+      <p>"Hybrid sober rock bar" + entrenamiento + bienestar + festival propio. Los competidores de Medellín son bares de rock a secas. Esta combinación no la tiene nadie más.</p>
+    </li>
+    <li>
+      <h3>La Finca Metalera</h3>
+      <p>Un festival residencial de dos días en hotel 4 estrellas (San Jerónimo, 39 km) con preventa por fases. Es un producto de alto ticket bien construido y con narrativa propia.</p>
+    </li>
+    <li>
+      <h3>Dos páginas bien escritas</h3>
+      <p><span class="mono">/finca-metalera/</span> y <span class="mono">/cumpleanos/</span> tienen títulos y descripciones redactados con intención. Demuestran que alguien sí sabe hacerlo: falta extenderlo al resto.</p>
+    </li>
+    <li>
+      <h3>Infraestructura de cobro local</h3>
+      <p>WooCommerce con Bold como pasarela: la elección correcta para Colombia. La plomería para vender ya está puesta.</p>
+    </li>
+    <li>
+      <h3>Instagram con 12K reales</h3>
+      <p>390 publicaciones y una biografía clara. El canal de distribución existe; el sitio simplemente no lo aprovecha ni lo mide.</p>
+    </li>
+  </ul>
+</section>
+
+<section id="criticos">
+  <div class="sec-head"><span class="num">04</span><h2>Hallazgos críticos</h2><span class="tail">7 · Arreglar en 7 días</span></div>
+  <div class="findings">
+
+    <article class="finding sev-crit">
+      <div class="f-top"><span class="f-id">C-01</span><h3>Los eventos son solo imágenes: cero texto que Google pueda leer</h3><span class="chip c-bad">Crítico</span></div>
+      <div class="evidence">/home-2/ → ~11 eventos publicados como PNG de 1080×1080
+Texto extraíble de la página: "Agenda de Eventos" + 11× "Haz tu reserva"
+Nombres, fechas, horarios y precios: solo dentro del píxel.</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Ninguna búsqueda tipo "Roll Fucker Roll Medellín" o "open mic metal Medellín" puede encontrarte. Google no indexa texto dentro de imágenes. Además, la página es inutilizable con lector de pantalla y las imágenes pesan hasta 1,17 MB cada una.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Cada evento pasa a ser una entrada real con nombre, fecha, hora, precio y descripción en texto, más el flyer como acompañamiento. Añadir marcado <span class="mono">Event</span> de schema.org para aparecer en el panel de eventos de Google.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-crit">
+      <div class="f-top"><span class="f-id">C-02</span><h3>No hay analítica: es imposible saber cuánta gente visita el sitio</h3><span class="chip c-bad">Crítico</span></div>
+      <div class="evidence">Búsqueda en el HTML de la portada:
+  gtag / Google Analytics ....... 0
+  Google Tag Manager ............ 0
+  Píxel de Meta (fbq) ........... 0
+  Píxel de TikTok ............... 0
+  Clarity / Hotjar .............. 0
+  stats.wp.com (Jetpack) ........ 2  ← lo único presente</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Tres consecuencias directas: (1) no se sabe qué campaña de Instagram trae reservas; (2) no se puede reorientar publicidad a quien vio el festival y no compró —justo el público que más convierte en un ticket de $1.8 M—; (3) cualquier inversión en marketing se hace a ciegas.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Instalar GA4 vía Google Tag Manager, más el píxel de Meta y el de TikTok, y marcar como conversión el clic a reserva y la compra en WooCommerce. Es trabajo de una tarde y desbloquea todo lo demás.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-crit">
+      <div class="f-top"><span class="f-id">C-03</span><h3>La portada pesa 21 MB y hace 188 peticiones</h3><span class="chip c-bad">Crítico</span></div>
+      <div class="evidence">Total transferido .......... 21.176 KB  (21,2 MB)
+Imágenes ................... 17.124 KB  (74 archivos)
+CSS ........................  1.949 KB  (53 archivos)
+JavaScript .................  1.775 KB  (58 archivos)
+Las 5 imágenes más pesadas: 1.171 KB · 1.072 KB · 1.033 KB · 951 KB · 918 KB
+Todas son PNG de 1080×1080 exportados de Instagram.</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>En datos móviles en Medellín, la portada consume ~21 MB del plan del visitante antes de mostrar nada útil. La mayoría abandona. Google usa la velocidad móvil como factor de posicionamiento, así que además hunde el ranking.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Convertir los flyers a WebP a 1080 px (bajan a ~120 KB cada uno: −90 %), activar carga diferida, y unificar CSS/JS con un plugin de optimización. Meta realista: menos de 2 MB y menos de 70 peticiones sin cambiar el diseño.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-crit">
+      <div class="f-top"><span class="f-id">C-04</span><h3>No hay dirección, teléfono ni horario en texto en ninguna parte</h3><span class="chip c-bad">Crítico</span></div>
+      <div class="evidence">Portada — búsqueda de datos de contacto en texto:
+  Teléfono (+57…) ....... 0 resultados
+  Correo electrónico .... 0 resultados
+  Dirección "Cra 80" .... 0 resultados
+  Horario de atención ... 0 resultados
+El bloque del pie titulado "Dirección" contiene únicamente
+un &lt;iframe&gt; de Google Maps de 400 px de ancho. Sin texto.</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Un visitante que quiere saber si abren hoy no lo encuentra y se va a Instagram —o a la competencia—. El horario real (jue 16–24 h, vie 16–2 h, sáb 14–2 h; cerrado dom–mié) solo está en directorios de terceros. Además, el iframe de 400 px desborda la pantalla de un móvil de 375 px.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Poner dirección, teléfono, WhatsApp, correo y horario como texto en el pie de todas las páginas y crear una página <span class="mono">/contacto/</span> —que hoy devuelve 404—. Los mismos datos, idénticos, en Google, Facebook, TripAdvisor e Instagram.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-crit">
+      <div class="f-top"><span class="f-id">C-05</span><h3>Sin marcado de negocio local: invisible en el mapa de Google</h3><span class="chip c-bad">Crítico</span></div>
+      <div class="evidence">Schema.org declarado en la portada:
+  ✓ Organization
+  ✓ WebSite
+  ✗ LocalBusiness / BarOrPub / Restaurant
+  ✗ openingHoursSpecification
+  ✗ PostalAddress · geo
+  ✗ aggregateRating
+  ✗ Event</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Para Google, este sitio es una organización genérica, no un bar en Laureles. Las búsquedas que más valen —"bar de metal cerca de mí", "dónde escuchar rock en Medellín"— se resuelven con datos que el sitio no entrega. El sitio no aparece en ninguno de los listados de "mejores bares de rock en Medellín" que sí recogen a Pub Rock, Villamil o Dynamite.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Añadir schema <span class="mono">BarOrPub</span> con dirección, coordenadas, horario, rango de precio ($40.000–60.000 COP) y enlace al perfil de Google. Es un bloque de código que se pega una vez.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-crit">
+      <div class="f-top"><span class="f-id">C-06</span><h3>El producto premium está agotado en plena preventa, y falta el Day Pass</h3><span class="chip c-bad">Crítico</span></div>
+      <div class="evidence">Tienda — inventario completo (3 SKU):
+  Individual · habitación compartida ...... $825.000    en stock
+  Pareja · habitación compartida ......... $1.650.000   en stock
+  Pareja · habitación privada ............ $1.857.000   SIN EXISTENCIAS
+                                          (antes $1.941.000)
+La página del festival anuncia un "Día de Sol Metalero":
+no existe como producto comprable.
+Fase de preventa vigente hoy: "The Black List" (1–15 sep), cierra en 4 días.</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>La habitación privada es el ticket más alto y el más rentable. Si de verdad se agotó, debería decirlo y ofrecer lista de espera; si es un error de inventario, cada día de preventa se pierde dinero. El Day Pass es además el producto de entrada más barato para captar a quien no se anima a quedarse dos días.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Revisar hoy mismo el stock en WooCommerce. Publicar el Day Pass con precio. Mostrar en cada producto la fase de preventa vigente y cuándo sube el precio: la urgencia real vende sola.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-crit">
+      <div class="f-top"><span class="f-id">C-07</span><h3>Sin imagen de previsualización: los enlaces compartidos salen en gris</h3><span class="chip c-bad">Crítico</span></div>
+      <div class="evidence">&lt;meta property="og:image"&gt; → ausente en la portada
+Presentes: og:title, og:description, og:url, og:video ×3
+twitter:card = summary_large_image  (sin imagen que mostrar)</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Cuando alguien pega el enlace en WhatsApp, Instagram o Facebook —el canal principal de este negocio— aparece un rectángulo vacío en lugar del flyer. Es una caída directa de clics en el único lugar donde la marca sí tiene audiencia.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Definir <span class="mono">og:image</span> de 1200×630 px en la portada y una propia en cada página de evento y producto.</p></div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section id="altos">
+  <div class="sec-head"><span class="num">05</span><h2>Hallazgos de prioridad alta</h2><span class="tail">8 · Arreglar en 30 días</span></div>
+  <div class="findings">
+
+    <article class="finding sev-alto">
+      <div class="f-top"><span class="f-id">A-01</span><h3>Contenido caducado a la vista del visitante</h3><span class="chip c-warn">Alto</span></div>
+      <div class="evidence">Portada, carrusel de eventos: flyer "SÁBADO 11 ABR" — hoy es 11 de septiembre
+Pie, "Ultimas notricias": Cradle of Filth — 30 de agosto de 2021
+Archivos de flyers subidos: /uploads/2026/01/ y /uploads/2026/02/</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Un visitante nuevo no puede distinguir entre "este sitio está desactualizado" y "este bar cerró". Es la señal de confianza más barata de arreglar y la más cara de ignorar.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Separar "Próximos eventos" de "Eventos pasados" por fecha automática, y retirar el bloque de noticias del pie hasta que haya noticias.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-alto">
+      <div class="f-top"><span class="f-id">A-02</span><h3>URLs de marcador de posición nunca corregidas</h3><span class="chip c-warn">Alto</span></div>
+      <div class="evidence">Eventos  → /home-2/
+Training → /elementor-pagina-2993/
+Blog     → /2021/08/30/iusto-et-aliquid-sit-rerum-possimus-sint/
+           ← texto de relleno en latín; el artículo es sobre Cradle of Filth</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Las URLs son el primer texto que lee Google y aparecen en los resultados. <span class="mono">/elementor-pagina-2993/</span> no dice nada y proyecta descuido. El slug en latín es literalmente contenido de demostración que quedó publicado.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Renombrar a <span class="mono">/eventos/</span>, <span class="mono">/entrenamiento/</span> y un slug real para el artículo, siempre con redirección 301 desde la URL vieja.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-alto">
+      <div class="f-top"><span class="f-id">A-03</span><h3>Títulos y descripciones sin ciudad ni categoría</h3><span class="chip c-warn">Alto</span></div>
+      <div class="evidence">Portada
+  título: "Home - La house of demons"
+  descripción: "PUB | METAL | CULTURE | TRAINING | WELLNESS"  (41 caracteres)
+Eventos
+  descripción: "Agenda de Eventos Haz tu reserva Haz tu reserva Haz tu
+   reserva Haz tu reserva Haz tu reserva…"   ← autogenerada
+Tienda
+  descripción: "Productos Archive - La house of demons"</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Ni "Medellín", ni "bar", ni "rock" aparecen en el título de la portada. Nadie busca "Home". La descripción autogenerada de Eventos es lo que un usuario vería en Google si llegara a aparecer.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Reescribir los 25 títulos y descripciones con el patrón <em>qué + dónde</em>. Por ejemplo: "Bar de Rock y Metal en Laureles, Medellín | La House of Demons". Las páginas de Finca y Cumpleaños ya lo hacen bien: copiar ese criterio.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-alto">
+      <div class="f-top"><span class="f-id">A-04</span><h3>"Hackeamos la Matrix" no le dice nada a un visitante nuevo</h3><span class="chip c-warn">Alto</span></div>
+      <div class="evidence">&lt;h1&gt; de la portada: "HACKEAMOS LA MATRIX"
+Subtítulo: "PUB | METAL | CULTURE | TRAINING | WELLNESS"
+Tres botones: LOG IN · FINCA METALERA · COMUNIDAD</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>El H1 es la señal de tema más importante de la página, para Google y para una persona que llega por primera vez. Este no dice qué es el negocio, dónde está ni qué se puede hacer allí. Y el primer botón es "LOG IN", que solo sirve a quien ya es miembro.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Mantener el lema como línea de marca, pero que el H1 diga qué es y dónde está. El primer botón debe ser "Reservar mesa" o la preventa del festival; "Log in" va arriba a la derecha, discreto.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-alto">
+      <div class="f-top"><span class="f-id">A-05</span><h3>Cuatro identidades compitiendo en el mismo sitio</h3><span class="chip c-warn">Alto</span></div>
+      <div class="evidence">Pie de página, en TODAS las páginas:
+"Bienvenido a House of Demons, la red social exclusiva para los
+ verdaderos seguidores del rock, metal y la cultura alternativa."
+Menú: Home · Eventos · Finca Metalera · Reservas · Cumpleaños · Training
+Componentes activos: BuddyPress + Youzify (red social), WooCommerce
+(tienda), sistema de reservas, gimnasio.</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Un bar, un gimnasio, una red social y una productora de festivales, sin jerarquía. La red social además arrastra un coste técnico enorme: las páginas con la barra lateral de comunidad pesan 240–280 KB de HTML, frente a 30–43 KB de las que no la llevan, y son las que tardan 4–7 segundos.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Decidir cuál es el negocio principal —los datos dicen que es el bar y el festival— y darle el sitio. Si la comunidad no tiene miembros activos, desactivar BuddyPress/Youzify: baja el peso, sube la velocidad y aclara el mensaje.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-alto">
+      <div class="f-top"><span class="f-id">A-06</span><h3>Las reservas se delegan a un bot externo y se pierde el rastro</h3><span class="chip c-warn">Alto</span></div>
+      <div class="evidence">/reservas/ → un único botón "reserva aquí!"
+            → https://typebot.co/reservas-lhod  (dominio de terceros)
+La página no muestra precios, horario, dirección ni teléfono.</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>En el momento exacto en que el visitante decide comprar, se le saca del sitio a un dominio que no es la marca. Sin analítica no se sabe cuántos completan el proceso ni cuántos abandonan, y los datos de los clientes quedan en un sistema ajeno.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Como mínimo, incrustar el bot dentro de la página y marcar el evento de conversión. Mejor: un formulario propio con FluentForms —ya está instalado— que deje los datos en casa.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-alto">
+      <div class="f-top"><span class="f-id">A-07</span><h3>517 reseñas de Google que el sitio no menciona jamás</h3><span class="chip c-warn">Alto</span></div>
+      <div class="evidence">Google ....... 4,7 / 5  ·  517 reseñas
+Facebook ..... 4,6 / 5  ·   42 reseñas
+Menciones de esas cifras en el sitio web: ninguna.
+Enlaces desde el sitio a Google, TripAdvisor o Restaurant Guru: ninguno.</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Es el argumento de venta más fuerte que tiene el negocio y está guardado fuera del sitio. En su lugar, la portada muestra cifras sin respaldo —"200+", "400+", "50+"— que un visitante escéptico descuenta de inmediato.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Sustituir las cifras inventadas por "4,7★ · 517 reseñas en Google", con enlace al perfil y marcado <span class="mono">aggregateRating</span>. Rotar 3–4 reseñas reales citadas con nombre.</p></div>
+      </div>
+    </article>
+
+    <article class="finding sev-alto">
+      <div class="f-top"><span class="f-id">A-08</span><h3>Los vídeos cargan publicidad de terceros en tu propia portada</h3><span class="chip c-warn">Alto</span></div>
+      <div class="evidence">Scripts externos detectados en la portada:
+  rumble.com/embedJS/…          (reproductor de vídeo)
+  imasdk.googleapis.com/ima3.js  (SDK de anuncios de Google)
+  s0.2mdn.net/instream/video/client.js  ×3  (servidor de anuncios)</div>
+      <div class="f-grid">
+        <div class="f-block"><span class="f-label">Impacto</span><p>Alojar los vídeos en Rumble mete tres cargadores de publicidad en la portada. Además de sumar peso y retrasos, existe la posibilidad de que se muestre publicidad de terceros —eventualmente de la competencia— dentro de tu propia página.</p></div>
+        <div class="f-block"><span class="f-label">Qué hacer</span><p class="fix">Mover los vídeos a YouTube en modo sin cookies, o servirlos directamente, y cargar el reproductor solo cuando el usuario hace clic.</p></div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section id="medios">
+  <div class="sec-head"><span class="num">06</span><h2>Hallazgos de prioridad media</h2><span class="tail">8 · Arreglar en 90 días</span></div>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>ID</th><th>Hallazgo</th><th>Evidencia</th><th>Acción</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="n">M-01</td>
+        <td class="k">Errores de redacción publicados</td>
+        <td class="small">"Ultimas <strong>notricias</strong>", "Aliados <strong>Comérciales</strong>", "el funereo"</td>
+        <td class="small">Corregir y revisar todos los textos.</td>
+      </tr>
+      <tr>
+        <td class="n">M-02</td>
+        <td class="k">Artefacto de Google Translate en producción</td>
+        <td class="small">Un bloque de estadísticas de la portada dice literalmente "<span class="mono">13 / 5.000</span> Lista de actividades": es el contador de caracteres del traductor, pegado por error.</td>
+        <td class="small">Borrar. Es la señal de descuido más visible del sitio.</td>
+      </tr>
+      <tr>
+        <td class="n">M-03</td>
+        <td class="k">Cifras sin respaldo</td>
+        <td class="small">"200+ actividades", "400+ miembros", "50+ próximos eventos" frente a ~11 eventos publicados y una lista de miembros prácticamente vacía.</td>
+        <td class="small">Usar números verificables o quitarlos.</td>
+      </tr>
+      <tr>
+        <td class="n">M-04</td>
+        <td class="k">Idiomas mezclados sin hreflang</td>
+        <td class="small">"LOG IN", "Coming Soon" y una barra lateral de WordPress en inglés ("Recent Posts", "Categories") junto a "Entradas recientes". GTranslate instalado, cero etiquetas <span class="mono">hreflang</span>.</td>
+        <td class="small">Unificar en español y configurar hreflang si se quiere versión en inglés para turistas.</td>
+      </tr>
+      <tr>
+        <td class="n">M-05</td>
+        <td class="k">URLs basura indexadas</td>
+        <td class="small"><span class="mono">/feed/</span> y <span class="mono">/members</span> aparecen en buscadores; <span class="mono">/product/single/</span> está indexada y devuelve <strong>404</strong>. Conviven dos bases de producto: <span class="mono">/product/</span> y <span class="mono">/producto/</span>.</td>
+        <td class="small">Aplicar noindex, unificar la base de producto y redirigir la 404.</td>
+      </tr>
+      <tr>
+        <td class="n">M-06</td>
+        <td class="k">Dominio secundario muerto</td>
+        <td class="small"><span class="mono">lahouseofdemons.com.co</span> aparece en resultados de búsqueda pero ya no resuelve por DNS.</td>
+        <td class="small">Recuperarlo y redirigir 301, o solicitar su retirada del índice.</td>
+      </tr>
+      <tr>
+        <td class="n">M-07</td>
+        <td class="k">Perfil de Instagram secundario caído</td>
+        <td class="small">@lahouseofdemons devuelve "perfil no disponible" pero sigue apareciendo en búsquedas. El bueno es @lahouseofdemonsofficial (12K).</td>
+        <td class="small">Recuperar o reclamar el usuario para que no divida el tráfico de marca.</td>
+      </tr>
+      <tr>
+        <td class="n">M-08</td>
+        <td class="k">Alojamiento compartido en Estados Unidos</td>
+        <td class="small">IP 162.215.248.162 (Bluehost/Newfold), DNS en site5.com. Caché de solo 2 horas: pasado ese plazo, el primer visitante espera 3,65 s.</td>
+        <td class="small">Poner Cloudflare por delante (gratis) o migrar a alojamiento con presencia en Latinoamérica.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="trafico">
+  <div class="sec-head"><span class="num">07</span><h2>Tráfico, indexación y alcance</h2><span class="tail">Lo que se puede y no se puede saber</span></div>
+  <div class="stack">
+    <div class="note">
+      <h3>No existen cifras de visitas para este sitio, y esa es la conclusión</h3>
+      <p>Consulté SimilarWeb, HypeStat y las bases de estimación habituales: <strong>lahouseofdemons.com no figura en ninguna</strong>. Esos servicios no publican datos de dominios por debajo de un umbral de tráfico —normalmente unas decenas de miles de visitas mensuales—. Que el dominio no aparezca significa que el tráfico está por debajo de ese umbral.</p>
+      <p>El sitio tampoco tiene Google Analytics instalado (hallazgo C-02), así que internamente tampoco hay datos. La única medición activa es la de Jetpack, cuyo panel sí es accesible desde el escritorio de WordPress: <strong>ahí está el único dato real disponible hoy</strong>. Si me das acceso a ese panel —o a Google Search Console— puedo hacer un análisis con cifras propias en lugar de estimaciones.</p>
+    </div>
+
+    <div class="stack-s">
+      <p class="eyebrow">Huella en buscadores</p>
+      <div class="scroller">
+      <table>
+        <thead><tr><th>Medida</th><th>Resultado</th><th>Lectura</th></tr></thead>
+        <tbody>
+          <tr><td class="k">URLs declaradas en sitemap</td><td class="n">25</td><td class="small">19 páginas + 4 productos + 2 entradas. Un sitio muy pequeño.</td></tr>
+          <tr><td class="k">Páginas visibles en buscadores</td><td class="n">~10</td><td class="small">Portada, Eventos, Reservas, Login, Members, Shop, Feed, Metal Cycling, Finca Metalera y un producto 404.</td></tr>
+          <tr><td class="k">Antigüedad del dominio</td><td class="n">18 meses</td><td class="small">Registrado el 28 feb 2025. Poco historial acumulado; la autoridad se construye con el tiempo.</td></tr>
+          <tr><td class="k">Caducidad del dominio</td><td class="n">28 feb 2027</td><td class="small">Renovar con antelación y a varios años: Google interpreta el registro largo como señal de permanencia.</td></tr>
+          <tr><td class="k">Presencia en listados de "mejores bares de rock en Medellín"</td><td class="n">0</td><td class="small">Aparecen Pub Rock, Villamil, Dynamite, Foxey, Dopamina, Valhala y Sicosis. House of Demons no está en ninguno.</td></tr>
+          <tr><td class="k">Enlaces salientes desde la portada</td><td class="n">8</td><td class="small">WhatsApp, Typebot, Instagram, TikTok, 3 vídeos de Rumble y un aliado comercial.</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="note">
+      <h3>De dónde viene realmente el tráfico</h3>
+      <p>Con Instagram en 12.000 seguidores y 517 reseñas en Google frente a un sitio de 25 URLs sin datos locales, el reparto casi con certeza es: la gran mayoría llega por <strong>Instagram y WhatsApp</strong>, una parte por <strong>búsquedas de marca</strong> ("house of demons medellín") y prácticamente nadie por búsquedas de categoría ("bar de metal medellín"). Ese último grupo —el visitante que aún no conoce la marca— es exactamente el que el sitio no está captando, y es donde está el crecimiento.</p>
+    </div>
+  </div>
+</section>
+
+<section id="mercado">
+  <div class="sec-head"><span class="num">08</span><h2>Mercado y competencia</h2><span class="tail">Escena rock/metal · Medellín</span></div>
+  <div class="stack">
+    <p class="body">Medellín tiene una escena de bares de rock densa y consolidada. La mayoría compite en el mismo eje: música fuerte, cerveza y banda en vivo el fin de semana. House of Demons compite en otro eje, y ahí está su ventaja.</p>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Local</th><th>Zona</th><th>Propuesta</th><th>Solapamiento</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Pub Rock Medellín</td><td class="small">Lleras + Laureles</td><td class="small">Rock clásico, banda en vivo viernes y sábado. Dos sedes. El más reconocido.</td><td><span class="chip c-bad">Alto</span></td></tr>
+        <tr><td class="k">Dynamite Hard &amp; Heavy</td><td class="small">Medellín</td><td class="small">Hard, heavy y clásicos en vinilo con sonido HD. El más cercano en género.</td><td><span class="chip c-bad">Alto</span></td></tr>
+        <tr><td class="k">Villamil Craft Beer</td><td class="small">Centro</td><td class="small">De los bares de metal más antiguos de la ciudad; cerveza artesanal.</td><td><span class="chip c-warn">Medio</span></td></tr>
+        <tr><td class="k">Dopamina / Valhala / Sicosis</td><td class="small">Laureles</td><td class="small">Noches de rock con público fiel; ambiente más underground.</td><td><span class="chip c-warn">Medio</span></td></tr>
+        <tr><td class="k">Foxey Pub</td><td class="small">Manila</td><td class="small">Pub de rock orientado a cerveza y terraza.</td><td><span class="chip c-ok">Bajo</span></td></tr>
+        <tr><td class="k">La House of Demons</td><td class="small">Laureles</td><td class="small">Pub sobrio híbrido + entrenamiento + bienestar + festival residencial propio.</td><td><span class="chip c-ok">Único</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note">
+      <h3>La ventaja existe, pero el sitio no la declara en ningún lado</h3>
+      <p>Ningún competidor ofrece indoor cycling con música metal, yoga metalero, hamburguesas saludables, opción sin alcohol y un festival propio de dos días. Es una posición defendible y difícil de imitar porque exige montar operación, no solo programación musical.</p>
+      <p>Sin embargo, ni el título de la portada, ni la descripción, ni el H1 mencionan nada de eso. El sitio compite con el mensaje genérico de "bar de metal" —donde Pub Rock y Dynamite ya llevan años de ventaja— en lugar de competir con el mensaje que nadie más puede copiar. Cambiar esa posición es gratis: es reescribir cinco líneas de texto.</p>
+    </div>
+    <div class="note">
+      <h3>El público extranjero está sin atender</h3>
+      <p>Medellín recibe un flujo constante de turistas y nómadas digitales, y los bares de rock aparecen en guías en inglés. Está instalado GTranslate pero sin configuración de <span class="mono">hreflang</span>, así que la versión en inglés no compite en Google. Una página en inglés bien hecha —"rock and metal bar in Medellín"— es un nicho que hoy no disputa nadie con un sitio propio.</p>
+    </div>
+  </div>
+</section>
+
+<section id="redes">
+  <div class="sec-head"><span class="num">09</span><h2>Redes, enlaces y presencia</h2><span class="tail">Auditoría de canales</span></div>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Canal</th><th>Estado</th><th>Métrica</th><th>Observación</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Instagram @lahouseofdemonsofficial</td><td><span class="chip c-ok">Activo</span></td><td class="n">12.000 seguidores · 390 posts · sigue a 305</td><td class="small">El canal principal y el activo digital más fuerte. Enlazado correctamente desde el sitio.</td></tr>
+      <tr><td class="k">Instagram @lahouseofdemons</td><td><span class="chip c-bad">Caído</span></td><td class="n">Perfil no disponible</td><td class="small">Sigue apareciendo en búsquedas y divide el tráfico de marca.</td></tr>
+      <tr><td class="k">TikTok @lahouseofdemons</td><td><span class="chip c-ok">Existe</span></td><td class="n">Métricas no públicas</td><td class="small">Enlazado desde el sitio. Canal natural para clips de conciertos y del festival; conviene evaluar si se está trabajando.</td></tr>
+      <tr><td class="k">Facebook /lahouseofdemons</td><td><span class="chip c-warn">Activo, no enlazado</span></td><td class="n">4,6 / 5 · 42 reseñas</td><td class="small">Existe y tiene reseñas, pero el sitio no enlaza a Facebook desde la portada.</td></tr>
+      <tr><td class="k">Perfil de Google (Maps)</td><td><span class="chip c-ok">Fuerte</span></td><td class="n">4,7 / 5 · 517 reseñas</td><td class="small">El mayor activo de reputación. El sitio no lo enlaza ni lo cita.</td></tr>
+      <tr><td class="k">TripAdvisor / Restaurant Guru</td><td><span class="chip c-warn">Listado por terceros</span></td><td class="n">Ficha creada · 253 reseñas de visitantes</td><td class="small">Fichas activas que el negocio probablemente no controla; conviene reclamarlas y unificar datos.</td></tr>
+      <tr><td class="k">Comunidad de WhatsApp</td><td><span class="chip c-ok">Enlace válido</span></td><td class="n">Grupo abierto</td><td class="small">Canal directo de alto valor. Funciona correctamente.</td></tr>
+      <tr><td class="k">Rumble (vídeo)</td><td><span class="chip c-warn">Revisar</span></td><td class="n">3 vídeos incrustados</td><td class="small">Plataforma de alcance muy inferior a YouTube y arrastra publicidad de terceros al sitio (A-08).</td></tr>
+      <tr><td class="k">Aliados comerciales</td><td><span class="chip c-warn">Escaso</span></td><td class="n">1 enlace</td><td class="small">Solo gothicgirlmagazine.com. Un bloque titulado "Aliados" con un único aliado resta más de lo que suma.</td></tr>
+      <tr><td class="k">YouTube</td><td><span class="chip c-bad">Sin presencia propia</span></td><td class="n">—</td><td class="small">Solo aparecen vídeos grabados por terceros sobre el local. Es tráfico de descubrimiento regalado.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="sec-head"><span class="num">10</span><h2>Plan de acción</h2><span class="tail">Ordenado por retorno</span></div>
+  <div class="scroller">
+  <table class="plan">
+    <thead><tr><th>Plazo</th><th>Acción</th><th>Por qué primero</th><th>Esfuerzo</th></tr></thead>
+    <tbody>
+      <tr><td class="when">Esta semana</td><td class="k">Revisar el stock del festival y publicar el Day Pass</td><td class="small">La fase de preventa vigente cierra el 15 de septiembre. Es dinero sobre la mesa hoy.</td><td class="eff">1 h</td></tr>
+      <tr><td class="when">Esta semana</td><td class="k">Instalar GA4, GTM y píxeles de Meta y TikTok</td><td class="small">Sin esto, ninguna decisión posterior se puede evaluar.</td><td class="eff">3 h</td></tr>
+      <tr><td class="when">Esta semana</td><td class="k">Dirección, teléfono, WhatsApp y horario en texto en el pie</td><td class="small">Arregla la pregunta más frecuente de cualquier visitante.</td><td class="eff">1 h</td></tr>
+      <tr><td class="when">Esta semana</td><td class="k">Añadir og:image y schema BarOrPub</td><td class="small">Desbloquea la búsqueda local y las vistas previas en WhatsApp e Instagram.</td><td class="eff">2 h</td></tr>
+      <tr><td class="when">Esta semana</td><td class="k">Retirar el evento de abril y el artefacto "13 / 5.000"</td><td class="small">Señales de abandono visibles en la primera pantalla.</td><td class="eff">30 min</td></tr>
+      <tr><td class="when">30 días</td><td class="k">Comprimir imágenes a WebP y activar carga diferida</td><td class="small">De 21 MB a menos de 2 MB. El mayor salto de velocidad por el menor esfuerzo.</td><td class="eff">4 h</td></tr>
+      <tr><td class="when">30 días</td><td class="k">Convertir los eventos en entradas con texto y schema Event</td><td class="small">Convierte 11 imágenes mudas en 11 páginas que Google puede posicionar.</td><td class="eff">6 h</td></tr>
+      <tr><td class="when">30 días</td><td class="k">Reescribir títulos, descripciones, H1 y slugs</td><td class="small">Coste casi nulo, efecto directo en clics desde buscadores.</td><td class="eff">4 h</td></tr>
+      <tr><td class="when">30 días</td><td class="k">Publicar las 517 reseñas en el sitio con aggregateRating</td><td class="small">El argumento de venta más creíble, hoy invisible.</td><td class="eff">2 h</td></tr>
+      <tr><td class="when">30 días</td><td class="k">Poner Cloudflare delante del sitio</td><td class="small">Corta el TTFB de 3,65 s en caché fría. Gratis.</td><td class="eff">1 h</td></tr>
+      <tr><td class="when">90 días</td><td class="k">Decidir si la red social sigue viva; si no, desactivarla</td><td class="small">Quita ~200 KB por página, acelera el sitio y aclara el mensaje.</td><td class="eff">Decisión</td></tr>
+      <tr><td class="when">90 días</td><td class="k">Reclamar y unificar fichas: Google, TripAdvisor, Restaurant Guru, Facebook</td><td class="small">Datos idénticos en todas partes: el factor de posicionamiento local más sólido.</td><td class="eff">5 h</td></tr>
+      <tr><td class="when">90 días</td><td class="k">Blog con calendario real: escena metal de Medellín, guías, crónicas</td><td class="small">Un artículo de 2021 con slug en latín es toda la estrategia de contenidos actual.</td><td class="eff">Continuo</td></tr>
+      <tr><td class="when">90 días</td><td class="k">Página en inglés para el público extranjero</td><td class="small">Nicho sin competencia real en Medellín.</td><td class="eff">6 h</td></tr>
+      <tr><td class="when">90 días</td><td class="k">Migrar los vídeos fuera de Rumble y abrir canal propio</td><td class="small">Elimina la publicidad de terceros y recupera alcance de descubrimiento.</td><td class="eff">4 h</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Método.</strong> Inspección técnica directa del sitio (HTML renderizado, cabeceras HTTP, rendimiento de red, sitemaps, robots.txt, datos estructurados, vista móvil a 375 px), consulta de registro RDAP del dominio, comprobación de códigos de estado de 18 URLs, verificación de perfiles sociales y directorios, y búsqueda de mercado sobre la escena rock/metal de Medellín. Mediciones tomadas el 11 y 12 de septiembre de 2026.</p>
+  <p><strong>Límites.</strong> Las cifras de visitas no son verificables desde fuera: el dominio no figura en SimilarWeb ni HypeStat y el sitio no tiene analítica instalada. Los datos de reseñas proceden de directorios de terceros. Las métricas de TikTok no son legibles públicamente. Con acceso a Google Search Console o al panel de Jetpack, estas secciones pasarían de estimación a dato.</p>
+</footer>
+
+</div>
+</body>
+</html>

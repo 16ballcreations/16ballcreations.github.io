@@ -85,3 +85,18 @@ python -m http.server 8080
 
 Las imágenes se cargan desde el CDN del propio sitio del bar (`i0.wp.com`), así que
 la demo necesita conexión.
+
+## Documentación del proyecto
+
+La base de conocimiento completa vive en [`docs/`](docs/):
+
+| Documento | Qué contiene |
+|---|---|
+| `docs/auditoria.html` | Auditoría del sitio actual: 23 hallazgos, medición técnica, indexación, redes y competencia |
+| `docs/plan-ejecucion.html` | 47 tareas por fases, decisiones del dueño, configuración de Rank Math y plan de reversión |
+| `docs/propuesta-web.html` | Dirección de diseño, arquitectura, inventario de material y fases de construcción |
+| `docs/index.html` | Índice de los tres, con el orden sugerido de lectura |
+
+Toda la carpeta lleva `noindex` y **no está enlazada desde las páginas de la demo**: la
+auditoría es un diagnóstico duro del sitio que el cliente ya tiene, y conviene presentarlo
+en persona antes de que lo encuentre por su cuenta.

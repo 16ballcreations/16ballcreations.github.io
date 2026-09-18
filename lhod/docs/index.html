@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Documentación LHOD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --paper:#EFF1F3; --surface:#FCFCFD; --surface-2:#E7EAEE;
+  --ink:#14171C; --ink-2:#3D444E; --ink-3:#6B727C;
+  --rule:#D2D7DE; --rule-2:#BFC6CF;
+  --blood:#8C1C2A; --blood-soft:#F2E2E4;
+  --teal:#0D6660; --teal-soft:#DDEBE9;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --measure:66ch; --pad:clamp(18px,4vw,56px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101317; --surface:#171B20; --surface-2:#1F242A;
+    --ink:#E6E9ED; --ink-2:#B3BAC3; --ink-3:#868E99;
+    --rule:#2A3038; --rule-2:#3A424C;
+    --blood:#E4697A; --blood-soft:#33191E;
+    --teal:#4FBDB2; --teal-soft:#12292A;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101317; --surface:#171B20; --surface-2:#1F242A;
+  --ink:#E6E9ED; --ink-2:#B3BAC3; --ink-3:#868E99;
+  --rule:#2A3038; --rule-2:#3A424C;
+  --blood:#E4697A; --blood-soft:#33191E;
+  --teal:#4FBDB2; --teal-soft:#12292A;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+.wrap{max-width:1000px;margin:0 auto;padding:0 var(--pad) 90px}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.14;text-wrap:balance}
+p{margin:0}
+a{color:var(--blood);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--blood);outline-offset:3px}
+.eyebrow{font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.mono{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums}
+.small{font-size:14.5px;color:var(--ink-2);line-height:1.5}
+
+.masthead{border-bottom:2px solid var(--ink);padding:clamp(30px,6vw,60px) 0 22px;display:flex;flex-direction:column;gap:16px}
+.masthead h1{font-size:clamp(34px,6.2vw,60px);font-weight:800;letter-spacing:-.025em;text-transform:uppercase}
+.masthead h1 span{display:block;color:var(--blood)}
+.lede{font-size:19.5px;line-height:1.55;color:var(--ink-2);max-width:var(--measure)}
+
+section{padding-top:clamp(40px,6vw,64px)}
+.sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--rule-2);padding-bottom:9px;margin-bottom:24px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(20px,3vw,26px);font-weight:700;letter-spacing:-.015em}
+.sec-head .num{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--blood);letter-spacing:.08em}
+.sec-head .tail{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase}
+
+.docs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;background:var(--rule);border:1px solid var(--rule)}
+.doc{background:var(--surface);padding:22px clamp(16px,2.6vw,28px);display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px clamp(16px,2.6vw,28px);align-items:start}
+.doc__n{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--blood);letter-spacing:.08em;padding-top:5px}
+.doc h3{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.doc h3 a{text-decoration:none;color:var(--ink)}
+.doc h3 a:hover{color:var(--blood);text-decoration:underline}
+.doc p{font-size:15.5px;color:var(--ink-2);line-height:1.5;margin-top:6px;max-width:68ch}
+.doc__meta{display:flex;flex-direction:column;gap:6px;align-items:flex-end;text-align:right;white-space:nowrap}
+.date{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.btn{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:9px 14px;border:1px solid var(--rule-2);color:var(--ink);text-decoration:none}
+.btn:hover,.btn:focus-visible{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn--red{border-color:var(--blood);color:var(--blood)}
+.btn--red:hover,.btn--red:focus-visible{background:var(--blood);border-color:var(--blood);color:#fff}
+@media (max-width:700px){
+  .doc{grid-template-columns:auto minmax(0,1fr)}
+  .doc__meta{grid-column:2;align-items:flex-start;text-align:left}
+}
+
+.note{border:1px dashed var(--rule-2);background:var(--surface);padding:18px 20px;display:flex;flex-direction:column;gap:8px}
+.note h3{font-size:15px;font-weight:700}
+.note p{font-size:15px;color:var(--ink-2);max-width:72ch}
+.stack{display:flex;flex-direction:column;gap:16px}
+.chip{display:inline-block;font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--teal);color:var(--teal);background:var(--teal-soft)}
+
+footer{margin-top:64px;padding-top:20px;border-top:2px solid var(--ink);display:flex;flex-direction:column;gap:10px}
+footer p{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);letter-spacing:.03em;max-width:70ch;line-height:1.7}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">La House of Demons · Base de conocimiento · 16 Ball Creations</p>
+  <h1>Todo el expediente <span>en un solo sitio</span></h1>
+  <p class="lede">Los tres informes del proyecto, en orden: qué encontramos en el sitio actual, qué hay que arreglar y qué proponemos construir. Junto a la demo navegable, es todo el contexto necesario para la reunión con el dueño.</p>
+</header>
+
+<section>
+  <div class="sec-head"><span class="num">01</span><h2>Los informes</h2><span class="tail">Septiembre de 2026</span></div>
+  <ol class="docs">
+
+    <li class="doc">
+      <span class="doc__n">01</span>
+      <div>
+        <h3><a href="auditoria.html">Auditoría del sitio actual</a></h3>
+        <p>Qué es hoy <span class="mono">lahouseofdemons.com</span>: 23 hallazgos ordenados por gravedad, medición técnica, indexación, redes y competencia en Medellín. Incluye por qué no existen cifras de visitas y qué haría falta para tenerlas.</p>
+      </div>
+      <div class="doc__meta">
+        <span class="date">11 sep 2026</span>
+        <a class="btn" href="auditoria.html">Abrir</a>
+      </div>
+    </li>
+
+    <li class="doc">
+      <span class="doc__n">02</span>
+      <div>
+        <h3><a href="plan-ejecucion.html">Plan de ejecución</a></h3>
+        <p>Qué hay que arreglar y en qué orden: 47 tareas por fases, decisiones que corresponden al dueño, datos que faltan por confirmar, configuración exacta de Rank Math y plan de reversión. Las casillas se pueden ir marcando.</p>
+      </div>
+      <div class="doc__meta">
+        <span class="date">11 sep 2026</span>
+        <a class="btn" href="plan-ejecucion.html">Abrir</a>
+      </div>
+    </li>
+
+    <li class="doc">
+      <span class="doc__n">03</span>
+      <div>
+        <h3><a href="propuesta-web.html">Propuesta de la nueva web</a></h3>
+        <p>Qué queremos construir: dirección de diseño con muestra en vivo, arquitectura de las ocho páginas, inventario del material disponible, lista de tomas para la sesión de fotos y fases de construcción.</p>
+      </div>
+      <div class="doc__meta">
+        <span class="date">15 sep 2026</span>
+        <a class="btn" href="propuesta-web.html">Abrir</a>
+      </div>
+    </li>
+
+    <li class="doc">
+      <span class="doc__n">04</span>
+      <div>
+        <h3><a href="../">Demo navegable</a> <span class="chip">En vivo</span></h3>
+        <p>Las siete páginas de la propuesta, funcionando: portada, agenda con eventos reales, la casa, entrenamiento, Finca Metalera, el nuevo formulario de reservas y cómo llegar.</p>
+      </div>
+      <div class="doc__meta">
+        <span class="date">15 sep 2026</span>
+        <a class="btn btn--red" href="../">Abrir demo</a>
+      </div>
+    </li>
+
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="num">02</span><h2>Cómo leerlos</h2><span class="tail">Orden sugerido</span></div>
+  <div class="stack">
+    <div class="note">
+      <h3>Para la reunión con el dueño</h3>
+      <p>Empezar por la <strong>demo</strong>, que es lo que se ve y lo que convence. Después la <strong>propuesta</strong>, para explicar las decisiones de diseño y qué falta por su parte. La <strong>auditoría</strong> conviene dosificarla: es un diagnóstico duro del sitio que ellos pagaron.</p>
+    </div>
+    <div class="note">
+      <h3>Qué está confirmado y qué no</h3>
+      <p>Los tres informes marcan en su propio texto lo que está verificado y lo que sigue pendiente. Nada de lo que aparece como dato medido es una estimación: las cifras de peso, peticiones y tiempos se midieron directamente sobre el sitio. Horario, dirección y teléfono vienen de directorios de terceros y siguen sin confirmar con el dueño.</p>
+    </div>
+    <div class="note">
+      <h3>Visibilidad</h3>
+      <p>Toda esta carpeta lleva <span class="mono">noindex</span> y no está enlazada desde la demo, así que no aparece en buscadores ni la encuentra quien solo tenga el enlace del cliente. Cualquiera con esta dirección sí puede leerla: compártela con criterio.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Base de conocimiento</strong> · Auditoría, plan y propuesta para La House of Demons · 16 Ball Creations · Actualizado el 18 de septiembre de 2026.</p>
+  <p>Fuentes y método están detallados al pie de cada informe.</p>
+</footer>
+
+</div>
+</body>
+</html>
