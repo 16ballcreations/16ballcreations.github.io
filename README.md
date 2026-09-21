@@ -21,7 +21,7 @@ los detalles (`data-ball` en `<html>`).
   bloque y guarda su imagen en `assets/img/projects/` (1200x750, JPG)
 - `assets/js/main.js` — grilla de proyectos, filtros, sorteo de bola y menú
 - `assets/js/ball.js` — la bola 16 en 3D del banner (Three.js)
-- `lhod/` — propuesta La House of Demons (proyecto aparte)
+- La House of Demons vive ahora en su propio repositorio: https://github.com/16ballcreations/lhod (se sigue publicando en /lhod/)
 
 ## La bola del banner
 
