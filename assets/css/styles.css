@@ -112,7 +112,8 @@ h3{font-size:1.5rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 
 /* ---------- sections ---------- */
-.sec{padding:var(--gap-section) 0;border-top:1px solid var(--hairline);scroll-margin-top:var(--header-h)}
+/* the divider between sections carries the colour of the drawn ball */
+.sec{padding:var(--gap-section) 0;border-top:1px solid var(--accent);scroll-margin-top:var(--header-h)}
 .sec-head{margin-bottom:56px;max-width:70ch}
 .sec-head h2{margin-bottom:18px}
 
@@ -151,6 +152,7 @@ h3{font-size:1.5rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:72px;border-top:1px solid var(--hairline)}
 .stats div{padding:24px 0 0;border-right:1px solid var(--hairline)}
+.stats div + div{padding-left:10px}
 .stats div:last-child{border-right:0}
 .stats dt{font-family:var(--font-display);font-size:2.6rem;line-height:1;color:var(--white)}
 .stats dd{margin:8px 0 0;font-size:.875rem;color:var(--iron);max-width:26ch}
@@ -211,6 +213,7 @@ h3{font-size:1.5rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 
 .steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--hairline)}
 .steps li{padding:24px 20px 0 0;border-right:1px solid var(--hairline)}
+.steps li + li{padding-left:10px}
 .steps li:last-child{border-right:0;padding-right:0}
 .steps .n{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);display:block;margin-bottom:12px}
 .steps h3{font-size:1.0625rem;margin-bottom:8px}
@@ -253,7 +256,7 @@ h3{font-size:1.5rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 .contact-list a:hover{color:var(--accent)}
 
 /* ---------- footer ---------- */
-.site-footer{border-top:1px solid var(--hairline);padding:32px 0}
+.site-footer{border-top:1px solid var(--accent);padding:32px 0}
 .footer-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .footer-inner p{margin:0;font-family:var(--font-mono);font-size:.75rem;color:var(--iron)}
 .footer-links{display:flex;gap:20px}
@@ -271,6 +274,7 @@ h3{font-size:1.5rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
   .grid-3{grid-template-columns:repeat(2,1fr)}
   .steps{grid-template-columns:repeat(2,1fr)}
   .steps li{border-right:0;padding-right:0;border-bottom:1px solid var(--hairline);padding-bottom:20px}
+  .steps li + li{padding-left:0}
   .hero-ball{order:-1;justify-items:start}
   .ball-3d{width:200px}
 }
@@ -279,6 +283,7 @@ h3{font-size:1.5rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
   .wrap{padding:0 20px}
   .projects,.grid-3,.stats,.feature ul,.logo-wall{grid-template-columns:1fr}
   .stats div{border-right:0;border-bottom:1px solid var(--hairline);padding-bottom:20px}
+  .stats div + div{padding-left:0}
   .stats div:last-child{border-bottom:0}
   .nav{gap:16px}
   .nav a:not(.btn){display:none}
