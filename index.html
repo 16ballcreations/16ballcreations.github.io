@@ -16,17 +16,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/styles.css?v=10">
+<link rel="stylesheet" href="assets/css/styles.css?v=11">
 </head>
 <body>
 
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a class="brand" href="#top" aria-label="16 Ball Creations, inicio">
-      <img src="assets/img/ball-16.png" alt="" width="560" height="561">
+      <img src="assets/img/ball-16.png?v=2" alt="" width="340" height="341">
       <span class="mono" style="color:var(--bone)">16 Ball Creations</span>
     </a>
-    <nav class="nav" aria-label="Secciones">
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Abrir el men&uacute;">
+      <span class="menu-bars" aria-hidden="true"></span>
+    </button>
+    <nav class="nav" id="siteNav" aria-label="Secciones">
       <a href="#proyectos">Proyectos</a>
       <a href="#modularity">Modularity</a>
       <a href="#servicios">Servicios</a>
@@ -58,7 +61,7 @@
           </div>
         </div>
         <div class="hero-ball">
-          <div class="ball-3d" id="ballStage"><img class="ball-fallback" src="assets/img/ball-16.png" alt="La bola 16, el s&iacute;mbolo de 16 Ball Creations" width="560" height="561"></div>
+          <div class="ball-3d" id="ballStage"><img class="ball-fallback" src="assets/img/ball-16.png?v=2" alt="La bola 16, el s&iacute;mbolo de 16 Ball Creations" width="340" height="341"></div>
         </div>
       </div>
 
@@ -267,9 +270,8 @@
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js" defer></script>
-<script src="assets/js/ball.js?v=4" defer></script>
+<script src="assets/js/ball.js?v=5" defer></script>
 <script src="assets/js/projects.js?v=4"></script>
-<script src="assets/js/main.js?v=4" defer></script>
+<script src="assets/js/main.js?v=5" defer></script>
 </body>
 </html>

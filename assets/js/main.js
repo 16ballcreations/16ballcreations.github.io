@@ -110,6 +110,43 @@
     render("Todos");
   }
 
+
+  /* ---------- the menu, on the screens where the bar cannot hold it ---------- */
+  var menuBtn = document.getElementById("menuBtn");
+  var siteNav = document.getElementById("siteNav");
+  var behind = [].slice.call(document.querySelectorAll("main, .site-footer"));
+
+  function setMenu(open){
+    root.classList.toggle("is-menu", open);
+    menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    menuBtn.setAttribute("aria-label", open ? "Cerrar el menú" : "Abrir el menú");
+    /* the rest of the page steps out of reach while the panel is up */
+    behind.forEach(function(el){ el.inert = open; });
+    if(open){
+      var first = siteNav.querySelector("a");
+      if(first){ first.focus(); }
+    }
+  }
+
+  if(menuBtn && siteNav){
+    menuBtn.addEventListener("click", function(){
+      setMenu(!root.classList.contains("is-menu"));
+    });
+    siteNav.addEventListener("click", function(e){
+      if(e.target.closest("a")){ setMenu(false); }
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && root.classList.contains("is-menu")){
+        setMenu(false);
+        menuBtn.focus();
+      }
+    });
+    /* turning the phone sideways can bring the full bar back */
+    window.addEventListener("resize", function(){
+      if(window.innerWidth > 720 && root.classList.contains("is-menu")){ setMenu(false); }
+    });
+  }
+
   /* ---------- header hairline once the page moves ---------- */
   function onScroll(){ header.classList.toggle("is-stuck", window.pageYOffset > 8); }
   window.addEventListener("scroll", onScroll, { passive:true });

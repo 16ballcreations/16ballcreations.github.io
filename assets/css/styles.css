@@ -97,6 +97,16 @@ h3{font-size:1.5rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 }
 .nav a:hover,.nav a.is-active{color:var(--white)}
 .nav .btn{margin-left:8px}
+/* the menu button only exists on the narrow screens, where the links move
+   into a panel; on the wide ones the bars are not even drawn */
+.menu-btn{display:none}
+.menu-bars{position:relative;display:block;width:20px;height:1.5px;background:currentColor}
+.menu-bars::before,.menu-bars::after{
+  content:"";position:absolute;left:0;width:20px;height:1.5px;background:currentColor;
+  transition:transform .22s ease-out;
+}
+.menu-bars::before{top:-6px}
+.menu-bars::after{top:6px}
 
 /* ---------- buttons ---------- */
 .btn{
@@ -298,8 +308,39 @@ h3{font-size:1.5rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
   .stats div{border-right:0;border-bottom:1px solid var(--hairline);padding-bottom:20px}
   .stats div + div{padding-left:0}
   .stats div:last-child{border-bottom:0}
-  .nav{gap:16px}
-  .nav a:not(.btn){display:none}
+  /* the links leave the bar and become a panel under the header */
+  .menu-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:44px;height:44px;margin-right:-12px;padding:0;
+    border:0;background:transparent;color:var(--white);cursor:pointer;
+  }
+  /* the header carries a backdrop filter, which would make it the frame for a
+     fixed child, so the panel hangs off it as an absolute box instead */
+  .nav{
+    position:absolute;top:100%;left:0;right:0;z-index:49;
+    height:calc(100vh - var(--header-h));
+    height:calc(100dvh - var(--header-h));
+    flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;
+    padding:8px 20px 40px;background:var(--void);
+    overflow-y:auto;overscroll-behavior:contain;
+    opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .22s ease-out,transform .22s ease-out,visibility .22s;
+  }
+  .nav a:not(.btn){
+    display:block;font-size:1.25rem;color:var(--bone);
+    padding:17px 0;border-bottom:1px solid var(--hairline);
+  }
+  .nav a.is-active{color:var(--accent)}
+  .nav .btn{margin:26px 0 0;justify-content:center;padding:14px 18px;font-size:.9375rem}
+  .is-menu .nav{opacity:1;visibility:visible;transform:none}
+  /* the page behind stays put while the panel is open */
+  html.is-menu{overflow:hidden}
+  /* the bars cross when the panel is open */
+  .is-menu .menu-bars{background:transparent}
+  .is-menu .menu-bars::before{transform:translateY(6px) rotate(45deg)}
+  .is-menu .menu-bars::after{transform:translateY(-6px) rotate(-45deg)}
+  /* no sphere here: the flat ball, one size down (see assets/js/ball.js) */
+  .ball-3d{width:150px}
   .roll{flex-wrap:wrap}
 }
 @media (prefers-reduced-motion:reduce){
