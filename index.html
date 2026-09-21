@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/styles.css?v=4">
+<link rel="stylesheet" href="assets/css/styles.css?v=5">
 </head>
 <body>
 
@@ -58,7 +58,7 @@
           </div>
         </div>
         <div class="hero-ball">
-          <div class="ball-3d"><img src="assets/img/ball-16.png" alt="La bola 16, el s&iacute;mbolo de 16 Ball Creations" width="560" height="561"></div>
+          <div class="ball-3d" id="ballStage"><img class="ball-fallback" src="assets/img/ball-16.png" alt="La bola 16, el s&iacute;mbolo de 16 Ball Creations" width="560" height="561"></div>
         </div>
       </div>
 
@@ -268,6 +268,8 @@
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js" defer></script>
+<script src="assets/js/ball.js?v=3" defer></script>
 <script src="assets/js/projects.js?v=4"></script>
 <script src="assets/js/main.js?v=4" defer></script>
 </body>
