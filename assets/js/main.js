@@ -123,8 +123,12 @@
     /* the rest of the page steps out of reach while the panel is up */
     behind.forEach(function(el){ el.inert = open; });
     if(open){
-      var first = siteNav.querySelector("a");
-      if(first){ first.focus(); }
+      /* the panel is still hidden this tick, and a hidden element cannot
+         take focus, so the first link waits for the next frame */
+      requestAnimationFrame(function(){
+        var first = siteNav.querySelector("a");
+        if(first){ first.focus(); }
+      });
     }
   }
 
