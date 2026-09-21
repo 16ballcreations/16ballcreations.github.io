@@ -29,7 +29,7 @@
   group.rotation.set(0.2, 0, 0.07);
   scene.add(group);
 
-  var texture = new THREE.TextureLoader().load("assets/img/ball-texture.png?v=2", function(){
+  var texture = new THREE.TextureLoader().load("assets/img/ball-texture.png?v=3", function(){
     if("colorSpace" in texture && THREE.SRGBColorSpace){ texture.colorSpace = THREE.SRGBColorSpace; }
     else if("encoding" in texture && THREE.sRGBEncoding){ texture.encoding = THREE.sRGBEncoding; }
     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
