@@ -44,7 +44,8 @@
     if(p.image){
       var shot = el("div", "project-shot");
       var img = el("img");
-      img.src = p.image;
+      /* the list lives in assets/js/projects.js, with paths from the site root */
+      img.src = p.image.indexOf("assets/") === 0 ? "../" + p.image : p.image;
       img.alt = p.alt || p.title;
       img.loading = "lazy";
       img.width = 1200; img.height = 750;

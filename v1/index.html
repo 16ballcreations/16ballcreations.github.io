@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es" data-ball="6">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16 Ball Creations — Si no existe, lo creamos</title>
+<meta name="description" content="Estudio independiente de desarrollo de software, diseño y producción audiovisual desde 2013. Aplicaciones web y móviles, sistemas a medida, ERP, pruebas automatizadas e identidad de marca.">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:title" content="16 Ball Creations — Si no existe, lo creamos">
+<meta property="og:description" content="Estudio independiente de desarrollo, diseño y producción audiovisual desde 2013.">
+<meta property="og:url" content="https://16ballcreations.github.io/v1/">
+<meta property="og:image" content="https://16ballcreations.github.io/assets/img/logo.png">
+<link rel="canonical" href="https://16ballcreations.github.io/v1/">
+<link rel="icon" href="../assets/img/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=11">
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top" aria-label="16 Ball Creations, inicio">
+      <img src="../assets/img/ball-16.png?v=2" alt="" width="340" height="341">
+      <span class="mono" style="color:var(--bone)">16 Ball Creations</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Abrir el men&uacute;">
+      <span class="menu-bars" aria-hidden="true"></span>
+    </button>
+    <nav class="nav" id="siteNav" aria-label="Secciones">
+      <a href="#proyectos">Proyectos</a>
+      <a href="#modularity">Modularity</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#proceso">Proceso</a>
+      <a href="#estudio">Estudio</a>
+      <a class="btn btn-sm" href="#contacto">Escríbenos</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="kicker">Estudio independiente &middot; desde 2013</p>
+          <h1 class="display">Si no existe,<br><em>lo creamos.</em></h1>
+          <p class="lead">En una mesa de pool hay quince bolas. La dieciséis no existe, así que la inventamos. Con ese mismo espíritu hacemos software: aplicaciones web y móviles, sistemas a medida e identidades de marca para ideas que todavía no tienen forma.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#proyectos">Ver proyectos</a>
+            <a class="btn" href="mailto:16ballcreations@gmail.com?subject=Tengo%20una%20idea">Cuéntanos tu idea</a>
+          </div>
+          <div class="roll">
+            <span class="ball" id="rollBall" data-n="6" style="--s:26px" aria-hidden="true"></span>
+            <p>Cada visita saca una bola al azar. Hoy salió la <strong id="rollLabel">bola 6</strong>.</p>
+            <button type="button" id="rollBtn">Tirar otra vez</button>
+          </div>
+        </div>
+        <div class="hero-ball">
+          <div class="ball-3d" id="ballStage"><img class="ball-fallback" src="../assets/img/ball-16.png?v=2" alt="La bola 16, el s&iacute;mbolo de 16 Ball Creations" width="340" height="341"></div>
+        </div>
+      </div>
+
+      <dl class="stats">
+        <div><dt>13</dt><dd>años creando productos digitales</dd></div>
+        <div><dt>10+</dt><dd>productos entregados para clientes</dd></div>
+        <div><dt>2</dt><dd>países: Venezuela y Colombia</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- PROYECTOS -->
+  <section class="sec" id="proyectos">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Trabajo</p>
+        <h2>Proyectos</h2>
+        <p class="lead">Lo que hemos construido para clientes y para nosotros mismos, desde 2015 hasta hoy. La lista crece con cada entrega.</p>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="Filtrar proyectos"></div>
+      <div class="projects" id="projects"></div>
+      <p class="projects-empty" id="projectsEmpty" hidden>No hay proyectos en esta categoría.</p>
+    </div>
+  </section>
+
+  <!-- MODULARITY -->
+  <section class="sec" id="modularity">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Producto propio</p>
+        <h2>Modularity ERP</h2>
+        <p class="lead">Un ERP multi-empresa para negocios que no tienen un departamento de sistemas. Nació en 2015 como el ERP de una concretera y hoy se adapta a cafés, talleres, salones de belleza y clínicas: activas los módulos que necesitas y el sistema habla el idioma de tu negocio.</p>
+      </div>
+      <div class="feature">
+        <div class="reveal">
+          <ul>
+            <li>Órdenes, mesas y cola de producción</li>
+            <li>Catálogo de servicios, agenda y citas</li>
+            <li>Inventario con alertas de stock</li>
+            <li>Facturación con trazabilidad completa</li>
+            <li>Clientes, fidelización y reportes</li>
+            <li>Roles y permisos por tipo de usuario</li>
+          </ul>
+          <div class="actions">
+            <a class="btn btn-primary" href="mailto:16ballcreations@gmail.com?subject=Demo%20de%20Modularity">Pide una demo</a>
+            <span class="project-note">Demo en línea muy pronto</span>
+          </div>
+        </div>
+        <figure class="window reveal" style="margin:0">
+          <div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+          <img src="../assets/img/modularity-dashboard.jpg" alt="Panel principal de Modularity para un café de demostración: ventas del día, órdenes, mesas y estado del equipo" width="1301" height="900" loading="lazy">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section class="sec" id="servicios">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Qué hacemos</p>
+        <h2>Servicios</h2>
+        <p class="lead">Un solo equipo para llevar una idea desde el boceto hasta producción, y seguir cuidándola después.</p>
+      </div>
+      <div class="grid-3">
+        <article class="card reveal"><span class="idx">01</span><h3>Aplicaciones web</h3><p>Plataformas y paneles en Vue, React y Angular, conectados a backends hechos a la medida de tu negocio.</p></article>
+        <article class="card reveal"><span class="idx">02</span><h3>Calidad y pruebas automatizadas</h3><p>Probamos lo que construimos. Pruebas automatizadas con Playwright y Cypress desde el primer día, para que cada cambio llegue sin romper lo que ya funciona.</p></article>
+        <article class="card reveal"><span class="idx">03</span><h3>Sistemas a medida y datos</h3><p>Backends en PHP (Yii2), Node.js y Django, plataformas BI y gestión de datos sobre MySQL, PostgreSQL y SQL Server.</p></article>
+        <article class="card reveal"><span class="idx">04</span><h3>Marca y diseño</h3><p>Logos, identidad corporativa, diseño editorial e interfaces que se ven bien y se entienden a la primera.</p></article>
+        <article class="card reveal"><span class="idx">05</span><h3>Producción audiovisual</h3><p>Edición de video, gráficos y estrategia de contenido para redes, con la experiencia de producir un canal propio.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- POR QUÉ EL POOL -->
+  <section class="sec" id="por-que">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Las reglas de la mesa</p>
+        <h2>¿Por qué el pool?</h2>
+        <p class="lead">El pool es un juego de precisión y de seguridad: cada tiro se calcula, y una mala jugada puede costar la partida completa. En el software pasa lo mismo: un error en producción puede costar un cliente.</p>
+      </div>
+      <div class="grid-3">
+        <article class="card reveal">
+          <span class="ball card-ball" data-n="1" style="--s:34px" aria-hidden="true"></span>
+          <h3>Precisión</h3>
+          <p>Antes de cada tiro se lee la mesa. Entendemos el problema, planificamos y validamos el diseño contigo antes de escribir código.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ball card-ball" data-n="2" style="--s:34px" aria-hidden="true"></span>
+          <h3>Juego de seguridad</h3>
+          <p>En el pool, jugar de seguridad es no dejarle ninguna oportunidad al rival. En software es validar cada dato, cada flujo y cada caso límite.</p>
+        </article>
+        <article class="card reveal">
+          <span class="ball card-ball" data-n="3" style="--s:34px" aria-hidden="true"></span>
+          <h3>Cada tiro cuenta</h3>
+          <p>Una mala jugada puede costar la partida. Por eso cada cambio pasa por pruebas automatizadas antes de llegar a producción. Solo jugamos a ganar.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESO -->
+  <section class="sec" id="proceso">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Cómo trabajamos</p>
+        <h2>Cinco tiros</h2>
+        <p class="lead">Siempre en el mismo orden. Ninguno se salta.</p>
+      </div>
+      <ol class="steps">
+        <li class="reveal"><span class="n">01</span><h3>Escuchar</h3><p>Entendemos el negocio y a quién lo usa antes de escribir una línea de código.</p></li>
+        <li class="reveal"><span class="n">02</span><h3>Diseñar</h3><p>Flujos, interfaz y marca, validados contigo antes de construir.</p></li>
+        <li class="reveal"><span class="n">03</span><h3>Construir</h3><p>Entregas cortas y frecuentes que puedes ver funcionando desde la primera semana.</p></li>
+        <li class="reveal"><span class="n">04</span><h3>Probar</h3><p>Pruebas automatizadas que protegen cada cambio. Es nuestra especialidad.</p></li>
+        <li class="reveal"><span class="n">05</span><h3>Lanzar</h3><p>Publicación, capacitación y soporte para que el proyecto siga creciendo.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ESTUDIO -->
+  <section class="sec" id="estudio">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">El estudio</p>
+        <h2>Diseño, audiovisual y quién está detrás</h2>
+      </div>
+      <div class="split">
+        <div class="panel reveal">
+          <div class="panel-head">
+            <img src="../assets/img/psicoformando-logo.png" alt="Logo de PsicoFormando" width="200" height="200" loading="lazy">
+            <div>
+              <h3>PsicoFormando</h3>
+              <p class="mono">Desde 2020 &middot; Producción propia</p>
+            </div>
+          </div>
+          <p class="small">Un proyecto de divulgación sobre psicología en YouTube, Instagram y TikTok, con sitio web propio. Producimos y editamos el video, diseñamos los gráficos, construimos el sitio y llevamos la estrategia de contenido.</p>
+          <ul class="metrics">
+            <li><strong>18k+</strong><span>seguidores</span></li>
+            <li><strong>8.6k</strong><span>TikTok</span></li>
+            <li><strong>6.3k</strong><span>Instagram</span></li>
+            <li><strong>3.7k</strong><span>YouTube</span></li>
+          </ul>
+          <p class="chips">
+            <a href="https://psicoformando.com" rel="noopener noreferrer">psicoformando.com</a>
+            <a href="https://www.youtube.com/psicoformando" rel="noopener noreferrer">YouTube</a>
+            <a href="https://www.instagram.com/psico.formando/" rel="noopener noreferrer">Instagram</a>
+            <a href="https://www.tiktok.com/@psicoformando" rel="noopener noreferrer">TikTok</a>
+          </p>
+        </div>
+
+        <div class="reveal">
+          <dl class="deflist">
+            <dt>Logos e identidad</dt>
+            <dd>Puto King Tattoo Art, PsicoFormando y 16 Ball Creations</dd>
+            <dt>Portadas y editorial</dt>
+            <dd>LS Innovaciones, Transportes La Represa y AreCar Corporación</dd>
+            <dt>3D y fotografía</dt>
+            <dd>3ds Max, SketchUp, Unreal Engine y Unity; fotografía para sitios de clientes</dd>
+            <dt>Quién está detrás</dt>
+            <dd>16 Ball Creations nació en 2013 como la marca de Renne Castellanos, ingeniero de software con más de catorce años en desarrollo full-stack y automatización de pruebas. La meta desde el principio fue convertirla en una empresa de desarrollo, y lo sigue siendo.</dd>
+          </dl>
+          <div class="actions" style="margin-top:24px">
+            <a class="btn" href="https://xan217.github.io/portfolio/" rel="noopener noreferrer">Ver el portafolio de Renne</a>
+          </div>
+          <div class="logo-wall on-light">
+            <figure><img src="../assets/img/logo.png" alt="Logo de 16 Ball Creations" width="640" height="282" loading="lazy"><figcaption>16 Ball Creations</figcaption></figure>
+            <figure><img src="../assets/img/psicoformando-logo.png" alt="Logo de PsicoFormando" width="200" height="200" loading="lazy"><figcaption>PsicoFormando</figcaption></figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section class="sec" id="contacto">
+    <div class="wrap contact">
+      <div>
+        <p class="kicker">La bola 8 cierra la partida</p>
+        <h2 class="display">¿Tienes una idea que todavía <em>no existe?</em></h2>
+        <p class="lead">Cuéntanos qué tienes en mente y te respondemos con un plan.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="mailto:16ballcreations@gmail.com?subject=Tengo%20una%20idea">Escríbenos</a>
+          <a class="btn" href="https://www.instagram.com/16ballcreations" rel="noopener noreferrer">@16ballcreations</a>
+        </div>
+      </div>
+      <dl class="contact-list">
+        <div><dt>Correo</dt><dd><a href="mailto:16ballcreations@gmail.com">16ballcreations@gmail.com</a></dd></div>
+        <div><dt>Instagram</dt><dd><a href="https://www.instagram.com/16ballcreations" rel="noopener noreferrer">@16ballcreations</a></dd></div>
+        <div><dt>GitHub</dt><dd><a href="https://github.com/16ballcreations" rel="noopener noreferrer">github.com/16ballcreations</a></dd></div>
+        <div><dt>Dónde estamos</dt><dd>Medellín, Colombia</dd></div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 16 Ball Creations &middot; Si no existe, lo creamos.</p>
+    <div class="footer-links">
+      <a href="mailto:16ballcreations@gmail.com">Correo</a>
+      <a href="https://www.instagram.com/16ballcreations" rel="noopener noreferrer">Instagram</a>
+      <a href="https://github.com/16ballcreations" rel="noopener noreferrer">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script src="ball.js?v=5" defer></script>
+<script src="../assets/js/projects.js?v=4"></script>
+<script src="main.js?v=6" defer></script>
+</body>
+</html>

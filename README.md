@@ -8,25 +8,38 @@ HTML, CSS y JavaScript sin frameworks ni build, publicado con GitHub Pages.
 
 ## La idea
 
-En el pool hay quince bolas; la 16 no existe, así que la creamos. El sitio
-usa negro puro, líneas de 1px en vez de sombras y tipografía editorial. El
-único color viene de las bolas: en cada visita se saca una al azar y tiñe
-los detalles (`data-ball` en `<html>`).
+En el pool hay quince bolas; la 16 no existe, así que la creamos. El banner
+es una mesa de pool jugable: las quince bolas rompen solas, y la 16 se arma
+con partículas que se desprenden de una esfera gigante, también de
+partículas, que flota detrás de toda la página. El visitante tira arrastrando
+(o tocando, en el teléfono), y la primera bola que golpea tiñe el sitio: el
+paño, las superficies y los acentos toman su color.
+
+El resto es negro, vidrio esmerilado y tipografía editorial (Instrument Serif,
+Inter y JetBrains Mono).
 
 ## Estructura
 
-- `index.html` — la página
-- `assets/css/styles.css` — estilos y tokens de color
-- `assets/js/projects.js` — **los proyectos**; para agregar uno, copia un
+- `index.html`: la página
+- `assets/css/site.css`: estilos; los colores de las bolas y la pila de
+  superficies teñidas están en `:root`
+- `assets/js/projects.js`: **los proyectos**; para agregar uno, copia un
   bloque y guarda su imagen en `assets/img/projects/` (1200x750, JPG)
-- `assets/js/main.js` — grilla de proyectos, filtros, sorteo de bola y menú
-- `assets/js/ball.js` — la bola 16 en 3D del banner (Three.js)
-- La House of Demons vive ahora en su propio repositorio: https://github.com/16ballcreations/lhod (se sigue publicando en /lhod/)
+- `assets/js/site.js`: índice de proyectos, filtros, manifiesto, cinta,
+  riel del proceso, formulario de contacto y menú
+- `assets/js/table.js`: la mesa: física, bolas sombreadas por píxel y la
+  formación de la 16
+- `assets/js/orb.js`: la esfera de partículas del fondo y su recorrido por
+  las secciones
+- `v1/`: la versión anterior del sitio, publicada en /v1/
+- La House of Demons vive en su propio repositorio: https://github.com/16ballcreations/lhod (se publica en /lhod/)
 
-## La bola del banner
+## El formulario de contacto
 
-Es una esfera real con Three.js, girando sobre su eje vertical, con un
-entorno de estudio para los reflejos. La textura (`assets/img/ball-texture.png`)
-es un mapa equirectangular de 1600x800: base blanca, franja negra en el
-ecuador y el círculo del número centrado en la franja, a un cuarto y a tres
-cuartos del ancho. Si no hay WebGL, queda el PNG plano girando por CSS.
+GitHub Pages no tiene servidor, así que el formulario no envía nada: arma el
+correo (asunto y cuerpo) y lo abre en la aplicación de correo del visitante.
+
+## Movimiento reducido
+
+Con `prefers-reduced-motion`, la mesa aparece quieta con las bolas ya
+repartidas, la esfera no gira y las entradas animadas se apagan.
