@@ -32,6 +32,7 @@ Inter y JetBrains Mono).
 - `assets/js/orb.js`: la esfera de partículas del fondo y su recorrido por
   las secciones
 - `v1/`: la versión anterior del sitio, publicada en /v1/
+- `v2/`: la primera iteración de la mesa (sin vidrio ni esfera), guardada como referencia en /v2/
 - La House of Demons vive en su propio repositorio: https://github.com/16ballcreations/lhod (se publica en /lhod/)
 
 ## El formulario de contacto
