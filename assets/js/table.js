@@ -553,7 +553,7 @@
       as.formed = true;
       ball16.glow = 1;
       balls.push(ball16);
-      if(kicker){ kicker.textContent = "La bola 16 no existía. Ya existe."; }
+      if(kicker){ kicker.textContent = "La bola 16 no existía. Nosotros la creamos."; }
       if(window.orbPulse){ window.orbPulse(); }
     }
     if(as.formed){
