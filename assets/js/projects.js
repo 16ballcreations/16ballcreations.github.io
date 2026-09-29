@@ -31,8 +31,8 @@ window.PROJECTS = [
     year: "Desde 2020",
     types: ["Audiovisual", "Marca", "Web"],
     summary: "Proyecto de divulgación sobre psicología: sitio web, producción y edición de video, diseño gráfico y estrategia de contenido.",
-    tags: ["WordPress", "Identidad", "Video", "Redes"],
-    image: "assets/img/projects/psicoformando.jpg",
+    tags: ["Astro", "Cloudflare", "Identidad", "Video", "Redes"],
+    image: "assets/img/projects/psicoformando.jpg?v=2",
     alt: "Portada del sitio de PsicoFormando",
     links: [
       { label: "psicoformando.com", url: "https://psicoformando.com" },
