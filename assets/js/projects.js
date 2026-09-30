@@ -16,6 +16,28 @@
 
 window.PROJECTS = [
   {
+    title: "Rivas Seven",
+    year: "2026",
+    types: ["Web"],
+    summary: "Sitio para Rivas Seven, cantautor de Medellín con raíces chocoanas. Como su música, la página va del duelo a la luz: arranca de noche en violeta y amanece en amarillo a medida que se baja.",
+    tags: ["HTML y CSS", "JavaScript", "Dirección de arte", "ES · PT · EN"],
+    image: "assets/img/projects/rivas-seven.jpg",
+    alt: "Portada del sitio de Rivas Seven: el artista de noche, en tonos violeta, junto a su nombre en letras grandes",
+    links: [],
+    note: "Muy pronto en línea"
+  },
+  {
+    title: "KaffeePlatz",
+    year: "2026",
+    types: ["Web"],
+    summary: "Nueva tienda en línea para una marca colombiana de accesorios de café: catálogo con filtros, un buscador que recomienda según cómo te gusta el café y pedidos directos por WhatsApp.",
+    tags: ["Astro", "Tailwind", "Cloudflare", "WhatsApp"],
+    image: "assets/img/projects/kaffeeplatz.jpg",
+    alt: "Portada del sitio de KaffeePlatz: una AeroPress sobre fondo crema, junto al titular «Eleva tu experiencia cafetera»",
+    links: [],
+    note: "Muy pronto en línea"
+  },
+  {
     title: "Modularity ERP",
     year: "2015 a hoy",
     types: ["Producto", "Web"],
