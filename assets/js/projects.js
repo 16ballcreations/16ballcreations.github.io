@@ -32,10 +32,9 @@ window.PROJECTS = [
     types: ["Web"],
     summary: "Nueva tienda en línea para una marca colombiana de accesorios de café: catálogo con filtros, un buscador que recomienda según cómo te gusta el café y pedidos directos por WhatsApp.",
     tags: ["Astro", "Tailwind", "Cloudflare", "WhatsApp"],
-    image: "assets/img/projects/kaffeeplatz.jpg",
+    image: "assets/img/projects/kaffeeplatz.jpg?v=2",
     alt: "Portada del sitio de KaffeePlatz: una AeroPress sobre fondo crema, junto al titular «Eleva tu experiencia cafetera»",
-    links: [],
-    note: "Muy pronto en línea"
+    links: [{ label: "kaffeeplatz.co", url: "https://kaffeeplatz.co" }]
   },
   {
     title: "Modularity ERP",
