@@ -300,6 +300,21 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 .tags li{font-family:var(--font-mono);font-size:.6875rem;color:var(--ash);border:1px solid var(--hairline);border-radius:999px;padding:4px 10px}
 .links{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .projects-empty{color:var(--iron);font-family:var(--font-mono);font-size:.8125rem;padding:24px 0}
+/* the archive: past work, quieter than the index above it */
+.archive{margin-top:88px}
+.archive-head{display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;margin-bottom:16px}
+.archive-head h3{font-family:var(--font-display);font-weight:400;font-size:2rem;color:var(--bone)}
+.archive-head p{margin:0;max-width:52ch;font-size:.875rem;color:var(--iron)}
+.archive-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--hairline)}
+.arch{
+  display:grid;grid-template-columns:110px minmax(180px,.8fr) 1.6fr 230px;gap:20px;align-items:baseline;
+  padding:16px 0;border-bottom:1px solid var(--hairline-soft);
+}
+.arch-year,.arch-note{font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.02em;color:var(--iron)}
+.arch-note{color:var(--charcoal);text-align:right}
+.arch-title{color:var(--bone);font-size:.9375rem;font-weight:500}
+.arch-sum{color:var(--iron);font-size:.875rem;line-height:1.5}
+
 /* the preview that trails the cursor over the index */
 .peek{
   position:fixed;top:0;left:0;z-index:40;width:340px;aspect-ratio:16/10;pointer-events:none;
@@ -330,6 +345,39 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 .window-bar span:first-child{background:var(--accent)}
 .window-bar em{margin-left:auto;font-style:normal;font-size:.6875rem}
 .window img{width:100%;height:auto}
+/* dark and light, one over the other: the light one is clipped to the right
+   of the divider, which the visitor drags */
+.compare{--pos:50%;position:relative;cursor:ew-resize;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.compare img{display:block;width:100%;height:auto;pointer-events:none}
+.cmp-light{position:absolute;inset:0;height:100%;clip-path:inset(0 0 0 var(--pos))}
+.cmp-handle{
+  position:absolute;top:0;bottom:0;left:var(--pos);width:44px;margin-left:-22px;
+  display:grid;place-items:center;outline:0;
+}
+.cmp-handle::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;background:var(--accent);box-shadow:0 0 18px color-mix(in srgb,var(--accent) 60%,transparent)}
+.cmp-knob{
+  position:relative;width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.35);box-shadow:0 8px 24px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.4);
+  transition:transform .2s var(--ease);
+}
+/* two small arrows, drawn as borders */
+.cmp-knob::before,.cmp-knob::after{
+  content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-4px;border:solid #fff;border-width:0 0 2px 2px;
+}
+.cmp-knob::before{left:9px;transform:rotate(45deg)}
+.cmp-knob::after{right:9px;transform:rotate(-135deg)}
+.compare:hover .cmp-knob,.cmp-handle:focus-visible .cmp-knob,.compare.is-dragging .cmp-knob{transform:scale(1.12)}
+.cmp-handle:focus-visible .cmp-knob{outline:2px solid var(--accent);outline-offset:3px}
+.cmp-tag{
+  position:absolute;top:14px;padding:5px 10px;border-radius:999px;font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;
+  pointer-events:none;transition:opacity .25s ease-out;
+}
+.cmp-tag-dark{left:14px;color:#f0f0f0;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15)}
+.cmp-tag-light{right:14px;color:#222;background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.08)}
+.cmp-note{margin:18px 0 0;text-align:center;color:var(--iron)}
+
 .modules{list-style:none;margin:56px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--hairline)}
 .modules li{
   display:flex;gap:14px;align-items:baseline;padding:20px 20px 20px 0;border-bottom:1px solid var(--hairline);
@@ -391,6 +439,19 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 .term .ok{color:var(--accent)} .term .dim{color:var(--charcoal)} .term b{font-weight:500;color:var(--white)}
 .term .ln{display:block;opacity:0;transform:translateX(-6px);transition:opacity .3s ease-out,transform .3s ease-out}
 .term .ln.on{opacity:1;transform:none}
+
+/* the price, right under the services: the first thing a visitor without a brief asks */
+.price{
+  display:grid;grid-template-columns:auto 1fr auto;gap:40px;align-items:center;
+  margin-top:24px;padding:32px 36px;border-radius:24px;
+}
+.price .kicker{margin-bottom:10px}
+.price-big{margin:0;font-family:var(--font-display);font-size:clamp(2.6rem,4.6vw,4rem);line-height:1;color:var(--white);white-space:nowrap}
+.price-big em{font-style:italic;color:var(--accent)}
+.price-text{margin:0;color:var(--ash);font-size:1rem;max-width:52ch}
+/* a link inside running text */
+.inline{color:var(--white);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+.inline:hover{color:var(--accent)}
 
 /* ---------- rules ---------- */
 .rules{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--hairline)}
@@ -463,6 +524,7 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 .monument.is-visible .monument-ball{animation:roll-in 1.4s .3s var(--ease) both}
 @keyframes roll-in{from{transform:translateX(3em) rotate(540deg)}to{transform:none}}
 
+.contact-lead{margin:-40px 0 56px;max-width:52ch;font-size:1.125rem;font-weight:300;color:var(--ash)}
 .contact-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:72px;align-items:start}
 /* a form written as a sentence, the fields drawn as hairlines */
 .brief{margin:0}
@@ -526,6 +588,7 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
   .hero-copy{grid-template-columns:1fr;gap:28px}
   .hero-card{max-width:520px}
   .contact-grid{grid-template-columns:1fr;gap:56px}
+  .price{grid-template-columns:1fr;gap:18px;padding:26px}
   .bento{grid-template-columns:1fr 1fr}
   .t-tall{grid-row:span 1;grid-column:span 2}
   .modules{grid-template-columns:1fr 1fr}
@@ -554,6 +617,11 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
   .row-btn{grid-template-columns:32px 1fr 20px;gap:14px;padding:22px 0}
   .row-meta{display:none}
   .deflist div{grid-template-columns:1fr;gap:4px}
+  .arch{grid-template-columns:1fr auto;gap:4px 16px}
+  .arch-title{order:-2}
+  .arch-year{order:-1;text-align:right}
+  .arch-sum{grid-column:1 / -1}
+  .arch-note{grid-column:1 / -1;text-align:left}
   .menu-btn{
     display:inline-flex;align-items:center;justify-content:center;
     width:44px;height:44px;margin-right:0;padding:0;

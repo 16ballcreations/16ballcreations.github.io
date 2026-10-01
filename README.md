@@ -25,6 +25,8 @@ Inter y JetBrains Mono).
   superficies teñidas están en `:root`
 - `assets/js/projects.js`: **los proyectos**; para agregar uno, copia un
   bloque y guarda su imagen en `assets/img/projects/` (1200x750, JPG)
+  Los que no tienen portada propia llevan `archived: true` y salen en
+  "Del archivo", en una línea y sin imagen
 - `assets/js/site.js`: índice de proyectos, filtros, manifiesto, cinta,
   riel del proceso, formulario de contacto y menú
 - `assets/js/table.js`: la mesa: física, bolas sombreadas por píxel y la

@@ -45,8 +45,9 @@
   var emptyNote = document.getElementById("projectsEmpty");
   var peek = document.getElementById("peek");
   var peekImg = document.getElementById("peekImg");
-  var items = window.PROJECTS || [];
-
+  /* projects without a cover of their own go to the archive below the index */
+  var items = (window.PROJECTS || []).filter(function(p){ return !p.archived; });
+  var archived = (window.PROJECTS || []).filter(function(p){ return p.archived; });
 
   function row(p, i){
     var li = el("li", "row");
@@ -130,7 +131,13 @@
     if(emptyNote){ emptyNote.hidden = shown.length > 0; }
   }
 
-  if(list && items.length){
+  /* with only a handful of projects the filters are noise, so they wait
+     until the index is long enough to need them */
+  var FILTER_FROM = 6;
+  if(list && items.length < FILTER_FROM){
+    if(filterBar){ filterBar.hidden = true; }
+    render("Todos");
+  } else if(list && items.length){
     /* categories the studio does not offer today stay out of the filter bar */
     var HIDDEN = { "Móvil":1 };
     var types = ["Todos"];
@@ -153,6 +160,21 @@
       filterBar.appendChild(btn);
     });
     render("Todos");
+  }
+
+  /* ---------- the archive: one line each, no image, no fuss ---------- */
+  var archiveWrap = document.getElementById("archiveWrap");
+  var archiveList = document.getElementById("archive");
+  if(archiveWrap && archiveList && archived.length){
+    archived.forEach(function(p){
+      var li = el("li", "arch");
+      li.appendChild(el("span", "arch-year", p.year || ""));
+      li.appendChild(el("span", "arch-title", p.title));
+      li.appendChild(el("span", "arch-sum", p.summary || ""));
+      li.appendChild(el("span", "arch-note", p.note || ""));
+      archiveList.appendChild(li);
+    });
+    archiveWrap.hidden = false;
   }
 
   /* the preview trails the cursor with a little lag, and leans into the motion */
@@ -232,6 +254,69 @@
   });
   if(term){ if(io){ io.observe(term); } else { runTerm(); } }
 
+  /* ---------- Modularity, dark against light ---------- */
+  var compare = document.getElementById("compare");
+  if(compare){
+    var handle = document.getElementById("compareHandle");
+    var tagDark = compare.querySelector(".cmp-tag-dark");
+    var tagLight = compare.querySelector(".cmp-tag-light");
+    var pos = 50, dragging = false, touched = false;
+    function setPos(p){
+      pos = Math.max(0, Math.min(100, p));
+      compare.style.setProperty("--pos", pos + "%");
+      handle.setAttribute("aria-valuenow", String(Math.round(pos)));
+      handle.setAttribute("aria-valuetext", pos < 15 ? "Casi todo claro" : pos > 85 ? "Casi todo oscuro" : "Oscuro a la izquierda, claro a la derecha");
+      /* each label fades as its side closes */
+      tagDark.style.opacity = pos < 14 ? "0" : "1";
+      tagLight.style.opacity = pos > 86 ? "0" : "1";
+    }
+    function fromPointer(e){
+      var r = compare.getBoundingClientRect();
+      setPos((e.clientX - r.left) / r.width * 100);
+    }
+    compare.addEventListener("pointerdown", function(e){
+      touched = true;
+      dragging = true;
+      compare.classList.add("is-dragging");
+      if(e.pointerType === "mouse"){ compare.setPointerCapture(e.pointerId); }
+      fromPointer(e);
+    });
+    compare.addEventListener("pointermove", function(e){
+      if(dragging){ fromPointer(e); }
+    });
+    function stop(){ dragging = false; compare.classList.remove("is-dragging"); }
+    compare.addEventListener("pointerup", stop);
+    compare.addEventListener("pointercancel", stop);
+    handle.addEventListener("keydown", function(e){
+      var step = e.shiftKey ? 20 : 5;
+      if(e.key === "ArrowLeft"){ setPos(pos - step); e.preventDefault(); }
+      else if(e.key === "ArrowRight"){ setPos(pos + step); e.preventDefault(); }
+      else if(e.key === "Home"){ setPos(0); e.preventDefault(); }
+      else if(e.key === "End"){ setPos(100); e.preventDefault(); }
+      touched = true;
+    });
+    setPos(50);
+
+    /* the first time it comes on screen, the divider sweeps once to show it moves */
+    if(!reduce && "IntersectionObserver" in window){
+      var hint = new IntersectionObserver(function(entries){
+        if(!entries[0].isIntersecting){ return; }
+        hint.disconnect();
+        var t0 = null;
+        function sweep(now){
+          if(touched){ return; }
+          if(!t0){ t0 = now; }
+          var t = (now - t0) / 2600;
+          if(t >= 1){ setPos(50); return; }
+          setPos(50 + Math.sin(t * Math.PI * 2) * 28 * (1 - t * .3));
+          requestAnimationFrame(sweep);
+        }
+        setTimeout(function(){ requestAnimationFrame(sweep); }, 700);
+      }, { threshold:.6 });
+      hint.observe(compare);
+    }
+  }
+
   /* ---------- the brief: a sentence that becomes an e-mail ---------- */
   var brief = document.getElementById("brief");
   if(brief){
@@ -246,7 +331,8 @@
       e.preventDefault();
       var name = fName.value.trim(), idea = fIdea.value.trim();
       var kindInput = brief.querySelector("input[name=kind]:checked");
-      var kind = kindInput ? kindInput.value : "algo que todavía no existe";
+      var unsure = !kindInput || kindInput.hasAttribute("data-unsure");
+      var kind = unsure ? "" : kindInput.value;
       fName.classList.toggle("is-bad", !name);
       fIdea.classList.toggle("is-bad", !idea);
       if(!name || !idea){
@@ -257,8 +343,10 @@
       }
       msg.textContent = msgIdle;
       msg.classList.remove("is-bad");
-      var subject = "Tengo una idea: " + kind + " (" + name + ")";
-      var body = "Hola, me llamo " + name + " y necesito " + kind + ".\n\nLa idea:\n" + idea + "\n";
+      var subject = unsure ? "Tengo una idea (" + name + ")" : "Tengo una idea: " + kind + " (" + name + ")";
+      var body = (unsure
+        ? "Hola, me llamo " + name + ". Todavía no sé bien qué necesito, pero esta es la idea:\n\n"
+        : "Hola, me llamo " + name + " y necesito " + kind + ".\n\nLa idea:\n") + idea + "\n";
       window.location.href = "mailto:16ballcreations@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     });
   }
