@@ -1,0 +1,24 @@
+/* 16 Ball Creations on Cloudflare.
+   One Worker for everything: the static site is copied into dist/ by
+   scripts/build.mjs and served from there, and the Worker itself only runs
+   for the paths that are not files: the forms' API and the review panel.
+   Publish with npm run deploy (it builds first). */
+{
+  "name": "page",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "16bc",
+      "database_id": "8e114e93-5a49-46e9-9c51-e3bcc92ed056",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "observability": { "enabled": true }
+}

@@ -129,7 +129,11 @@
   }
   function target(){
     var y = window.pageYOffset;
-    if(!anchors.length){ return { x:.7, y:.5, r:.4, a:.5 }; }
+    /* a page without the home sections can place the orb with data-x, -y, -r, -a */
+    if(!anchors.length){
+      var d = canvas.dataset;
+      return { x:+(d.x || .7), y:+(d.y || .5), r:+(d.r || .4), a:+(d.a || .5) };
+    }
     if(y <= anchors[0].at){ return anchors[0].s; }
     for(var i = 0; i < anchors.length - 1; i++){
       var A = anchors[i], B = anchors[i + 1];

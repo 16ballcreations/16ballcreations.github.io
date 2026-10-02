@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=4">
+<link rel="stylesheet" href="assets/css/site.css?v=6">
 </head>
 <body>
 
@@ -98,7 +98,7 @@
       <dl class="stats">
         <div><dt><span data-count="13">13</span></dt><dd>años creando productos digitales</dd></div>
         <div><dt><span data-count="10">10</span>+</dt><dd>proyectos entregados para clientes</dd></div>
-        <div><dt><span data-count="2">2</span></dt><dd>países: Venezuela y Colombia</dd></div>
+        <div><dt><span data-count="3">3</span></dt><dd>países: Venezuela, Colombia y Costa Rica</dd></div>
       </dl>
     </div>
   </section>
@@ -117,7 +117,7 @@
         <div class="aura" aria-hidden="true"><i></i><i></i><i></i></div>
         <!-- the brand comes first: every project starts by checking it, and
              from there it becomes a brand update, a build, or both -->
-        <article class="tile t-wide reveal"><span class="idx mono">01</span><h3>Empezamos por tu marca</h3><p>Antes de construir nada, queremos conocer tu marca: de dónde viene, por qué nació, a quién le habla y a dónde quiere llegar. De ahí sale el camino: actualizar tu marca (logo, colores y piezas gráficas), construir lo que te hace falta, o las dos cosas.</p><ul class="tags"><li>Ej.: Rivas Seven</li><li>Ej.: PsicoFormando</li><li>Ej.: Puto King Tattoo Art</li></ul></article>
+        <article class="tile t-wide reveal"><span class="idx mono">01</span><h3>Todo empieza con una <em class="mira-word">MIRA</em></h3><p class="mira-acro mono"><b>M</b>arca · <b>I</b>magen · <b>R</b>edes · <b>A</b>lineación</p><p>Antes de ofrecerte cualquier solución, miramos tu marca: de dónde viene, por qué nació, a quién le habla y si todo lo que muestra cuenta la misma historia. Primero hablamos; si vemos que podemos ayudarte, te enviamos tu MIRA. De ahí sale el camino: actualizar tu marca (logo, colores y piezas gráficas), construir lo que te hace falta, o las dos cosas.</p><ul class="tags"><li>Ej.: Rivas Seven</li><li>Ej.: PsicoFormando</li><li>Ej.: Puto King Tattoo Art</li></ul><a class="btn btn-sm tile-cta" href="#contacto">Hablemos primero <span aria-hidden="true">&rarr;</span></a></article>
         <article class="tile t-tall reveal"><span class="idx mono">02</span><h3>Lo revisamos todo antes de entregarlo</h3><p>Antes de que lo vean tus clientes, comprobamos que todo funcione. Y lo volvemos a comprobar cada vez que cambiamos algo, para que nada se rompa por el camino.</p>
           <pre class="term mono" aria-hidden="true"><span class="ok">✓</span> Se ve bien en el celular
 <span class="ok">✓</span> Los mensajes te llegan
@@ -179,8 +179,9 @@
         <li><span class="mono">06</span>Cada empleado ve solo lo que le toca</li>
       </ul>
       <div class="actions center">
-        <a class="btn btn-primary" href="mailto:16ballcreations@gmail.com?subject=Demo%20de%20Modularity">Pide una demo</a>
-        <span class="note mono">Demostraciones disponibles muy pronto</span>
+        <a class="btn btn-primary" href="https://modularity.16ballcreations.workers.dev/?demo" target="_blank" rel="noopener noreferrer">Probar la demo <span aria-hidden="true">&nearr;</span></a>
+        <a class="btn" href="mailto:16ballcreations@gmail.com?subject=Demostraci%C3%B3n%20guiada%20de%20Modularity">Pedir una demostración guiada</a>
+        <span class="note mono">Datos de ejemplo: explora con libertad</span>
       </div>
     </div>
   </section>
@@ -254,7 +255,7 @@
       <div class="track" id="track">
         <div class="rail" aria-hidden="true"><div class="rail-fill" id="railFill"></div><span class="ball rail-ball" id="railBall" data-n="16"></span></div>
         <ol class="steps" id="steps">
-          <li><span class="n mono">01</span><h3>Tu historia</h3><p>De dónde viene tu marca, por qué nació y qué quiere lograr. Te escuchamos antes de proponer nada.</p></li>
+          <li><span class="n mono">01</span><h3>Tu historia</h3><p>De dónde viene tu marca, por qué nació y qué quiere lograr. Primero una llamada; si podemos ayudarte, tu MIRA. Te escuchamos antes de proponer nada.</p></li>
           <li><span class="n mono">02</span><h3>Tu identidad</h3><p>Con esa historia le damos forma: logo, colores, estilo y una voz que se reconoce. La ajustamos contigo hasta que se sienta tuya.</p></li>
           <li><span class="n mono">03</span><h3>Tus plataformas</h3><p>Construimos dónde vive tu marca: tu página, tu tienda, tus redes o el sistema que ordena tu negocio. Puedes verlo avanzar desde la primera semana.</p></li>
           <li><span class="n mono">04</span><h3>Todo probado</h3><p>Comprobamos que todo funcione antes de entregarlo. Es nuestra especialidad.</p></li>
@@ -329,7 +330,7 @@
       <p class="contact-lead">Proyectos desde US$200. Escríbenos aunque solo tengas una idea a medias: organizamos una llamada para entender qué estás buscando.</p>
 
       <div class="contact-grid">
-        <!-- GitHub Pages has no server: the form writes the e-mail and hands it to the visitor's mail app -->
+        <!-- the form posts to the Worker (/api/contacto); if that fails it falls back to the visitor's mail app -->
         <form class="brief" id="brief" novalidate>
           <p class="brief-line">
             Hola, me llamo
@@ -349,9 +350,16 @@
           </fieldset>
           <p class="brief-line"><label for="fIdea">La idea, en pocas palabras:</label></p>
           <textarea class="field field-area" id="fIdea" name="idea" rows="3" placeholder="qué quieres construir y para quién…" required></textarea>
+          <p class="brief-line">
+            Escríbeme a
+            <label class="sr" for="fReach">Tu correo o WhatsApp</label>
+            <input class="field field-reach" id="fReach" name="contacto" autocomplete="email" placeholder="tu correo o WhatsApp" required>
+          </p>
+          <!-- people never see this field; bots fill it in -->
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="brief-foot">
-            <button type="submit" class="btn btn-primary">Armar el correo <span aria-hidden="true">&rarr;</span></button>
-            <p class="brief-msg mono" id="briefMsg" role="status">Se abre tu correo con todo listo para enviar.</p>
+            <button type="submit" class="btn btn-primary" id="briefSend">Enviar <span aria-hidden="true">&rarr;</span></button>
+            <p class="brief-msg mono" id="briefMsg" role="status">Usamos tus datos solo para responderte. No los compartimos con nadie.</p>
           </div>
         </form>
 
@@ -379,9 +387,9 @@
   </div>
 </footer>
 
-<script src="assets/js/projects.js?v=13"></script>
-<script src="assets/js/site.js?v=4" defer></script>
+<script src="assets/js/projects.js?v=14"></script>
+<script src="assets/js/site.js?v=6" defer></script>
 <script src="assets/js/table.js?v=2" defer></script>
-<script src="assets/js/orb.js?v=1" defer></script>
+<script src="assets/js/orb.js?v=2" defer></script>
 </body>
 </html>

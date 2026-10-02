@@ -33,14 +33,46 @@ Inter y JetBrains Mono).
   formación de la 16
 - `assets/js/orb.js`: la esfera de partículas del fondo y su recorrido por
   las secciones
+- `mira/`: **MIRA** (Marca, Imagen, Redes y Alineación), el cuestionario de cinco
+  preguntas para entender al cliente antes de proponerle nada. Estilos en
+  `assets/css/mira.css`, lógica en `assets/js/mira.js`; las respuestas se envían
+  por correo, como el formulario de contacto. No está enlazado desde el inicio ni
+  se indexa: se envía después de la primera llamada, a quien sabemos que podemos
+  ayudar. El enlace personal saluda y rellena: `mira/?nombre=Ana&marca=Café%20La%20Esquina`
+- `autorizacion/`: el documento de autorización de uso de imagen para los casos
+  de estudio. Se completa escribiendo sobre la página o con un enlace
+  (`?cliente=&proyecto=&web=&redes=&fecha=`) y se guarda como PDF. No se indexa
 - `v1/`: la versión anterior del sitio, publicada en /v1/
 - `v2/`: la primera iteración de la mesa (sin vidrio ni esfera), guardada como referencia en /v2/
 - La House of Demons vive en su propio repositorio: https://github.com/16ballcreations/lhod (se publica en /lhod/)
 
-## El formulario de contacto
+## Cloudflare: el sitio, los formularios y el panel
 
-GitHub Pages no tiene servidor, así que el formulario no envía nada: arma el
-correo (asunto y cuerpo) y lo abre en la aplicación de correo del visitante.
+Todo vive en un Worker de Cloudflare llamado `page`
+(https://page.16ballcreations.workers.dev):
+
+- `scripts/build.mjs` copia el sitio a `dist/`, que es lo único que se publica.
+  Si agregas una carpeta nueva al sitio, súmala a la lista de ese archivo.
+- `worker/index.js` atiende lo que no es un archivo:
+  - `POST /api/mira` y `POST /api/contacto` guardan cada envío en la base D1
+    `16bc` (tabla `submissions`, ver `migrations/`).
+  - `/admin` es el panel para leer los envíos y marcarlos como revisados. Pide
+    la clave guardada como secreto `ADMIN_PASSWORD`.
+- Si el envío falla, los formularios abren el correo del visitante con todo
+  armado, así que nada se pierde.
+
+Comandos:
+
+```
+npm install                 # una vez
+npm run dev                 # el sitio con el Worker en http://localhost:8787
+npm run deploy              # publica en Cloudflare
+npm run db:migrate          # aplica migraciones nuevas a la base de producción
+npx wrangler secret put ADMIN_PASSWORD   # crea o cambia la clave del panel
+```
+
+Para probar en local, la clave del panel va en `.dev.vars`
+(`ADMIN_PASSWORD="…"`), que no se sube al repositorio.
 
 ## Movimiento reducido
 

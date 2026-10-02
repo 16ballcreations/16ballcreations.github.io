@@ -317,37 +317,64 @@
     }
   }
 
-  /* ---------- the brief: a sentence that becomes an e-mail ---------- */
+  /* ---------- the brief: a sentence that reaches the studio ---------- */
+  /* It posts to the Worker. While the site is still served from GitHub
+     Pages too, it posts across to the Worker's own address. If the post
+     fails for any reason, the visitor's mail app takes over, as before. */
+  var API = /\.github\.io$/.test(location.hostname) ? "https://page.16ballcreations.workers.dev" : "";
+  window.send16 = function(kind, data, honeypot){
+    return fetch(API + "/api/" + kind, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({ data:data, website:honeypot || "" })
+    }).then(function(r){ if(!r.ok){ throw new Error("HTTP " + r.status); } return r.json(); });
+  };
+
   var brief = document.getElementById("brief");
   if(brief){
     var fName = document.getElementById("fName");
     var fIdea = document.getElementById("fIdea");
+    var fReach = document.getElementById("fReach");
+    var sendBtn = document.getElementById("briefSend");
     var msg = document.getElementById("briefMsg");
     var msgIdle = msg.textContent;
-    [fName, fIdea].forEach(function(f){
+    [fName, fIdea, fReach].forEach(function(f){
       f.addEventListener("input", function(){ f.classList.remove("is-bad"); });
     });
+    function say(text, state){
+      msg.textContent = text;
+      msg.classList.toggle("is-bad", state === "bad");
+      msg.classList.toggle("is-ok", state === "ok");
+    }
     brief.addEventListener("submit", function(e){
       e.preventDefault();
-      var name = fName.value.trim(), idea = fIdea.value.trim();
+      var name = fName.value.trim(), idea = fIdea.value.trim(), reach = fReach.value.trim();
       var kindInput = brief.querySelector("input[name=kind]:checked");
       var unsure = !kindInput || kindInput.hasAttribute("data-unsure");
       var kind = unsure ? "" : kindInput.value;
       fName.classList.toggle("is-bad", !name);
       fIdea.classList.toggle("is-bad", !idea);
-      if(!name || !idea){
-        msg.textContent = !name ? "Falta tu nombre." : "Cuéntanos la idea, aunque sea en una frase.";
-        msg.classList.add("is-bad");
-        (!name ? fName : fIdea).focus();
+      fReach.classList.toggle("is-bad", reach.length < 6);
+      if(!name || !idea || reach.length < 6){
+        say(!name ? "Falta tu nombre." : !idea ? "Cuéntanos la idea, aunque sea en una frase." : "Déjanos un correo o un WhatsApp para responderte.", "bad");
+        (!name ? fName : !idea ? fIdea : fReach).focus();
         return;
       }
-      msg.textContent = msgIdle;
-      msg.classList.remove("is-bad");
-      var subject = unsure ? "Tengo una idea (" + name + ")" : "Tengo una idea: " + kind + " (" + name + ")";
-      var body = (unsure
-        ? "Hola, me llamo " + name + ". Todavía no sé bien qué necesito, pero esta es la idea:\n\n"
-        : "Hola, me llamo " + name + " y necesito " + kind + ".\n\nLa idea:\n") + idea + "\n";
-      window.location.href = "mailto:16ballcreations@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      sendBtn.disabled = true;
+      say("Enviando…");
+      var data = { nombre:name, tipo:kind, idea:idea, contacto:reach };
+      window.send16("contacto", data, brief.querySelector(".hp").value).then(function(){
+        brief.reset();
+        say("¡Listo, " + name + "! Recibimos tu idea. Te escribimos para organizar la llamada.", "ok");
+      }).catch(function(){
+        /* the post did not land: hand it to the mail app instead */
+        say(msgIdle);
+        var subject = unsure ? "Tengo una idea (" + name + ")" : "Tengo una idea: " + kind + " (" + name + ")";
+        var body = (unsure
+          ? "Hola, me llamo " + name + ". Todavía no sé bien qué necesito, pero esta es la idea:\n\n"
+          : "Hola, me llamo " + name + " y necesito " + kind + ".\n\nLa idea:\n") + idea + "\n\nEscríbeme a: " + reach + "\n";
+        window.location.href = "mailto:16ballcreations@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      }).then(function(){ sendBtn.disabled = false; });
     });
   }
 

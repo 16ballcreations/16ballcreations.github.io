@@ -1,0 +1,137 @@
+/* MIRA: Marca, Imagen, Redes y Alineación.
+   The questionnaire that reads the table before any shot. It sits on top of
+   site.css (tokens, glass, buttons, balls, the orb), one screen at a time:
+   the intro, the five shots plus the 8 that closes, and the result. Each
+   shot hands the page the colour of its ball. */
+
+.mira-page{min-height:100vh}
+.mira-page .header-inner{padding-right:8px}
+.screen{display:none;min-height:100vh;min-height:100svh;padding:calc(var(--header-h) + 56px) 0 72px}
+.screen.is-on{display:block;animation:screen-in .6s var(--ease) both}
+@keyframes screen-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+.mira-title{
+  margin:0 0 48px;font-family:var(--font-display);font-weight:400;color:var(--white);
+  font-size:clamp(3rem,8.4vw,7.4rem);line-height:.92;letter-spacing:-.025em;
+}
+.mira-title em{font-style:italic;color:var(--accent)}
+.btn-lg{padding:15px 28px;font-size:1rem}
+
+/* ---------- the four letters ---------- */
+.letters{list-style:none;margin:0 0 56px;padding:0;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--hairline)}
+.letters li{display:flex;gap:16px;align-items:flex-start;padding:28px 24px 28px 0;border-right:1px solid var(--hairline)}
+.letters li + li{padding-left:24px}
+.letters li:last-child{border-right:0}
+.letters b{
+  font-family:var(--font-display);font-weight:400;font-size:clamp(3.6rem,6vw,5.4rem);line-height:.8;color:var(--c);
+}
+.letters li:nth-child(1){--c:var(--b1)} .letters li:nth-child(2){--c:var(--b2)}
+.letters li:nth-child(3){--c:var(--b3)} .letters li:nth-child(4){--c:var(--b4)}
+.letters span{color:var(--ash);font-size:.9375rem;line-height:1.5}
+.letters strong{display:block;margin-bottom:4px;color:var(--white);font-weight:500;font-size:1rem}
+.intro-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap}
+.intro-foot .lead{margin:0;max-width:52ch}
+
+/* ---------- the rail of shots ---------- */
+.rail-steps{display:flex;justify-content:center;align-items:center;gap:14px;margin:0 auto 28px}
+.rail-steps .ball{--s:30px;opacity:.28;transform:scale(.9);transition:opacity .4s ease-out,transform .5s var(--ease)}
+.rail-steps .ball.is-done{opacity:.8;transform:scale(.9)}
+.rail-steps .ball.is-current{opacity:1;transform:scale(1.25)}
+
+/* ---------- the card ---------- */
+.card{max-width:780px;margin:0 auto;padding:40px 44px 32px;border-radius:28px}
+.q{display:none;margin:0;padding:0;border:0;min-width:0}
+.q.is-on{display:block;animation:q-in .55s var(--ease) both}
+.q.is-back{animation-name:q-in-back}
+@keyframes q-in{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes q-in-back{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.q legend{display:block;padding:0;margin:0 0 22px;width:100%}
+.q-n{display:block;margin-bottom:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.q-title{display:block;font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);line-height:1.05;letter-spacing:-.01em;color:var(--white)}
+.q-help{margin:0 0 18px;color:var(--ash);font-size:.9375rem}
+.q-help .count{margin-left:8px;color:var(--accent)}
+.field-label{display:block;margin:22px 0 6px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
+.field-label .opt{margin-left:6px;color:var(--charcoal)}
+.mfield{
+  display:block;width:100%;padding:6px 2px 10px;border:0;border-bottom:1px solid var(--ash);border-radius:0;
+  background:transparent;color:var(--white);outline:0;
+  font-family:var(--font-display);font-size:clamp(1.35rem,2.4vw,1.75rem);line-height:1.3;
+  transition:border-color .2s ease-out;
+}
+.mfield::placeholder{color:var(--charcoal);font-style:italic}
+.mfield:focus{border-bottom-color:var(--accent)}
+.mfield.is-bad{border-bottom-color:var(--b3)}
+.marea{resize:vertical;min-height:5.5em}
+
+/* starters: tap one and it lands in the story */
+.starters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.starter{
+  padding:8px 14px;border-radius:999px;border:1px dashed var(--hairline);background:transparent;cursor:pointer;
+  color:var(--ash);font:italic 1rem var(--font-display);transition:color .15s ease-out,border-color .15s ease-out;
+}
+.starter:hover,.starter:focus-visible{color:var(--white);border-color:var(--accent)}
+
+/* the chips: each picked answer wears the ball of its shot */
+.chips-pick{display:flex;flex-wrap:wrap;gap:10px}
+.chips-pick label{position:relative;cursor:pointer}
+.chips-pick input{position:absolute;opacity:0;pointer-events:none}
+.chips-pick span{
+  display:inline-flex;align-items:center;gap:10px;padding:11px 18px;border-radius:999px;border:1px solid var(--hairline);
+  background:rgba(255,255,255,.02);color:var(--bone);font-size:.9375rem;
+  transition:color .15s ease-out,border-color .15s ease-out,background .2s ease-out,transform .25s var(--ease);
+}
+.chips-pick span::before{
+  content:"";width:10px;height:10px;border-radius:50%;border:1px solid var(--iron);
+  transition:background .2s ease-out,border-color .2s ease-out,transform .3s var(--ease);
+}
+.chips-pick label:hover span{border-color:var(--accent)}
+.chips-pick input:checked + span{color:var(--void);background:var(--accent);border-color:var(--accent);transform:translateY(-1px)}
+.chips-pick input:checked + span::before{background:var(--void);border-color:var(--void);transform:scale(1.2)}
+.chips-pick input:focus-visible + span{outline:2px solid var(--accent);outline-offset:3px}
+.chips-pick input:disabled + span{opacity:.35;cursor:not-allowed}
+
+.q-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:36px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08)}
+.q-msg{flex:1;margin:0;text-align:center;color:var(--iron)}
+.q-msg.is-bad{color:var(--b3)}
+.q-hint{margin:18px 0 0;text-align:center;color:var(--charcoal)}
+#qBack[hidden]{display:inline-flex;visibility:hidden}
+
+/* ---------- the result ---------- */
+.result{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:0 0 40px}
+.res{position:relative;padding:28px 30px;border-radius:22px;overflow:hidden}
+.res-letter{
+  position:absolute;right:18px;top:-6px;font-family:var(--font-display);font-size:6.5rem;line-height:1;color:var(--c);opacity:.22;
+  pointer-events:none;
+}
+.res:nth-child(1){--c:var(--b1)} .res:nth-child(2){--c:var(--b2)} .res:nth-child(3){--c:var(--b3)} .res:nth-child(4){--c:var(--b4)}
+.res h3{margin:0 0 14px;font-family:var(--font-mono);font-size:.6875rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.res p{position:relative;margin:0 0 10px;color:var(--bone);font-size:.9375rem;line-height:1.55}
+.res p b{display:block;margin-bottom:2px;font-family:var(--font-mono);font-size:.625rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
+.res .empty{color:var(--charcoal);font-style:italic}
+.done-foot .lead{max-width:56ch}
+.done-foot .q-msg{text-align:left;margin-top:16px}
+.done-foot .q-msg.is-ok{color:var(--accent)}
+
+@media (max-width:900px){
+  .letters{grid-template-columns:1fr 1fr}
+  .letters li:nth-child(2){border-right:0}
+  .letters li:nth-child(3){padding-left:0}
+  .letters li:nth-child(n+3){border-top:1px solid var(--hairline)}
+}
+@media (max-width:720px){
+  .screen{padding-top:calc(var(--header-h) + 32px)}
+  .mira-title{margin-bottom:32px}
+  .letters{grid-template-columns:1fr}
+  .letters li,.letters li + li{padding:20px 0;border-right:0;border-top:1px solid var(--hairline)}
+  .letters li:first-child{border-top:0}
+  .card{padding:26px 20px 22px;border-radius:22px}
+  .rail-steps{gap:10px}
+  .rail-steps .ball{--s:24px}
+  .result{grid-template-columns:1fr}
+  .q-foot{flex-wrap:wrap}
+  .q-msg{order:3;flex-basis:100%}
+  .q-hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .screen.is-on,.q.is-on{animation:none}
+}

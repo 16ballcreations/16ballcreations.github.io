@@ -46,8 +46,10 @@ window.PROJECTS = [
     tags: ["Sistema de gestión", "Producto propio"],
     image: "assets/img/projects/modularity.jpg?v=2",
     alt: "Panel principal de Modularity para un taller de demostración",
-    links: [{ label: "Ver detalle", url: "#modularity" }],
-    note: "Demo en línea muy pronto"
+    links: [
+      { label: "Probar la demo", url: "https://modularity.16ballcreations.workers.dev/?demo" },
+      { label: "Ver detalle", url: "#modularity" }
+    ]
   },
   {
     title: "PsicoFormando",
