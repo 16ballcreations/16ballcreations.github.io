@@ -2,9 +2,15 @@
 
 *Si no existe, lo creamos.*
 
-Sitio del estudio: https://16ballcreations.github.io
+Sitio del estudio: https://page.16ballcreations.workers.dev
 
-HTML, CSS y JavaScript sin frameworks ni build, publicado con GitHub Pages.
+HTML, CSS y JavaScript sin frameworks, publicado en un Worker de Cloudflare
+(ver "Cloudflare" más abajo). Se publica con `npm run deploy`: subir a `main`
+guarda el código, pero ya no publica nada.
+
+`16ballcreations.github.io` solo redirige: GitHub Pages publica la rama
+`redirect`, que manda cada ruta a la misma ruta en Cloudflare. `/lhod/` y
+`/rivas-seven/` siguen en GitHub, servidas desde sus propios repositorios.
 
 ## La idea
 
