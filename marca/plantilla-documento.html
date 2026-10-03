@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<!-- TÍTULO DEL ARCHIVO: "<Tipo de documento> — <Cliente o proyecto>" -->
+<title>Propuesta — Café La Esquina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* =====================================================================
+     16 Ball Creations · plantilla de documento PDF (A4)
+     Guía completa: marca/GUIA-DOCUMENTOS-PDF.md
+     Cada <article class="sheet"> es UNA hoja A4. Para más páginas, copia
+     otra .sheet completa. Nada debe salirse de los 297 mm de alto.
+     ===================================================================== */
+  :root{
+    /* superficies */
+    --void:#000000; --felt:#060707; --paper:#f7f6f2;
+    /* líneas y texto sobre negro */
+    --hairline:#2a2e31; --white:#ffffff; --bone:#ecebe6; --ash:#a1a4a5; --iron:#71757c;
+    /* texto sobre papel */
+    --ink:#111111; --ink-soft:#6b6f75; --rule:#d9d8d2;
+    /* las bolas: el único color del sistema */
+    --b1:#f4c20d; --b2:#4d7dff; --b3:#ff5c6e; --b4:#a375d8;
+    --b5:#ff9d3d; --b6:#3ad389; --b7:#e0765f; --b8:#e8e8e8;
+    /* UN acento por documento: elige una bola (por defecto, la 6) */
+    --accent:var(--b6);
+    --display:"Instrument Serif","Times New Roman",serif;
+    --ui:"Inter",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{margin:0;background:#1a1c1e;color:var(--bone);font-family:var(--ui);-webkit-font-smoothing:antialiased}
+  @page{size:A4;margin:0}
+
+  .sheet{
+    position:relative;width:210mm;height:297mm;margin:24px auto;padding:15mm 16mm 12mm;overflow:hidden;
+    display:flex;flex-direction:column;
+    background:radial-gradient(ellipse 80% 45% at 85% 0%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 70%),var(--felt);
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+    page-break-after:always;break-after:page;
+  }
+  .sheet:last-child{page-break-after:auto;break-after:auto}
+  /* la cuadrícula tenue de la mesa, que se desvanece hacia abajo */
+  .sheet::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:10mm 10mm;
+    -webkit-mask-image:linear-gradient(180deg,#000,transparent 45%);mask-image:linear-gradient(180deg,#000,transparent 45%);
+  }
+  .sheet > *{position:relative}
+
+  /* --- encabezado --- */
+  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10mm;margin-bottom:7mm}
+  .brand{display:flex;align-items:center;gap:3mm;font-family:var(--mono);font-size:8.5pt;letter-spacing:.02em;color:var(--bone)}
+  .brand img{width:8mm;height:auto}
+  .kicker{margin:0;font-family:var(--mono);font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);text-align:right;line-height:1.6}
+  .kicker b{color:var(--accent);font-weight:500}
+
+  /* --- título e intro --- */
+  h1{margin:0 0 3mm;font-family:var(--display);font-weight:400;font-size:34pt;line-height:.95;letter-spacing:-.01em;color:var(--white)}
+  h1 em{font-style:italic;color:var(--accent)}
+  h2{margin:0 0 3mm;font-family:var(--display);font-weight:400;font-size:20pt;line-height:1.05;color:var(--white)}
+  h2 em{font-style:italic;color:var(--accent)}
+  .intro{margin:0 0 7mm;max-width:150mm;font-size:9.5pt;line-height:1.55;color:var(--ash)}
+  p{font-size:9.5pt;line-height:1.55;color:var(--bone)}
+
+  /* --- datos del cliente: cuadrícula de líneas finas --- */
+  .data{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--hairline);margin-bottom:7mm}
+  .data div{padding:2.6mm 4mm 2.6mm 0;border-bottom:1px solid var(--hairline)}
+  .data div:nth-child(odd){border-right:1px solid var(--hairline)}
+  .data div:nth-child(even){padding-left:4mm}
+  .data .wide{grid-column:1 / -1;border-right:0 !important;padding-left:0 !important}
+  .label{display:block;margin-bottom:1mm;font-family:var(--mono);font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+  .val{display:block;font-size:10.5pt;color:var(--white)}
+
+  /* --- bloques numerados con bolas --- */
+  .blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-bottom:7mm}
+  .blocks.two{grid-template-columns:repeat(2,1fr)}
+  .block{padding:4.5mm 4.5mm 4mm;border:1px solid var(--hairline);border-radius:4mm;background:rgba(255,255,255,.025)}
+  .block h3{margin:0 0 2.5mm;display:flex;align-items:center;gap:2.5mm;font-family:var(--display);font-weight:400;font-size:15pt;line-height:1.1;color:var(--white)}
+  .ball{
+    flex:none;width:6mm;height:6mm;border-radius:50%;display:inline-grid;place-items:center;
+    background:var(--c);box-shadow:inset -1mm -1mm 1.6mm rgba(0,0,0,.4);
+  }
+  .ball::after{content:attr(data-n);width:3mm;height:3mm;border-radius:50%;background:#fffdf5;color:#111;display:grid;place-items:center;font:600 5.5pt var(--ui)}
+  .block ul{margin:0;padding:0;list-style:none}
+  .block li{position:relative;padding-left:3.5mm;margin-bottom:1.6mm;font-size:8.6pt;line-height:1.45;color:var(--bone)}
+  .block li::before{content:"";position:absolute;left:0;top:1.9mm;width:1.4mm;height:1.4mm;border-radius:50%;background:var(--c)}
+  .block p{margin:0;font-size:8.6pt}
+  .c1{--c:var(--b1)} .c2{--c:var(--b2)} .c3{--c:var(--b3)} .c4{--c:var(--b4)}
+  .c5{--c:var(--b5)} .c6{--c:var(--b6)} .c7{--c:var(--b7)} .c8{--c:#111;}
+
+  /* --- frase destacada --- */
+  .highlight{margin:0 0 7mm;padding:4mm 6mm;border-left:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,transparent);border-radius:0 3mm 3mm 0}
+  .highlight p{margin:0;font-family:var(--display);font-size:13pt;line-height:1.35;color:var(--white)}
+  .highlight em{font-style:italic;color:var(--accent)}
+
+  /* --- tabla (inversión, cronograma…) --- */
+  table{width:100%;border-collapse:collapse;margin-bottom:7mm;font-size:9pt}
+  th{text-align:left;padding:2mm 0;font-family:var(--mono);font-weight:400;font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--iron);border-bottom:1px solid var(--hairline)}
+  td{padding:2.4mm 0;border-bottom:1px solid var(--hairline);color:var(--bone);vertical-align:top}
+  td.num{text-align:right;font-family:var(--mono);color:var(--white)}
+  tr.total td{border-bottom:0;font-weight:500;color:var(--white)}
+
+  /* --- zona de papel: firmas o lo que el cliente escribe a mano.
+         Siempre al pie, con degradado desde el negro. --- */
+  .paper{
+    margin:auto -16mm -12mm;padding:13mm 16mm 7mm;color:var(--ink);
+    background:linear-gradient(180deg,var(--felt) 0,var(--paper) 11mm,var(--paper) 100%);
+  }
+  .signs{display:grid;grid-template-columns:1fr 1fr;gap:12mm;margin-bottom:6mm}
+  .sign .line{height:15mm;border-bottom:1px solid #8c9094}
+  .sign .name{margin-top:2mm;font-size:9.5pt;color:var(--ink)}
+  .sign .meta{margin-top:1mm;font-family:var(--mono);font-size:7pt;color:var(--ink-soft);letter-spacing:.04em}
+
+  /* --- pie --- */
+  .foot{display:flex;justify-content:space-between;align-items:center;padding-top:4mm;border-top:1px solid var(--hairline);font-family:var(--mono);font-size:7pt;color:var(--iron);margin-top:auto}
+  .paper .foot{border-top-color:var(--rule);margin-top:0}
+  .foot b{color:var(--bone);font-weight:400}
+  .paper .foot b{color:var(--ink)}
+
+  @media print{
+    body{background:var(--felt)}
+    .sheet{margin:0;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================ HOJA 1 ============================ -->
+<article class="sheet">
+  <header class="head">
+    <!-- El logo es la bola 16. Ruta relativa a esta carpeta (marca/). -->
+    <div class="brand"><img src="../assets/img/ball-16.png" alt="">16 Ball Creations</div>
+    <!-- Línea 1: categoría. Línea 2 (en acento): tipo de documento. -->
+    <p class="kicker">Propuesta<br><b>Café La Esquina</b></p>
+  </header>
+
+  <!-- Título: una frase corta; la parte emocional en cursiva y en acento. -->
+  <h1>Tu marca, <em>en orden.</em></h1>
+  <p class="intro">Después de nuestra llamada y de tu MIRA, esto es lo que proponemos. Primero ordenamos la marca para que cuente una sola historia; después construimos lo que necesita para llegar a tu gente.</p>
+
+  <section class="data" aria-label="Datos">
+    <div><span class="label">Cliente</span><span class="val">Ana Pérez</span></div>
+    <div><span class="label">Proyecto o marca</span><span class="val">Café La Esquina</span></div>
+    <div><span class="label">Preparado por</span><span class="val">Renne Castellanos · 16 Ball Creations</span></div>
+    <div><span class="label">Fecha</span><span class="val">2 de octubre de 2026</span></div>
+  </section>
+
+  <!-- Bloques numerados: cada uno lleva su bola (c1…c8) y su número. -->
+  <section class="blocks">
+    <div class="block c1">
+      <h3><span class="ball" data-n="1" aria-hidden="true"></span>Tu historia</h3>
+      <ul><li>De dónde viene la marca y por qué nació.</li><li>A quién le habla.</li></ul>
+    </div>
+    <div class="block c2">
+      <h3><span class="ball" data-n="2" aria-hidden="true"></span>Tu identidad</h3>
+      <ul><li>Logo, colores y estilo.</li><li>Una voz que se reconoce.</li></ul>
+    </div>
+    <div class="block c3">
+      <h3><span class="ball" data-n="3" aria-hidden="true"></span>Tus plataformas</h3>
+      <ul><li>Página web y redes alineadas.</li><li>Todo probado antes de entregar.</li></ul>
+    </div>
+  </section>
+
+  <table>
+    <thead><tr><th>Qué incluye</th><th style="text-align:right">Inversión</th></tr></thead>
+    <tbody>
+      <tr><td>Actualización de marca</td><td class="num">US$ 000</td></tr>
+      <tr><td>Página web</td><td class="num">US$ 000</td></tr>
+      <tr class="total"><td>Total</td><td class="num">US$ 000</td></tr>
+    </tbody>
+  </table>
+
+  <div class="highlight">
+    <p>Todo empieza por entender <em>tu marca</em>; lo demás sale de ahí.</p>
+  </div>
+
+  <!-- Zona de papel: SOLO si hay firmas o algo para escribir a mano. Va al pie.
+       Las líneas de firma van VACÍAS: ningún agente pega firmas. -->
+  <div class="paper">
+    <section class="signs">
+      <div class="sign"><div class="line"></div><div class="name">Ana Pérez</div><div class="meta">Documento:</div></div>
+      <div class="sign"><div class="line"></div><div class="name">Renne Castellanos</div><div class="meta">16 Ball Creations</div></div>
+    </section>
+    <footer class="foot">
+      <span>Contacto: <b>16ballcreations@gmail.com</b></span>
+      <span>Si no existe, lo creamos.</span>
+    </footer>
+  </div>
+</article>
+
+<!-- Para una hoja sin firmas, el pie va suelto, sin .paper:
+<article class="sheet">
+  ...
+  <footer class="foot"><span>Contacto: <b>16ballcreations@gmail.com</b></span><span>Si no existe, lo creamos.</span></footer>
+</article>
+-->
+
+</body>
+</html>

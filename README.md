@@ -48,6 +48,9 @@ Inter y JetBrains Mono).
 - `autorizacion/`: el documento de autorización de uso de imagen para los casos
   de estudio. Se completa escribiendo sobre la página o con un enlace
   (`?cliente=&proyecto=&web=&redes=&fecha=`) y se guarda como PDF. No se indexa
+- `marca/`: **guía para agentes de IA** que crean documentos PDF a nombre de la
+  marca (`GUIA-DOCUMENTOS-PDF.md`) y su plantilla (`plantilla-documento.html`).
+  No se publica. Para convertir: `node scripts/pdf.mjs entrada.html salida.pdf`
 - `v1/`: la versión anterior del sitio, publicada en /v1/
 - `v2/`: la primera iteración de la mesa (sin vidrio ni esfera), guardada como referencia en /v2/
 - La House of Demons vive en su propio repositorio: https://github.com/16ballcreations/lhod (se publica en /lhod/)

@@ -10,6 +10,7 @@
     "db:migrate:local": "wrangler d1 migrations apply 16bc --local"
   },
   "devDependencies": {
+    "playwright-core": "^1.63.0",
     "wrangler": "4.145.0"
   }
 }
