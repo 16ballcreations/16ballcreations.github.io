@@ -66,6 +66,15 @@ Todo vive en un Worker de Cloudflare llamado `page`
     la clave guardada como secreto `ADMIN_PASSWORD`.
 - Si el envío falla, los formularios abren el correo del visitante con todo
   armado, así que nada se pierde.
+- **Autorizaciones de uso de imagen** (casos de estudio):
+  1. En `/admin/firma` Renne registra su firma una vez (se le quita el fondo en
+     el navegador y se guarda en la tabla privada `settings`, nunca en el repo).
+  2. En `/admin/autorizacion` se crean con los datos del cliente; salen ya
+     firmadas por Renne y dan un enlace `/autorizacion/?t=…` para el cliente.
+  3. El cliente firma en la zona blanca, pone su documento y acepta. La firma es
+     definitiva; queda con fecha, IP y navegador en la tabla `authorizations`.
+     Cualquiera con el enlace puede volver a abrirla y guardarla en PDF.
+  Sin `?t=`, `/autorizacion/` sigue siendo la plantilla editable a mano.
 
 Comandos:
 
