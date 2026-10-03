@@ -10,6 +10,9 @@
    POST /admin/revisado         mark a submission as reviewed, or not
    GET  /admin/autorizacion     new authorisation: the data; Renne's signature goes on it
    POST /admin/autorizacion     create it, and get the client's link
+   GET  /admin/autorizacion/editar?id=   fix the data of one nobody signed yet
+   POST /admin/autorizacion/editar
+   POST /admin/autorizacion/borrar       delete one (signed or not), after a confirm
    GET  /admin/firma            Renne's registered signature: see it, replace it
    POST /admin/firma            save it (cleaned up in the browser before upload)
 
@@ -42,7 +45,7 @@ export default {
       if(request.method === "POST"){ return signAuthorization(request, env, url, auth[1]); }
       return json({ ok:false, error:"Método no permitido" }, 405, request, url);
     }
-    if(path === "/admin" || path === "/admin/revisado" || path === "/admin/autorizacion" || path === "/admin/firma"){
+    if(path === "/admin" || path.startsWith("/admin/")){
       return admin(request, env, url, path);
     }
     return env.ASSETS.fetch(request);
@@ -224,9 +227,17 @@ async function admin(request, env, url, path){
   if(path === "/admin/autorizacion"){
     return request.method === "POST" ? createAuthorization(request, env, url) : newAuthorizationPage(env);
   }
+  if(path === "/admin/autorizacion/editar"){
+    return request.method === "POST" ? updateAuthorization(request, env, url) : editAuthorizationPage(env, url);
+  }
+  if(path === "/admin/autorizacion/borrar" && request.method === "POST"){
+    return deleteAuthorization(request, env, url);
+  }
   if(path === "/admin/firma"){
     return request.method === "POST" ? saveSignature(request, env, url) : signaturePage(env, url);
   }
+
+  if(path !== "/admin"){ return Response.redirect(url.origin + "/admin", 303); }
 
   const tipo = ["mira", "contacto", "autorizaciones"].includes(url.searchParams.get("tipo")) ? url.searchParams.get("tipo") : "";
   const pendientes = url.searchParams.get("ver") === "pendientes";
@@ -303,6 +314,13 @@ function authorizationCard(r, origin, fresh){
         <input class="mono" value="${esc(link)}" readonly aria-label="Enlace para el cliente">
         <button type="button" data-copy="${esc(link)}">Copiar enlace</button>
         <a class="pill" href="${esc(link)}" target="_blank" rel="noopener">${signed ? "Ver y descargar" : "Ver"}</a>
+        ${signed ? "" : `<a class="pill" href="/admin/autorizacion/editar?id=${r.id}">Editar</a>`}
+        <form method="post" action="/admin/autorizacion/borrar" data-confirm="${signed
+          ? "Esta autorización ya está firmada. Si la borras, se pierde la firma del cliente y el enlace deja de funcionar. ¿Borrarla?"
+          : "¿Borrar esta autorización? El enlace que enviaste dejará de funcionar."}">
+          <input type="hidden" name="id" value="${r.id}">
+          <button type="submit" class="danger">Borrar</button>
+        </form>
       </div>
     </article>`;
 }
@@ -385,6 +403,60 @@ async function saveSignature(request, env, url){
   return Response.redirect(url.origin + "/admin/firma?guardada=1", 303);
 }
 
+async function editAuthorizationPage(env, url){
+  const id = parseInt(url.searchParams.get("id"), 10);
+  const r = id ? await env.DB.prepare("SELECT * FROM authorizations WHERE id = ?1").bind(id).first() : null;
+  if(!r){ return Response.redirect(url.origin + "/admin?tipo=autorizaciones", 303); }
+  if(r.client_signed_at){
+    return page("Ya está firmada", `
+      <p class="kicker"><a href="/admin?tipo=autorizaciones">← Panel</a></p>
+      <p class="empty">Esta autorización ya fue firmada, así que no se puede cambiar: el cliente firmó estos datos. Si hay un error, bórrala y crea una nueva para que la firme otra vez.</p>`, 409);
+  }
+  return page("Editar autorización", `
+    <header class="top">
+      <div>
+        <p class="kicker"><a href="/admin?tipo=autorizaciones">← Panel</a> · editar autorización</p>
+        <h1>Corrige <em>antes de que firme</em></h1>
+      </div>
+    </header>
+    <form class="newauth" method="post" action="/admin/autorizacion/editar">
+      <input type="hidden" name="id" value="${r.id}">
+      <label>Cliente<input name="cliente" required value="${esc(r.cliente)}"></label>
+      <label>Proyecto o marca<input name="proyecto" required value="${esc(r.proyecto)}"></label>
+      <label>Sitio web<input name="web" value="${esc(r.web || "")}" placeholder="https://"></label>
+      <label>Redes sociales<input name="redes" value="${esc(r.redes || "")}" placeholder="Instagram, TikTok… (enlaces o usuarios)"></label>
+      <p class="mono hintline">El enlace que ya enviaste sigue siendo el mismo; el cliente verá los datos corregidos.</p>
+      <button type="submit" class="go">Guardar cambios</button>
+    </form>`);
+}
+
+async function updateAuthorization(request, env, url){
+  const form = await request.formData();
+  const id = parseInt(form.get("id"), 10);
+  const field = (k, max) => String(form.get(k) || "").trim().slice(0, max);
+  const cliente = field("cliente", 160), proyecto = field("proyecto", 160);
+  const web = field("web", 300), redes = field("redes", 600);
+  if(!id || !cliente || !proyecto){
+    return page("Falta algo", `<p class="empty">Faltan el cliente o el proyecto. <a href="/admin/autorizacion/editar?id=${id || ""}">Volver</a></p>`, 400);
+  }
+  /* only an unsigned authorisation can change: the client signs what they read */
+  const result = await env.DB.prepare(
+    "UPDATE authorizations SET cliente = ?1, proyecto = ?2, web = ?3, redes = ?4 WHERE id = ?5 AND client_signed_at IS NULL"
+  ).bind(cliente, proyecto, web || null, redes || null, id).run();
+  if(!result.meta.changes){
+    return page("No se pudo editar", `<p class="empty">Esta autorización ya fue firmada o no existe, así que no se cambió. <a href="/admin?tipo=autorizaciones">Volver al panel</a></p>`, 409);
+  }
+  const row = await env.DB.prepare("SELECT token FROM authorizations WHERE id = ?1").bind(id).first();
+  return Response.redirect(url.origin + "/admin?tipo=autorizaciones&nueva=" + row.token, 303);
+}
+
+async function deleteAuthorization(request, env, url){
+  const form = await request.formData();
+  const id = parseInt(form.get("id"), 10);
+  if(id){ await env.DB.prepare("DELETE FROM authorizations WHERE id = ?1").bind(id).run(); }
+  return Response.redirect(url.origin + "/admin?tipo=autorizaciones", 303);
+}
+
 async function createAuthorization(request, env, url){
   const form = await request.formData();
   const field = (k, max) => String(form.get(k) || "").trim().slice(0, max);
@@ -404,6 +476,10 @@ async function createAuthorization(request, env, url){
 
 /* copy buttons in the list */
 const COPY_SCRIPT = `<script>
+document.addEventListener("submit", function(e){
+  var f = e.target.closest("form[data-confirm]");
+  if(f && !confirm(f.getAttribute("data-confirm"))){ e.preventDefault(); }
+});
 document.addEventListener("click", function(e){
   var b = e.target.closest("[data-copy]");
   if(!b){ return; }
@@ -575,6 +651,9 @@ function page(title, content, status = 200, script = ""){
   .tag.t-ok{background:var(--accent)} .tag.t-wait{background:var(--b1)}
   .sub.fresh{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .linkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+  .linkrow form{margin:0}
+  button.danger{border-color:rgba(255,92,110,.5);color:var(--b3)}
+  button.danger:hover{background:var(--b3);color:#000}
   .linkrow input{flex:1;min-width:260px;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#000;color:var(--bone)}
   .kicker a{color:var(--ash)}
   .newauth{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px}
