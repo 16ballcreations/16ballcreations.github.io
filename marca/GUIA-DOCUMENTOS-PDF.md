@@ -114,7 +114,9 @@ Escala en A4: título 34 pt · subtítulo 20 pt · bloque 15 pt · frase destaca
 ### La hoja
 
 - **A4 vertical**, márgenes de 15 mm arriba, 16 mm a los lados y 12 mm abajo.
-- Cuadrícula tenue de 10 mm arriba, que se desvanece hacia la mitad.
+- Cuadrícula tenue de 10 mm arriba, que se desvanece hacia la mitad. Va dibujada en vector (SVG) y sin
+  esquina de color: así el PDF pesa poco y abre rápido en cualquier visor. Evita `mask-image`,
+  degradados grandes de fondo y `filter`, que el PDF convierte en imagen y hacen pesado el archivo.
 - Líneas de 1 px; tarjetas con radio de 4 mm y fondo apenas más claro.
 - **La zona de papel** (fondo `#f7f6f2`, texto oscuro) va **al pie**, solo
   cuando hay firmas o algo que el cliente vaya a escribir a mano, porque las
