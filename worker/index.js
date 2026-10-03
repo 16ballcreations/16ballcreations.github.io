@@ -123,7 +123,7 @@ async function receive(request, env, url, kind){
 
 /* ---------- image-use authorisations ---------- */
 
-const MAX_SIG = 250 * 1024;
+const MAX_SIG = 400 * 1024;
 
 function newToken(){
   const bytes = new Uint8Array(16);
@@ -452,19 +452,27 @@ const SIG_SCRIPT = `<script>
       var minX = w, minY = h, maxX = -1, maxY = -1;
       for(var y = 0; y < h; y++){ for(var x = 0; x < w; x++){
         var i = (y * w + x) * 4, lum = .299 * p[i] + .587 * p[i + 1] + .114 * p[i + 2];
-        /* light paper becomes transparent; ink becomes near-black, its edge soft */
-        var a = lum > 205 ? 0 : lum < 120 ? 255 : Math.round((205 - lum) / 85 * 255);
+        /* light paper becomes transparent; ink becomes near-black. Only four
+           levels of ink, so scanner grain does not bloat the PNG */
+        var a = lum > 200 ? 0 : lum < 130 ? 255 : lum < 165 ? 176 : 96;
         p[i] = p[i + 1] = p[i + 2] = 17; p[i + 3] = a;
         if(a > 60){ if(x < minX){ minX = x; } if(x > maxX){ maxX = x; } if(y < minY){ minY = y; } if(y > maxY){ maxY = y; } }
       } }
       if(maxX < 0){ msg.textContent = "No encontramos trazos oscuros en la imagen."; return; }
       ctx.putImageData(d, 0, 0);
       var pad = 8, cw = maxX - minX + 1 + pad * 2, ch = maxY - minY + 1 + pad * 2;
-      var k = Math.min(1, 900 / cw), t = document.createElement("canvas");
-      t.width = Math.round(cw * k); t.height = Math.round(ch * k);
-      t.getContext("2d").drawImage(c, minX - pad, minY - pad, cw, ch, 0, 0, t.width, t.height);
-      out.value = t.toDataURL("image/png");
-      if(out.value.length > 240000){ msg.textContent = "La imagen quedó muy pesada; prueba con una foto más pequeña."; save.disabled = true; return; }
+      var t = document.createElement("canvas");
+      function render(k){
+        t.width = Math.max(1, Math.round(cw * k)); t.height = Math.max(1, Math.round(ch * k));
+        t.getContext("2d").drawImage(c, minX - pad, minY - pad, cw, ch, 0, 0, t.width, t.height);
+        return t.toDataURL("image/png");
+      }
+      /* 700 px wide is plenty for a signature line; if it is still heavy,
+         it shrinks a step at a time instead of being refused */
+      var k = Math.min(1, 700 / cw), v = render(k);
+      while(v.length > 200000 && k > .15){ k *= .85; v = render(k); }
+      if(v.length > 380000){ msg.textContent = "No logramos aligerar la imagen; prueba con un recorte más ajustado a la firma."; save.disabled = true; return; }
+      out.value = v;
       prev.src = out.value; prev.hidden = false;
       msg.textContent = "Así quedará. Si se ve bien, guárdala.";
       save.disabled = false;
