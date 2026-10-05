@@ -14,6 +14,7 @@ const SITE = [
   "assets",
   "mira",
   "autorizacion",
+  "testimonio",
   "v1",
   "v2"
 ];

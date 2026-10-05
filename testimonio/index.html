@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tu testimonio — 16 Ball Creations</title>
+<meta name="description" content="Tres preguntas sobre cómo te sentiste trabajando con 16 Ball Creations.">
+<meta name="theme-color" content="#000000">
+<!-- sent at the end of a project, to the person we worked with: it stays out of search -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/img/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css?v=6">
+<link rel="stylesheet" href="../assets/css/mira.css?v=1">
+<link rel="stylesheet" href="../assets/css/testimonio.css?v=1">
+</head>
+<body class="mira-page">
+
+<canvas class="orb" id="orb" aria-hidden="true" data-x=".86" data-y=".58" data-r=".42" data-a=".32"></canvas>
+
+<header class="site-header is-stuck" id="siteHeader">
+  <div class="wrap header-inner glass">
+    <a class="brand" href="../index.html" aria-label="16 Ball Creations, volver al inicio">
+      <img src="../assets/img/ball-16.png?v=2" alt="" width="340" height="341">
+      <span>16 Ball Creations</span>
+    </a>
+    <a class="btn btn-sm" href="../index.html">Volver al inicio</a>
+  </div>
+</header>
+
+<main class="mira" id="testimonio">
+
+  <!-- 0 · the intro -->
+  <section class="screen is-on" data-screen="intro" aria-labelledby="tTitle">
+    <div class="wrap">
+      <p class="kicker" id="tHello">La partida terminó</p>
+      <h1 class="mira-title" id="tTitle">Cuéntanos cómo <em>lo viviste.</em></h1>
+      <div class="intro-foot">
+        <p class="lead">Son tres preguntas, unos dos minutos. No buscamos números: queremos saber qué cambió en ti y cómo te sentiste en el camino. Tú decides si se publica y cómo.</p>
+        <button class="btn btn-primary btn-lg" type="button" data-go="next">Empezar <span aria-hidden="true">&rarr;</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- the three shots and the 8 -->
+  <section class="screen quiz" data-screen="quiz" aria-live="polite">
+    <div class="wrap">
+      <div class="rail-steps" aria-hidden="true">
+        <span class="ball" data-n="1"></span><span class="ball" data-n="2"></span><span class="ball" data-n="3"></span><span class="ball" data-n="8"></span>
+      </div>
+
+      <form class="card glass" id="quiz" novalidate>
+
+        <fieldset class="q" data-q="1" data-ball="1">
+          <legend><span class="q-n mono">Pregunta 1 de 3 · Tú</span><span class="q-title">¿Qué cambió en ti después de este proceso?</span></legend>
+          <p class="q-help">Cómo te ves hoy frente a tu marca, lo que te llevas. Si no sabes por dónde empezar, toca una:</p>
+          <div class="starters">
+            <button type="button" class="starter">Hoy siento que…</button>
+            <button type="button" class="starter">Antes de empezar…</button>
+            <button type="button" class="starter">Lo que más me llevo es…</button>
+          </div>
+          <label class="sr" for="tImpact">Qué cambió en ti</label>
+          <textarea class="mfield marea" id="tImpact" name="impacto" rows="4" placeholder="En tus palabras, como se lo contarías a alguien…" required></textarea>
+        </fieldset>
+
+        <fieldset class="q" data-q="2" data-ball="2">
+          <legend><span class="q-n mono">Pregunta 2 de 3 · El camino</span><span class="q-title">¿Cómo te sentiste durante el proceso?</span></legend>
+          <p class="q-help">Elige hasta tres. <span class="count mono" id="feelCount">0 de 3</span></p>
+          <div class="chips-pick" data-name="sentimientos" data-max="3">
+            <label><input type="checkbox" value="Que me escuchaban de verdad"><span>Que me escuchaban de verdad</span></label>
+            <label><input type="checkbox" value="Que entendían mi historia"><span>Que entendían mi historia</span></label>
+            <label><input type="checkbox" value="Acompañamiento en cada paso"><span>Acompañamiento en cada paso</span></label>
+            <label><input type="checkbox" value="Confianza para decidir"><span>Confianza para decidir</span></label>
+            <label><input type="checkbox" value="Claridad sobre mi marca"><span>Claridad sobre mi marca</span></label>
+            <label><input type="checkbox" value="Tranquilidad"><span>Tranquilidad</span></label>
+            <label><input type="checkbox" value="Entusiasmo por lo que venía"><span>Entusiasmo por lo que venía</span></label>
+            <label><input type="checkbox" value="Algo de incertidumbre al principio"><span>Algo de incertidumbre al principio</span></label>
+          </div>
+          <label class="field-label" for="tFeelMore">¿Algo más sobre cómo te sentiste? <span class="opt">Opcional</span></label>
+          <input class="mfield" id="tFeelMore" name="sentirMas" placeholder="Un momento, un detalle…">
+        </fieldset>
+
+        <fieldset class="q" data-q="3" data-ball="3">
+          <legend><span class="q-n mono">Pregunta 3 de 3 · La partida</span><span class="q-title">¿Qué tan bien te sientes con el resultado?</span></legend>
+          <p class="q-help">Elige una bola.</p>
+          <div class="rating" role="radiogroup" aria-label="Nivel de satisfacción, de 1 a 5">
+            <label><input type="radio" name="satisfaccion" value="1"><span class="ball" data-n="1"></span></label>
+            <label><input type="radio" name="satisfaccion" value="2"><span class="ball" data-n="2"></span></label>
+            <label><input type="radio" name="satisfaccion" value="3"><span class="ball" data-n="3"></span></label>
+            <label><input type="radio" name="satisfaccion" value="4"><span class="ball" data-n="4"></span></label>
+            <label><input type="radio" name="satisfaccion" value="5"><span class="ball" data-n="5"></span></label>
+          </div>
+          <p class="rating-say" id="ratingSay" aria-live="polite">&nbsp;</p>
+        </fieldset>
+
+        <fieldset class="q" data-q="4" data-ball="8">
+          <legend><span class="q-n mono">La bola 8 cierra la partida</span><span class="q-title">¿Cómo te presentamos?</span></legend>
+          <label class="field-label" for="tName">Tu nombre</label>
+          <input class="mfield" id="tName" name="nombre" autocomplete="name" placeholder="Tu nombre" required>
+          <label class="field-label" for="tBrand">Tu marca o proyecto <span class="opt">Opcional</span></label>
+          <input class="mfield" id="tBrand" name="marca" autocomplete="organization" placeholder="Ej.: Café La Esquina">
+          <p class="field-label">Si publicamos tu testimonio, ¿cómo quieres aparecer?</p>
+          <div class="publish" role="radiogroup" aria-label="Cómo aparecer">
+            <label><input type="radio" name="publicar" value="nombre"><span><b>Con mi nombre y mi marca</b>Tal como lo escribí arriba.</span></label>
+            <label><input type="radio" name="publicar" value="iniciales"><span><b>Solo con mis iniciales</b>Sin mi nombre completo.</span></label>
+            <label><input type="radio" name="publicar" value="no"><span><b>Prefiero que no se publique</b>Solo para ustedes.</span></label>
+          </div>
+        </fieldset>
+
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <div class="q-foot">
+          <button type="button" class="btn" id="qBack">&larr; Atrás</button>
+          <p class="q-msg mono" id="qMsg" role="status"></p>
+          <button type="submit" class="btn btn-primary" id="qNext">Siguiente <span aria-hidden="true">&rarr;</span></button>
+        </div>
+      </form>
+      <p class="q-hint mono">Enter para continuar · tus respuestas se guardan en este navegador mientras completas</p>
+    </div>
+  </section>
+
+  <!-- the preview: their words, as they would read on the site -->
+  <section class="screen" data-screen="done" aria-labelledby="doneTitle">
+    <div class="wrap">
+      <p class="kicker">Gracias por la partida</p>
+      <h2 class="mira-title" id="doneTitle">Así se vería <em>tu testimonio.</em></h2>
+      <figure class="quote glass" id="quote">
+        <div class="quote-balls" id="quoteBalls" aria-hidden="true"></div>
+        <blockquote id="quoteText"></blockquote>
+        <p class="quote-feel mono" id="quoteFeel"></p>
+        <figcaption id="quoteWho"></figcaption>
+      </figure>
+      <p class="quote-private mono" id="quotePrivate" hidden>Elegiste que no se publique: solo lo leeremos nosotros.</p>
+      <div class="done-foot">
+        <div class="actions">
+          <button class="btn btn-primary btn-lg" type="button" id="sendT">Enviar mi testimonio <span aria-hidden="true">&rarr;</span></button>
+          <button class="btn" type="button" id="editT">Cambiar algo</button>
+        </div>
+        <p class="q-msg mono" id="doneMsg" role="status">Usamos tus datos solo para responderte. No los compartimos con nadie.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="../assets/js/testimonio.js?v=1" defer></script>
+<script src="../assets/js/orb.js?v=2" defer></script>
+</body>
+</html>

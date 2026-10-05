@@ -45,6 +45,11 @@ Inter y JetBrains Mono).
   por correo, como el formulario de contacto. No está enlazado desde el inicio ni
   se indexa: se envía después de la primera llamada, a quien sabemos que podemos
   ayudar. El enlace personal saluda y rellena: `mira/?nombre=Ana&marca=Café%20La%20Esquina`
+- `testimonio/`: el formulario de testimonios, tres preguntas sobre la persona
+  (qué cambió en ella, cómo se sintió, satisfacción de 1 a 5) y cómo quiere
+  aparecer (con nombre, con iniciales o sin publicar). Se envía al cerrar un
+  proyecto con enlace personal: `testimonio/?nombre=Ana&marca=Café%20La%20Esquina`.
+  No se indexa. Llega a la tabla `testimonials` y se lee en `/admin`, pestaña Testimonios
 - `autorizacion/`: el documento de autorización de uso de imagen para los casos
   de estudio. Se completa escribiendo sobre la página o con un enlace
   (`?cliente=&proyecto=&web=&redes=&fecha=`) y se guarda como PDF. No se indexa

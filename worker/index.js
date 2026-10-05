@@ -4,6 +4,7 @@
 
    POST /api/mira               a MIRA, sent from /mira/
    POST /api/contacto           the contact form on the home page
+   POST /api/testimonio         a testimonial, sent from /testimonio/
    GET  /api/autorizacion/:t    an image-use authorisation, for its signing page
    POST /api/autorizacion/:t    the client signs it (once)
    GET  /admin                  the review panel (basic auth, ADMIN_PASSWORD secret)
@@ -13,6 +14,7 @@
    GET  /admin/autorizacion/editar?id=   fix the data of one nobody signed yet
    POST /admin/autorizacion/editar
    POST /admin/autorizacion/borrar       delete one (signed or not), after a confirm
+   POST /admin/testimonio/revisado | /borrar   review or delete a testimonial
    GET  /admin/firma            Renne's registered signature: see it, replace it
    POST /admin/firma            save it (cleaned up in the browser before upload)
 
@@ -36,6 +38,11 @@ export default {
     if(path === "/api/mira" || path === "/api/contacto"){
       if(request.method === "OPTIONS"){ return preflight(request, url); }
       if(request.method === "POST"){ return receive(request, env, url, path === "/api/mira" ? "mira" : "contacto"); }
+      return json({ ok:false, error:"Método no permitido" }, 405, request, url);
+    }
+    if(path === "/api/testimonio"){
+      if(request.method === "OPTIONS"){ return preflight(request, url); }
+      if(request.method === "POST"){ return receiveTestimonial(request, env, url); }
       return json({ ok:false, error:"Método no permitido" }, 405, request, url);
     }
     const auth = path.match(/^\/api\/autorizacion\/([a-f0-9]{32})$/);
@@ -121,6 +128,33 @@ async function receive(request, env, url, kind){
     "INSERT INTO submissions (kind, name, brand, contact, data) VALUES (?1, ?2, ?3, ?4, ?5)"
   ).bind(kind, name, brand, contact, JSON.stringify(data)).run();
 
+  return json({ ok:true }, 201, request, url);
+}
+
+/* ---------- testimonials ---------- */
+
+const PUBLISH = ["nombre", "iniciales", "no"];
+
+async function receiveTestimonial(request, env, url){
+  let body;
+  try{
+    const text = await request.text();
+    if(text.length > MAX_BODY){ return json({ ok:false, error:"Demasiado largo" }, 413, request, url); }
+    body = JSON.parse(text);
+  }catch(e){
+    return json({ ok:false, error:"No se pudo leer el envío" }, 400, request, url);
+  }
+  if(body && body.website){ return json({ ok:true }, 201, request, url); }
+  const d = clean(body && body.data) || {};
+  const nombre = String(d.nombre || "").slice(0, 160), impacto = String(d.impacto || "");
+  const satisfaccion = parseInt(d.satisfaccion, 10), publicar = String(d.publicar || "");
+  const sentimientos = Array.isArray(d.sentimientos) ? d.sentimientos.filter(x => typeof x === "string").slice(0, 3) : [];
+  if(!nombre || impacto.length < 10){ return json({ ok:false, error:"Faltan tu nombre o tu respuesta" }, 400, request, url); }
+  if(!(satisfaccion >= 1 && satisfaccion <= 5)){ return json({ ok:false, error:"Falta el nivel de satisfacción" }, 400, request, url); }
+  if(!PUBLISH.includes(publicar)){ return json({ ok:false, error:"Falta elegir cómo aparecer" }, 400, request, url); }
+  await env.DB.prepare(
+    "INSERT INTO testimonials (nombre, marca, impacto, sentimientos, sentir_mas, satisfaccion, publicar) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)"
+  ).bind(nombre, String(d.marca || "").slice(0, 160) || null, impacto, JSON.stringify(sentimientos), String(d.sentirMas || "").slice(0, 600) || null, satisfaccion, publicar).run();
   return json({ ok:true }, 201, request, url);
 }
 
@@ -233,13 +267,25 @@ async function admin(request, env, url, path){
   if(path === "/admin/autorizacion/borrar" && request.method === "POST"){
     return deleteAuthorization(request, env, url);
   }
+  if(path === "/admin/testimonio/revisado" && request.method === "POST"){
+    const form = await request.formData();
+    const id = parseInt(form.get("id"), 10), value = form.get("revisado") === "1" ? 1 : 0;
+    if(id){ await env.DB.prepare("UPDATE testimonials SET reviewed = ?1 WHERE id = ?2").bind(value, id).run(); }
+    return Response.redirect(url.origin + "/admin?tipo=testimonios", 303);
+  }
+  if(path === "/admin/testimonio/borrar" && request.method === "POST"){
+    const form = await request.formData();
+    const id = parseInt(form.get("id"), 10);
+    if(id){ await env.DB.prepare("DELETE FROM testimonials WHERE id = ?1").bind(id).run(); }
+    return Response.redirect(url.origin + "/admin?tipo=testimonios", 303);
+  }
   if(path === "/admin/firma"){
     return request.method === "POST" ? saveSignature(request, env, url) : signaturePage(env, url);
   }
 
   if(path !== "/admin"){ return Response.redirect(url.origin + "/admin", 303); }
 
-  const tipo = ["mira", "contacto", "autorizaciones"].includes(url.searchParams.get("tipo")) ? url.searchParams.get("tipo") : "";
+  const tipo = ["mira", "contacto", "autorizaciones", "testimonios"].includes(url.searchParams.get("tipo")) ? url.searchParams.get("tipo") : "";
   const pendientes = url.searchParams.get("ver") === "pendientes";
 
   const counts = await env.DB.prepare(
@@ -261,8 +307,19 @@ async function admin(request, env, url, path){
     return `<a class="pill${on ? " on" : ""}" href="${href}">${label}</a>`;
   };
 
+  const tc = await env.DB.prepare(
+    "SELECT COUNT(*) AS n, SUM(CASE WHEN reviewed = 0 THEN 1 ELSE 0 END) AS p FROM testimonials"
+  ).first();
+
   let list;
-  if(tipo === "autorizaciones"){
+  if(tipo === "testimonios"){
+    const { results } = await env.DB.prepare(
+      "SELECT * FROM testimonials" + (pendientes ? " WHERE reviewed = 0" : "") + " ORDER BY created_at DESC, id DESC LIMIT 200"
+    ).all();
+    list = results.length
+      ? results.map(testimonialCard).join("")
+      : `<p class="empty">No hay testimonios ${pendientes ? "sin revisar " : ""}todavía.</p>`;
+  } else if(tipo === "autorizaciones"){
     const where = pendientes ? " WHERE client_signed_at IS NULL" : "";
     const { results } = await env.DB.prepare(
       "SELECT id, token, created_at, cliente, proyecto, client_doc, client_signed_at FROM authorizations" + where + " ORDER BY created_at DESC, id DESC LIMIT 200"
@@ -288,15 +345,40 @@ async function admin(request, env, url, path){
         <p class="kicker">16 Ball Creations · panel</p>
         <h1>Lo que <em>ha llegado</em></h1>
       </div>
-      <p class="totals mono">MIRA ${c.mira.n} (${c.mira.p} sin revisar) · Contacto ${c.contacto.n} (${c.contacto.p} sin revisar) · Autorizaciones ${ac.n || 0} (${ac.p || 0} sin firmar)</p>
+      <p class="totals mono">MIRA ${c.mira.n} (${c.mira.p} sin revisar) · Contacto ${c.contacto.n} (${c.contacto.p} sin revisar) · Autorizaciones ${ac.n || 0} (${ac.p || 0} sin firmar) · Testimonios ${tc.n || 0} (${tc.p || 0} sin revisar)</p>
     </header>
     <nav class="filters">
-      ${link("", "", "Todo")}${link("mira", "", "MIRA")}${link("contacto", "", "Contacto")}${link("autorizaciones", "", "Autorizaciones")}${link(tipo, "pendientes", tipo === "autorizaciones" ? "Solo sin firmar" : "Solo sin revisar")}
+      ${link("", "", "Todo")}${link("mira", "", "MIRA")}${link("contacto", "", "Contacto")}${link("autorizaciones", "", "Autorizaciones")}${link("testimonios", "", "Testimonios")}${link(tipo, "pendientes", tipo === "autorizaciones" ? "Solo sin firmar" : "Solo sin revisar")}
       <a class="pill" href="/admin/firma">Tu firma</a>
       <a class="pill new" href="/admin/autorizacion">+ Nueva autorización</a>
     </nav>
     ${list}
   `, 200, COPY_SCRIPT);
+}
+
+const SATISFACTION = { 1:"No cumplió lo que esperaba", 2:"Le faltó algo", 3:"Cumplió", 4:"Me encantó", 5:"Superó lo que esperaba" };
+const APPEAR = { nombre:"Publicar con nombre y marca", iniciales:"Publicar solo con iniciales", no:"No publicar" };
+
+function testimonialCard(r){
+  let feelings = [];
+  try{ feelings = JSON.parse(r.sentimientos || "[]"); }catch(e){}
+  const balls = [1, 2, 3, 4, 5].map(n => `<i class="dot b${n}${n > r.satisfaccion ? " off" : ""}"></i>`).join("");
+  return `
+    <article class="sub${r.reviewed ? " done" : ""}">
+      <header>
+        <span class="tag ${r.publicar === "no" ? "t-wait" : "t-ok"}">${esc(APPEAR[r.publicar])}</span>
+        <h2>${esc(r.nombre)}</h2>
+        <span class="when mono">${esc(r.marca || "")}</span>
+      </header>
+      <blockquote class="tquote">“${esc(r.impacto).replace(/\n/g, "<br>")}”</blockquote>
+      <p class="mono tmeta"><span class="dots">${balls}</span> ${r.satisfaccion} de 5 · ${esc(SATISFACTION[r.satisfaccion])}</p>
+      ${feelings.length || r.sentir_mas ? `<p class="mono tmeta">Se sintió: ${esc(feelings.join(" · "))}${r.sentir_mas ? (feelings.length ? " — " : "") + esc(r.sentir_mas) : ""}</p>` : ""}
+      <p class="mono tmeta">${esc(whenInBogota(r.created_at))}</p>
+      <div class="linkrow">
+        <form method="post" action="/admin/testimonio/revisado"><input type="hidden" name="id" value="${r.id}"><input type="hidden" name="revisado" value="${r.reviewed ? "0" : "1"}"><button type="submit">${r.reviewed ? "Revisado ✓" : "Marcar como revisado"}</button></form>
+        <form method="post" action="/admin/testimonio/borrar" data-confirm="¿Borrar este testimonio? No se puede recuperar."><input type="hidden" name="id" value="${r.id}"><button type="submit" class="danger">Borrar</button></form>
+      </div>
+    </article>`;
 }
 
 function authorizationCard(r, origin, fresh){
@@ -652,6 +734,12 @@ function page(title, content, status = 200, script = ""){
   .sub.fresh{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .linkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
   .linkrow form{margin:0}
+  .tquote{margin:0 0 12px;font:400 1.5rem/1.25 "Instrument Serif",serif;color:var(--white)}
+  .tmeta{margin:0 0 6px !important}
+  .dots{display:inline-flex;gap:4px;vertical-align:-2px;margin-right:6px}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .dot.b1{background:var(--b1)} .dot.b2{background:var(--b2)} .dot.b3{background:var(--b3)} .dot.b4{background:var(--b4)} .dot.b5{background:#ff9d3d}
+  .dot.off{opacity:.18}
   button.danger{border-color:rgba(255,92,110,.5);color:var(--b3)}
   button.danger:hover{background:var(--b3);color:#000}
   .linkrow input{flex:1;min-width:260px;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#000;color:var(--bone)}
