@@ -1206,9 +1206,10 @@ function page(title, content, status = 200, script = "", shell = false){
   .pipeline b{font:400 1.9rem/1 "Instrument Serif",serif;color:var(--white);letter-spacing:0}
   .pipeline a.on{border-color:var(--accent)} .pipeline a.on b{color:var(--accent)}
   .pipeline a.today{border-style:dashed}
-  .search{margin-left:auto}
+  /* the search gets its own row, as wide as the filters above it */
+  .search{flex:1 1 100%;display:flex;margin-top:4px}
   .search input,.pform input,.pform select,.pform textarea{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:14px Inter,sans-serif}
-  .search input{min-width:260px;border-radius:999px}
+  .search input{flex:1;width:100%;min-width:0;border-radius:999px}
   .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-bottom:18px}
   .ptable{width:100%;border-collapse:collapse;font-size:14px}
   .ptable th{text-align:left;padding:10px 12px;font:400 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron);border-bottom:1px solid var(--line)}
