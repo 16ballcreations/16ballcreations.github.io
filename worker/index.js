@@ -276,13 +276,13 @@ async function admin(request, env, url, path){
     const form = await request.formData();
     const id = parseInt(form.get("id"), 10), value = form.get("revisado") === "1" ? 1 : 0;
     if(id){ await env.DB.prepare("UPDATE testimonials SET reviewed = ?1 WHERE id = ?2").bind(value, id).run(); }
-    return Response.redirect(url.origin + "/admin?tipo=testimonios", 303);
+    return Response.redirect(url.origin + "/admin/testimonios", 303);
   }
   if(path === "/admin/testimonio/borrar" && request.method === "POST"){
     const form = await request.formData();
     const id = parseInt(form.get("id"), 10);
     if(id){ await env.DB.prepare("DELETE FROM testimonials WHERE id = ?1").bind(id).run(); }
-    return Response.redirect(url.origin + "/admin?tipo=testimonios", 303);
+    return Response.redirect(url.origin + "/admin/testimonios", 303);
   }
   if(path === "/admin/firma"){
     return request.method === "POST" ? saveSignature(request, env, url) : signaturePage(env, url);
@@ -294,77 +294,165 @@ async function admin(request, env, url, path){
   if(path === "/admin/recursos"){ return resourcesPage(env); }
   if(path === "/admin/recurso"){ return resourcePage(env, url); }
 
-  if(path !== "/admin"){ return Response.redirect(url.origin + "/admin", 303); }
+  if(path === "/admin/mira" || path === "/admin/contacto"){ return submissionsPage(env, url, path.slice(7)); }
+  if(path === "/admin/autorizaciones"){ return authorizationsPage(env, url); }
+  if(path === "/admin/testimonios"){ return testimonialsPage(env, url); }
 
-  const tipo = ["mira", "contacto", "autorizaciones", "testimonios"].includes(url.searchParams.get("tipo")) ? url.searchParams.get("tipo") : "";
-  const pendientes = url.searchParams.get("ver") === "pendientes";
-
-  const counts = await env.DB.prepare(
-    "SELECT kind, COUNT(*) AS n, SUM(CASE WHEN reviewed = 0 THEN 1 ELSE 0 END) AS p FROM submissions GROUP BY kind"
-  ).all();
-  const c = { mira:{ n:0, p:0 }, contacto:{ n:0, p:0 } };
-  for(const r of counts.results){ c[r.kind] = { n:r.n, p:r.p || 0 }; }
-  const ac = await env.DB.prepare(
-    "SELECT COUNT(*) AS n, SUM(CASE WHEN client_signed_at IS NULL THEN 1 ELSE 0 END) AS p FROM authorizations"
-  ).first();
-
-  const here = url.pathname + url.search;
-  const link = (t, v, label) => {
-    const q = new URLSearchParams();
-    if(t){ q.set("tipo", t); }
-    if(v){ q.set("ver", v); }
-    const href = "/admin" + (q.toString() ? "?" + q : "");
-    const on = (t || "") === tipo && (v === "pendientes") === pendientes;
-    return `<a class="pill${on ? " on" : ""}" href="${href}">${label}</a>`;
-  };
-
-  const tc = await env.DB.prepare(
-    "SELECT COUNT(*) AS n, SUM(CASE WHEN reviewed = 0 THEN 1 ELSE 0 END) AS p FROM testimonials"
-  ).first();
-
-  let list;
-  if(tipo === "testimonios"){
-    const { results } = await env.DB.prepare(
-      "SELECT * FROM testimonials" + (pendientes ? " WHERE reviewed = 0" : "") + " ORDER BY created_at DESC, id DESC LIMIT 200"
-    ).all();
-    list = results.length
-      ? results.map(testimonialCard).join("")
-      : `<p class="empty">No hay testimonios ${pendientes ? "sin revisar " : ""}todavía.</p>`;
-  } else if(tipo === "autorizaciones"){
-    const where = pendientes ? " WHERE client_signed_at IS NULL" : "";
-    const { results } = await env.DB.prepare(
-      "SELECT id, token, created_at, cliente, proyecto, client_doc, client_signed_at FROM authorizations" + where + " ORDER BY created_at DESC, id DESC LIMIT 200"
-    ).all();
-    const fresh = url.searchParams.get("nueva");
-    list = results.length
-      ? results.map(r => authorizationCard(r, url.origin, fresh)).join("")
-      : `<p class="empty">No hay autorizaciones ${pendientes ? "esperando firma " : ""}todavía.</p>`;
-  } else {
-    const where = [], binds = [];
-    if(tipo){ where.push("kind = ?" + (binds.length + 1)); binds.push(tipo); }
-    if(pendientes){ where.push("reviewed = 0"); }
-    const sql = "SELECT * FROM submissions" + (where.length ? " WHERE " + where.join(" AND ") : "") + " ORDER BY created_at DESC, id DESC LIMIT 200";
-    const { results } = await env.DB.prepare(sql).bind(...binds).all();
-    list = results.length
-      ? results.map(r => card(r, here)).join("")
-      : `<p class="empty">No hay envíos ${pendientes ? "pendientes " : ""}todavía.</p>`;
+  /* the panel used to be one page with ?tipo=; old links land in the right section */
+  const legacy = url.searchParams.get("tipo");
+  if(path === "/admin" && SECTION_PATHS[legacy]){
+    const q = new URLSearchParams(url.search); q.delete("tipo");
+    return Response.redirect(url.origin + SECTION_PATHS[legacy] + (q.toString() ? "?" + q : ""), 303);
   }
+  if(path !== "/admin"){ return Response.redirect(url.origin + "/admin", 303); }
+  return dashboardPage(env);
+}
 
-  return page("Panel", `
-    <header class="top">
-      <div>
-        <p class="kicker">16 Ball Creations · panel</p>
-        <h1>Lo que <em>ha llegado</em></h1>
-      </div>
-      <p class="totals mono">MIRA ${c.mira.n} (${c.mira.p} sin revisar) · Contacto ${c.contacto.n} (${c.contacto.p} sin revisar) · Autorizaciones ${ac.n || 0} (${ac.p || 0} sin firmar) · Testimonios ${tc.n || 0} (${tc.p || 0} sin revisar)</p>
-    </header>
-    <nav class="filters">
-      ${link("", "", "Todo")}${link("mira", "", "MIRA")}${link("contacto", "", "Contacto")}${link("autorizaciones", "", "Autorizaciones")}${link("testimonios", "", "Testimonios")}${link(tipo, "pendientes", tipo === "autorizaciones" ? "Solo sin firmar" : "Solo sin revisar")}
-      <a class="pill" href="/admin/prospectos">Prospectos</a>
-      <a class="pill" href="/admin/firma">Tu firma</a>
-      <a class="pill new" href="/admin/autorizacion">+ Nueva autorización</a>
-    </nav>
-    ${list}
+/* ---------- the admin shell: a menu, one section per thing ---------- */
+
+const SECTION_PATHS = { mira:"/admin/mira", contacto:"/admin/contacto", autorizaciones:"/admin/autorizaciones", testimonios:"/admin/testimonios" };
+
+/* what needs attention, for the menu badges and the home page */
+async function attention(env){
+  const today = todayIso();
+  const [subs, auth, testi, pros, res] = await env.DB.batch([
+    env.DB.prepare("SELECT kind, COUNT(*) AS n, SUM(CASE WHEN reviewed = 0 THEN 1 ELSE 0 END) AS p FROM submissions GROUP BY kind"),
+    env.DB.prepare("SELECT COUNT(*) AS n, SUM(CASE WHEN client_signed_at IS NULL THEN 1 ELSE 0 END) AS p FROM authorizations"),
+    env.DB.prepare("SELECT COUNT(*) AS n, SUM(CASE WHEN reviewed = 0 THEN 1 ELSE 0 END) AS p FROM testimonials"),
+    env.DB.prepare(
+      "SELECT COUNT(*) AS n, SUM(CASE WHEN proxima_fecha IS NOT NULL AND proxima_fecha <= ?1 AND etapa NOT IN ('cliente', 'descartado') THEN 1 ELSE 0 END) AS p, " +
+      "SUM(CASE WHEN etapa = 'por_contactar' THEN 1 ELSE 0 END) AS nuevos, SUM(CASE WHEN etapa IN ('respondio', 'reunion', 'propuesta') THEN 1 ELSE 0 END) AS vivos, " +
+      "SUM(CASE WHEN etapa = 'cliente' THEN 1 ELSE 0 END) AS clientes FROM prospects"
+    ).bind(today),
+    env.DB.prepare("SELECT COUNT(*) AS n FROM resources")
+  ]);
+  const a = {
+    mira:{ n:0, p:0 }, contacto:{ n:0, p:0 },
+    autorizaciones:{ n:auth.results[0].n || 0, p:auth.results[0].p || 0 },
+    testimonios:{ n:testi.results[0].n || 0, p:testi.results[0].p || 0 },
+    prospectos:{ n:pros.results[0].n || 0, p:pros.results[0].p || 0, nuevos:pros.results[0].nuevos || 0, vivos:pros.results[0].vivos || 0, clientes:pros.results[0].clientes || 0 },
+    recursos:{ n:res.results[0].n || 0, p:0 }
+  };
+  for(const r of subs.results){ a[r.kind] = { n:r.n, p:r.p || 0 }; }
+  return a;
+}
+
+const MENU = [
+  { group:null, items:[{ key:"inicio", href:"/admin", label:"Inicio" }] },
+  { group:"Ventas", items:[
+    { key:"prospectos", href:"/admin/prospectos", label:"Prospectos", hint:"para hoy" },
+    { key:"recursos", href:"/admin/recursos", label:"Recursos" }
+  ]},
+  { group:"Lo que llega", items:[
+    { key:"contacto", href:"/admin/contacto", label:"Contacto", hint:"sin revisar" }
+  ]},
+  { group:"Clientes", items:[
+    { key:"mira", href:"/admin/mira", label:"MIRA", hint:"sin revisar" },
+    { key:"autorizaciones", href:"/admin/autorizaciones", label:"Autorizaciones", hint:"sin firmar" },
+    { key:"testimonios", href:"/admin/testimonios", label:"Testimonios", hint:"sin revisar" }
+  ]},
+  { group:"Ajustes", items:[{ key:"firma", href:"/admin/firma", label:"Tu firma" }] }
+];
+
+async function adminPage(env, active, title, content, status = 200, script = ""){
+  let a = null;
+  try{ a = await attention(env); }catch(e){}
+  const nav = MENU.map(g => `
+    ${g.group ? `<p class="nav-group">${g.group}</p>` : ""}
+    ${g.items.map(it => {
+      const p = a && a[it.key] ? a[it.key].p : 0;
+      return `<a class="nav-item${it.key === active ? " on" : ""}" href="${it.href}"${it.key === active ? ' aria-current="page"' : ""}>
+        <span>${it.label}</span>${p ? `<span class="badge" title="${p} ${it.hint || ""}">${p}</span>` : ""}</a>`;
+    }).join("")}`).join("");
+  return page(title, `
+    <div class="shell">
+      <aside class="side">
+        <a class="side-brand" href="/admin"><img src="/assets/img/ball-16.png" alt="">16 Ball Creations<span>panel</span></a>
+        <nav class="side-nav" aria-label="Secciones del panel">${nav}</nav>
+        <a class="side-site" href="/" target="_blank" rel="noopener">Ver el sitio ↗</a>
+      </aside>
+      <div class="content">${content}</div>
+    </div>`, status, script, true);
+}
+
+/* ---------- home: what needs you today ---------- */
+async function dashboardPage(env){
+  const a = await attention(env);
+  const today = todayIso();
+  const due = (await env.DB.prepare(
+    "SELECT id, negocio, proxima_accion, proxima_fecha FROM prospects WHERE proxima_fecha IS NOT NULL AND proxima_fecha <= ?1 " +
+    "AND etapa NOT IN ('cliente', 'descartado') ORDER BY proxima_fecha, rank LIMIT 8"
+  ).bind(today).all()).results;
+  const tile = (href, label, big, line, hot) => `
+    <a class="tile${hot ? " hot" : ""}" href="${href}"><span class="tile-label">${label}</span><b>${big}</b><span class="tile-line">${line}</span></a>`;
+  const plural = (n, one, many) => n + " " + (n === 1 ? one : many);
+  return adminPage(env, "inicio", "Panel", `
+    <header class="top"><div><p class="kicker">16 Ball Creations · panel</p><h1>Lo que <em>te espera</em></h1></div></header>
+    <section class="tiles">
+      ${tile("/admin/prospectos?ver=hoy", "Prospectos para hoy", a.prospectos.p, `${plural(a.prospectos.vivos, "conversación abierta", "conversaciones abiertas")} · ${plural(a.prospectos.nuevos, "por contactar", "por contactar")}`, a.prospectos.p)}
+      ${tile("/admin/contacto?ver=pendientes", "Contacto sin revisar", a.contacto.p, plural(a.contacto.n, "mensaje en total", "mensajes en total"), a.contacto.p)}
+      ${tile("/admin/mira?ver=pendientes", "MIRA sin revisar", a.mira.p, plural(a.mira.n, "recibida", "recibidas"), a.mira.p)}
+      ${tile("/admin/autorizaciones?ver=pendientes", "Autorizaciones sin firmar", a.autorizaciones.p, plural(a.autorizaciones.n, "creada", "creadas"), 0)}
+      ${tile("/admin/testimonios?ver=pendientes", "Testimonios sin revisar", a.testimonios.p, plural(a.testimonios.n, "recibido", "recibidos"), a.testimonios.p)}
+      ${tile("/admin/prospectos", "Clientes desde prospectos", a.prospectos.clientes, plural(a.prospectos.n, "prospecto en la base", "prospectos en la base"), 0)}
+    </section>
+    <section class="sub">
+      <h3>Seguimientos de prospectos para hoy</h3>
+      ${due.length ? `<ul class="timeline">${due.map(r => `<li><a class="biz" href="/admin/prospecto?id=${encodeURIComponent(r.id)}">${esc(r.negocio)}</a>
+        <span class="mono${r.proxima_fecha < today ? " due" : ""}"> · ${esc(r.proxima_accion || "Seguimiento")} · ${esc(r.proxima_fecha)}</span></li>`).join("")}</ul>`
+        : `<p class="empty">Nada pendiente para hoy.</p>`}
+    </section>`);
+}
+
+/* the filter pills every list shares: all, or only what is pending */
+function pendingPills(base, pendientes, label){
+  return `<nav class="filters"><a class="pill${pendientes ? "" : " on"}" href="${base}">Todo</a><a class="pill${pendientes ? " on" : ""}" href="${base}?ver=pendientes">${label}</a></nav>`;
+}
+function sectionHead(group, h1, extra = ""){
+  return `<header class="top"><div><p class="kicker">${group}</p><h1>${h1}</h1></div>${extra}</header>`;
+}
+
+/* ---------- MIRA and contact ---------- */
+async function submissionsPage(env, url, kind){
+  const pendientes = url.searchParams.get("ver") === "pendientes";
+  const { results } = await env.DB.prepare(
+    "SELECT * FROM submissions WHERE kind = ?1" + (pendientes ? " AND reviewed = 0" : "") + " ORDER BY created_at DESC, id DESC LIMIT 200"
+  ).bind(kind).all();
+  const here = url.pathname + url.search;
+  const isMira = kind === "mira";
+  return adminPage(env, kind, isMira ? "MIRA" : "Contacto", `
+    ${sectionHead(isMira ? "Clientes · MIRA" : "Lo que llega · contacto", isMira ? "Las <em>MIRA</em>" : "Lo que <em>escriben</em>",
+      `<p class="totals mono">${isMira ? "Marca, Imagen, Redes y Alineación, después de la primera llamada" : "El formulario de contacto del sitio"}</p>`)}
+    ${pendingPills("/admin/" + kind, pendientes, "Solo sin revisar")}
+    ${results.length ? results.map(r => card(r, here)).join("") : `<p class="empty">No hay ${isMira ? "MIRA" : "mensajes"} ${pendientes ? "sin revisar " : ""}todavía.</p>`}
+  `, 200, COPY_SCRIPT);
+}
+
+/* ---------- authorisations ---------- */
+async function authorizationsPage(env, url){
+  const pendientes = url.searchParams.get("ver") === "pendientes";
+  const { results } = await env.DB.prepare(
+    "SELECT id, token, created_at, cliente, proyecto, client_doc, client_signed_at FROM authorizations" +
+    (pendientes ? " WHERE client_signed_at IS NULL" : "") + " ORDER BY created_at DESC, id DESC LIMIT 200"
+  ).all();
+  const fresh = url.searchParams.get("nueva");
+  return adminPage(env, "autorizaciones", "Autorizaciones", `
+    ${sectionHead("Clientes · autorizaciones", "Uso de <em>imagen</em>", `<a class="pill new" href="/admin/autorizacion">+ Nueva autorización</a>`)}
+    ${pendingPills("/admin/autorizaciones", pendientes, "Solo sin firmar")}
+    ${results.length ? results.map(r => authorizationCard(r, url.origin, fresh)).join("") : `<p class="empty">No hay autorizaciones ${pendientes ? "esperando firma " : ""}todavía.</p>`}
+  `, 200, COPY_SCRIPT);
+}
+
+/* ---------- testimonials ---------- */
+async function testimonialsPage(env, url){
+  const pendientes = url.searchParams.get("ver") === "pendientes";
+  const { results } = await env.DB.prepare(
+    "SELECT * FROM testimonials" + (pendientes ? " WHERE reviewed = 0" : "") + " ORDER BY created_at DESC, id DESC LIMIT 200"
+  ).all();
+  return adminPage(env, "testimonios", "Testimonios", `
+    ${sectionHead("Clientes · testimonios", "Lo que <em>vivieron</em>", `<p class="totals mono">Se envían al cerrar un proyecto: /testimonio/?nombre=…&amp;marca=…</p>`)}
+    ${pendingPills("/admin/testimonios", pendientes, "Solo sin revisar")}
+    ${results.length ? results.map(testimonialCard).join("") : `<p class="empty">No hay testimonios ${pendientes ? "sin revisar " : ""}todavía.</p>`}
   `, 200, COPY_SCRIPT);
 }
 
@@ -426,10 +514,10 @@ async function registeredSignature(env){
 
 async function newAuthorizationPage(env){
   const sig = await registeredSignature(env);
-  return page("Nueva autorización", `
+  return adminPage(env, "autorizaciones", "Nueva autorización", `
     <header class="top">
       <div>
-        <p class="kicker"><a href="/admin?tipo=autorizaciones">← Panel</a> · nueva autorización</p>
+        <p class="kicker"><a href="/admin/autorizaciones">← Autorizaciones</a> · nueva autorización</p>
         <h1>Va firmada <em>por ti</em></h1>
       </div>
     </header>
@@ -462,10 +550,10 @@ async function newAuthorizationPage(env){
 async function signaturePage(env, url){
   const sig = await registeredSignature(env);
   const saved = url.searchParams.get("guardada") === "1";
-  return page("Tu firma", `
+  return adminPage(env, "firma", "Tu firma", `
     <header class="top">
       <div>
-        <p class="kicker"><a href="/admin?tipo=autorizaciones">← Panel</a> · tu firma</p>
+        <p class="kicker">Ajustes · tu firma</p>
         <h1>Tu firma, <em>una sola vez</em></h1>
       </div>
     </header>
@@ -488,7 +576,7 @@ async function saveSignature(request, env, url){
   const form = await request.formData();
   const firma = String(form.get("firma") || "");
   if(!isSignature(firma)){
-    return page("Falta la firma", `<p class="empty">No llegó una firma válida. <a href="/admin/firma">Volver</a></p>`, 400);
+    return adminPage(env, "firma", "Falta la firma", `<p class="empty">No llegó una firma válida. <a href="/admin/firma">Volver</a></p>`, 400);
   }
   await env.DB.prepare(
     "INSERT INTO settings (key, value, updated_at) VALUES ('renne_sig', ?1, datetime('now')) " +
@@ -500,16 +588,16 @@ async function saveSignature(request, env, url){
 async function editAuthorizationPage(env, url){
   const id = parseInt(url.searchParams.get("id"), 10);
   const r = id ? await env.DB.prepare("SELECT * FROM authorizations WHERE id = ?1").bind(id).first() : null;
-  if(!r){ return Response.redirect(url.origin + "/admin?tipo=autorizaciones", 303); }
+  if(!r){ return Response.redirect(url.origin + "/admin/autorizaciones", 303); }
   if(r.client_signed_at){
-    return page("Ya está firmada", `
-      <p class="kicker"><a href="/admin?tipo=autorizaciones">← Panel</a></p>
+    return adminPage(env, "autorizaciones", "Ya está firmada", `
+      <p class="kicker"><a href="/admin/autorizaciones">← Autorizaciones</a></p>
       <p class="empty">Esta autorización ya fue firmada, así que no se puede cambiar: el cliente firmó estos datos. Si hay un error, bórrala y crea una nueva para que la firme otra vez.</p>`, 409);
   }
-  return page("Editar autorización", `
+  return adminPage(env, "autorizaciones", "Editar autorización", `
     <header class="top">
       <div>
-        <p class="kicker"><a href="/admin?tipo=autorizaciones">← Panel</a> · editar autorización</p>
+        <p class="kicker"><a href="/admin/autorizaciones">← Autorizaciones</a> · editar autorización</p>
         <h1>Corrige <em>antes de que firme</em></h1>
       </div>
     </header>
@@ -531,24 +619,24 @@ async function updateAuthorization(request, env, url){
   const cliente = field("cliente", 160), proyecto = field("proyecto", 160);
   const web = field("web", 300), redes = field("redes", 600);
   if(!id || !cliente || !proyecto){
-    return page("Falta algo", `<p class="empty">Faltan el cliente o el proyecto. <a href="/admin/autorizacion/editar?id=${id || ""}">Volver</a></p>`, 400);
+    return adminPage(env, "autorizaciones", "Falta algo", `<p class="empty">Faltan el cliente o el proyecto. <a href="/admin/autorizacion/editar?id=${id || ""}">Volver</a></p>`, 400);
   }
   /* only an unsigned authorisation can change: the client signs what they read */
   const result = await env.DB.prepare(
     "UPDATE authorizations SET cliente = ?1, proyecto = ?2, web = ?3, redes = ?4 WHERE id = ?5 AND client_signed_at IS NULL"
   ).bind(cliente, proyecto, web || null, redes || null, id).run();
   if(!result.meta.changes){
-    return page("No se pudo editar", `<p class="empty">Esta autorización ya fue firmada o no existe, así que no se cambió. <a href="/admin?tipo=autorizaciones">Volver al panel</a></p>`, 409);
+    return adminPage(env, "autorizaciones", "No se pudo editar", `<p class="empty">Esta autorización ya fue firmada o no existe, así que no se cambió. <a href="/admin/autorizaciones">Volver al panel</a></p>`, 409);
   }
   const row = await env.DB.prepare("SELECT token FROM authorizations WHERE id = ?1").bind(id).first();
-  return Response.redirect(url.origin + "/admin?tipo=autorizaciones&nueva=" + row.token, 303);
+  return Response.redirect(url.origin + "/admin/autorizaciones?nueva=" + row.token, 303);
 }
 
 async function deleteAuthorization(request, env, url){
   const form = await request.formData();
   const id = parseInt(form.get("id"), 10);
   if(id){ await env.DB.prepare("DELETE FROM authorizations WHERE id = ?1").bind(id).run(); }
-  return Response.redirect(url.origin + "/admin?tipo=autorizaciones", 303);
+  return Response.redirect(url.origin + "/admin/autorizaciones", 303);
 }
 
 async function createAuthorization(request, env, url){
@@ -559,13 +647,13 @@ async function createAuthorization(request, env, url){
   let firma = String(form.get("firma") || "");
   if(!firma && form.get("registrada") === "1"){ firma = (await registeredSignature(env)) || ""; }
   if(!cliente || !proyecto || !isSignature(firma)){
-    return page("Falta algo", `<p class="empty">Faltan el cliente, el proyecto o tu firma. <a href="/admin/autorizacion">Volver</a></p>`, 400);
+    return adminPage(env, "autorizaciones", "Falta algo", `<p class="empty">Faltan el cliente, el proyecto o tu firma. <a href="/admin/autorizacion">Volver</a></p>`, 400);
   }
   const token = newToken();
   await env.DB.prepare(
     "INSERT INTO authorizations (token, cliente, proyecto, web, redes, fecha, renne_sig) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)"
   ).bind(token, cliente, proyecto, web || null, redes || null, todayInBogota(), firma).run();
-  return Response.redirect(url.origin + "/admin?tipo=autorizaciones&nueva=" + token, 303);
+  return Response.redirect(url.origin + "/admin/autorizaciones?nueva=" + token, 303);
 }
 
 /* ---------- prospects ---------- */
@@ -602,13 +690,13 @@ async function prospectsPage(env, url){
   const head = (h1, extra = "") => `
     <header class="top">
       <div>
-        <p class="kicker"><a href="/admin">← Panel</a> · prospectos</p>
+        <p class="kicker">Ventas · prospectos</p>
         <h1>${h1}</h1>
       </div>
       ${extra}
     </header>`;
   if(!campaigns.length){
-    return page("Prospectos", head("Todavía <em>no hay prospectos</em>") + `
+    return adminPage(env, "prospectos", "Prospectos", head("Todavía <em>no hay prospectos</em>") + `
       <p class="empty">Carga una campaña desde su carpeta privada:<br>
       <code>node scripts/prospectos-sql.mjs prospectos/&lt;campaña&gt;</code> y después
       <code>npx wrangler d1 execute 16bc --remote --file tmp/prospectos-&lt;campaña&gt;.sql</code></p>`);
@@ -659,7 +747,7 @@ async function prospectsPage(env, url){
       <td class="mono${r.proxima_fecha && r.proxima_fecha <= today ? " due" : ""}">${esc(r.proxima_accion || "")}${r.proxima_fecha ? "<br>" + esc(r.proxima_fecha) : ""}</td>
     </tr>`).join("");
 
-  return page("Prospectos", head("Los <em>prospectos</em>", `
+  return adminPage(env, "prospectos", "Prospectos", head("Los <em>prospectos</em>", `
       <p class="totals mono">${campaigns.map(c => `<a class="${c.campaign === campaign ? "on" : ""}" href="/admin/prospectos?c=${esc(c.campaign)}">${esc(c.campaign)} (${c.n})</a>`).join(" · ")}<br>
       <a href="/admin/recursos">Recursos de las campañas →</a></p>`) + `
     <nav class="pipeline">
@@ -705,7 +793,7 @@ async function prospectPage(env, url){
   const timeline = events.map(e => `
     <li><span class="mono">${esc(whenInBogota(e.created_at))} · ${esc(EVENTS[e.tipo] || e.tipo)}</span>${esc(e.texto).replace(/\n/g, "<br>")}</li>`).join("");
 
-  return page(r.negocio, `
+  return adminPage(env, "prospectos", r.negocio, `
     <header class="top">
       <div>
         <p class="kicker"><a href="${back}">← Prospectos</a> · ${esc(r.campaign)} · ${esc(r.code)} · puesto ${r.rank ?? "–"}</p>
@@ -813,10 +901,10 @@ async function updateProspect(request, env, url){
 
 async function resourcesPage(env){
   const { results } = await env.DB.prepare("SELECT slug, campaign, title, updated_at FROM resources ORDER BY campaign DESC, title").all();
-  return page("Recursos", `
+  return adminPage(env, "recursos", "Recursos", `
     <header class="top">
       <div>
-        <p class="kicker"><a href="/admin/prospectos">← Prospectos</a> · recursos</p>
+        <p class="kicker">Ventas · recursos</p>
         <h1>Los <em>recursos</em></h1>
       </div>
     </header>
@@ -831,7 +919,7 @@ async function resourcesPage(env){
 async function resourcePage(env, url){
   const r = await env.DB.prepare("SELECT * FROM resources WHERE slug = ?1").bind(url.searchParams.get("slug") || "").first();
   if(!r){ return Response.redirect(url.origin + "/admin/recursos", 303); }
-  return page(r.title, `
+  return adminPage(env, "recursos", r.title, `
     <p class="kicker"><a href="/admin/recursos">← Recursos</a> · ${esc(r.campaign || "")}</p>
     <article class="md">${markdown(r.body)}</article>
   `);
@@ -1019,7 +1107,7 @@ function card(r, here){
     </article>`;
 }
 
-function page(title, content, status = 200, script = ""){
+function page(title, content, status = 200, script = "", shell = false){
   return new Response(`<!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow"><title>${esc(title)} · 16 Ball Creations</title>
@@ -1140,8 +1228,41 @@ function page(title, content, status = 200, script = ""){
   .md blockquote{margin:12px 0;padding:12px 16px;border-left:2px solid var(--accent);background:rgba(255,255,255,.03);color:var(--bone)}
   .md a{color:var(--accent)} .md li.deep{margin-left:22px;color:var(--ash)}
   @media (max-width:900px){.pipeline{grid-template-columns:repeat(4,1fr)}.pgrid{grid-template-columns:1fr}}
-  @media (max-width:720px){.mira{grid-template-columns:1fr}.when{margin-left:0}.newauth{grid-template-columns:1fr}}
-</style></head><body><main>${content}</main>${script}</body></html>`, {
+  @media (max-width:720px){.pipeline{grid-template-columns:repeat(2,1fr)}.search{margin-left:0;width:100%}.search input{min-width:0;width:100%}.tiles{grid-template-columns:1fr}.mira{grid-template-columns:1fr}.when{margin-left:0}.newauth{grid-template-columns:1fr}}
+  /* the admin shell: menu on the left, the section on the right */
+  main.wide{max-width:none;padding:0}
+  .shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+  .side{position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:18px;padding:26px 16px;border-right:1px solid var(--line);background:#030404}
+  .side-brand{display:flex;align-items:center;gap:10px;padding:0 8px;color:var(--white);text-decoration:none;font:500 13px "JetBrains Mono",monospace}
+  .side-brand img{width:26px;height:auto}
+  .side-brand span{margin-left:auto;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+  .side-nav{display:flex;flex-direction:column;gap:2px}
+  .nav-group{margin:16px 8px 6px;font:11px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+  .nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:10px;color:var(--ash);text-decoration:none;font-size:14px}
+  .nav-item:hover{background:rgba(255,255,255,.04);color:var(--white)}
+  .nav-item.on{background:rgba(58,211,137,.1);color:var(--white);box-shadow:inset 2px 0 0 var(--accent)}
+  .badge{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--b1);color:#000;font:600 11px "JetBrains Mono",monospace;text-align:center}
+  .side-site{margin-top:auto;padding:8px;color:var(--iron);font:12px "JetBrains Mono",monospace;text-decoration:none}
+  .side-site:hover{color:var(--accent)}
+  .content{min-width:0;padding:40px 40px 80px;max-width:1240px}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+  .tile{display:flex;flex-direction:column;gap:4px;padding:18px 20px;border:1px solid var(--line);border-radius:16px;text-decoration:none;background:rgba(255,255,255,.02)}
+  .tile:hover{border-color:var(--ash)}
+  .tile.hot{border-color:var(--b1)}
+  .tile-label{font:11px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
+  .tile b{font:400 3rem/1 "Instrument Serif",serif;color:var(--white)}
+  .tile.hot b{color:var(--b1)}
+  .tile-line{font-size:13px;color:var(--ash)}
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr}
+    .side{position:sticky;top:0;z-index:5;height:auto;flex-direction:row;align-items:center;gap:10px;padding:10px 14px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto}
+    .side-brand span,.side-site,.nav-group{display:none}
+    .side-nav{flex-direction:row;gap:4px}
+    .nav-item{white-space:nowrap;padding:7px 10px}
+    .content{padding:24px 16px 60px}
+    .tiles{grid-template-columns:1fr 1fr}
+  }
+</style></head><body><main${shell ? ' class="wide"' : ""}>${content}</main>${script}</body></html>`, {
     status,
     headers:{ "Content-Type":"text/html; charset=utf-8", "Cache-Control":"no-store", "X-Robots-Tag":"noindex, nofollow" }
   });

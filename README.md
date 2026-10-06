@@ -70,8 +70,12 @@ Todo vive en un Worker de Cloudflare llamado `page`
 - `worker/index.js` atiende lo que no es un archivo:
   - `POST /api/mira` y `POST /api/contacto` guardan cada envío en la base D1
     `16bc` (tabla `submissions`, ver `migrations/`).
-  - `/admin` es el panel para leer los envíos y marcarlos como revisados. Pide
-    la clave guardada como secreto `ADMIN_PASSWORD`.
+  - `/admin` es el panel. Pide la clave guardada como secreto `ADMIN_PASSWORD`.
+    Tiene un menú lateral con una sección para cada cosa: Inicio (lo pendiente
+    de hoy), Ventas (`/admin/prospectos`, `/admin/recursos`), Lo que llega
+    (`/admin/contacto`), Clientes (`/admin/mira`, `/admin/autorizaciones`,
+    `/admin/testimonios`) y Ajustes (`/admin/firma`). Los enlaces viejos
+    `/admin?tipo=…` llevan a la sección nueva.
 - Si el envío falla, los formularios abren el correo del visitante con todo
   armado, así que nada se pierde.
 - **Autorizaciones de uso de imagen** (casos de estudio):
