@@ -667,7 +667,26 @@ const NETWORK = {
   verificado:"Redes verificadas", probable:"Redes probables", no_confirmado:"Redes sin confirmar",
   sin_redes:"Sin redes", fuera_de_zona:"Fuera de la zona", requiere_sesion:"Requiere sesión"
 };
-const PRIORITIES = ["A", "B", "C", "D", "Descartar"];
+/* The order to go after prospects, as pool balls: 1 first, 5 last, and the 8
+   for the discarded (6 and 7 are skipped on purpose). The research ranks them
+   A to D; D is wide, so it splits by score: 25 and up is the 4, below is the 5.
+   Derived when shown, so reloading a campaign keeps working. */
+const BALLS = {
+  1:{ label:"Primero", sql:"prioridad = 'A'" },
+  2:{ label:"Muy probable", sql:"prioridad = 'B'" },
+  3:{ label:"Probable", sql:"prioridad = 'C'" },
+  4:{ label:"Poco probable", sql:"prioridad = 'D' AND score >= 25" },
+  5:{ label:"El menos probable", sql:"prioridad = 'D' AND (score < 25 OR score IS NULL)" },
+  8:{ label:"Descartado", sql:"prioridad = 'Descartar'" }
+};
+const OLD_PRIORITY = { A:"1", B:"2", C:"3", Descartar:"8" };
+function ballOf(prioridad, score){
+  if(prioridad === "A"){ return 1; }
+  if(prioridad === "B"){ return 2; }
+  if(prioridad === "C"){ return 3; }
+  if(prioridad === "D"){ return score >= 25 ? 4 : 5; }
+  return 8;
+}
 
 function todayIso(){
   return new Date().toLocaleDateString("en-CA", { timeZone:"America/Bogota" });
@@ -679,8 +698,9 @@ function plusDays(iso, n){
 function stageTag(etapa){
   return `<span class="tag st-${esc(etapa)}">${esc(STAGES[etapa] || etapa)}</span>`;
 }
-function priorityTag(p){
-  return `<span class="tag pr-${esc(String(p || "").slice(0, 1))}">${esc(p || "–")}</span>`;
+function ballTag(prioridad, score, withLabel = false){
+  const n = ballOf(prioridad, score);
+  return `<span class="pball" title="Bola ${n} · ${BALLS[n].label}"><i class="pb pb${n}"><b>${n}</b></i>${withLabel ? `<span>${BALLS[n].label}</span>` : ""}</span>`;
 }
 
 async function prospectsPage(env, url){
@@ -704,19 +724,19 @@ async function prospectsPage(env, url){
 
   const p = url.searchParams;
   const campaign = campaigns.some(c => c.campaign === p.get("c")) ? p.get("c") : campaigns[0].campaign;
-  const prioridad = PRIORITIES.includes(p.get("prioridad")) ? p.get("prioridad") : "";
+  const bola = BALLS[p.get("bola")] ? p.get("bola") : (OLD_PRIORITY[p.get("prioridad")] || "");
   const etapa = STAGES[p.get("etapa")] ? p.get("etapa") : "";
   const hoy = p.get("ver") === "hoy";
   const text = (p.get("q") || "").trim().slice(0, 80);
   const today = todayIso();
 
   const where = ["campaign = ?1"], binds = [campaign];
-  if(prioridad){ binds.push(prioridad); where.push("prioridad = ?" + binds.length); }
+  if(bola){ where.push("(" + BALLS[bola].sql + ")"); }
   if(etapa){ binds.push(etapa); where.push("etapa = ?" + binds.length); }
   if(hoy){ binds.push(today); where.push("proxima_fecha IS NOT NULL AND proxima_fecha <= ?" + binds.length + " AND etapa NOT IN ('cliente', 'descartado')"); }
   if(text){ binds.push("%" + text + "%"); const n = binds.length; where.push(`(negocio LIKE ?${n} OR barrio LIKE ?${n} OR categoria LIKE ?${n} OR code LIKE ?${n})`); }
   const { results } = await env.DB.prepare(
-    "SELECT id, code, rank, prioridad, negocio, categoria, barrio, canal, enlace, etapa, proxima_accion, proxima_fecha FROM prospects WHERE " +
+    "SELECT id, code, rank, prioridad, score, negocio, categoria, barrio, canal, enlace, etapa, proxima_accion, proxima_fecha FROM prospects WHERE " +
     where.join(" AND ") + " ORDER BY rank LIMIT 300"
   ).bind(...binds).all();
 
@@ -730,7 +750,7 @@ async function prospectsPage(env, url){
 
   const href = changes => {
     const q = new URLSearchParams({ c:campaign });
-    const cur = { prioridad, etapa, q:text, ver:hoy ? "hoy" : "" };
+    const cur = { bola, etapa, q:text, ver:hoy ? "hoy" : "" };
     for(const [k, v] of Object.entries({ ...cur, ...changes })){ if(v){ q.set(k, v); } }
     return "/admin/prospectos?" + q;
   };
@@ -739,7 +759,7 @@ async function prospectsPage(env, url){
   const rows = results.map(r => `
     <tr>
       <td class="mono">${r.rank ?? ""}</td>
-      <td>${priorityTag(r.prioridad)}</td>
+      <td>${ballTag(r.prioridad, r.score)}</td>
       <td><a class="biz" href="/admin/prospecto?id=${encodeURIComponent(r.id)}">${esc(r.negocio)}</a><span class="mono sub2">${esc(r.code)} · ${esc(r.categoria || "")}</span></td>
       <td>${esc(r.barrio || "")}</td>
       <td>${r.enlace ? `<a href="${esc(r.enlace)}" target="_blank" rel="noopener">${esc(r.canal)}</a>` : esc(r.canal || "")}</td>
@@ -755,18 +775,18 @@ async function prospectsPage(env, url){
       <a class="${hoy ? "on" : ""} today" href="${href({ ver:hoy ? "" : "hoy" })}"><b>${due.n || 0}</b>Para hoy</a>
     </nav>
     <nav class="filters">
-      ${pill({ prioridad:"" }, "Todas", !prioridad)}
-      ${PRIORITIES.map(x => pill({ prioridad:x }, "Prioridad " + x, prioridad === x)).join("")}
+      ${pill({ bola:"" }, "Todas", !bola)}
+      ${Object.keys(BALLS).map(n => `<a class="pill ballpill${bola === n ? " on" : ""}" href="${href({ bola:n })}" title="${BALLS[n].label}"><i class="pb pb${n}"><b>${n}</b></i>${BALLS[n].label}</a>`).join("")}
       <form method="get" action="/admin/prospectos" class="search">
         <input type="hidden" name="c" value="${esc(campaign)}">
-        ${prioridad ? `<input type="hidden" name="prioridad" value="${esc(prioridad)}">` : ""}
+        ${bola ? `<input type="hidden" name="bola" value="${esc(bola)}">` : ""}
         ${etapa ? `<input type="hidden" name="etapa" value="${esc(etapa)}">` : ""}
         <input name="q" value="${esc(text)}" placeholder="Buscar negocio, barrio o categoría">
       </form>
     </nav>
     ${results.length ? `
     <div class="tablewrap"><table class="ptable">
-      <thead><tr><th>#</th><th>Prior.</th><th>Negocio</th><th>Barrio</th><th>Escribir por</th><th>Etapa</th><th>Próximo paso</th></tr></thead>
+      <thead><tr><th>#</th><th>Bola</th><th>Negocio</th><th>Barrio</th><th>Escribir por</th><th>Etapa</th><th>Próximo paso</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>` : `<p class="empty">Ningún prospecto con estos filtros.</p>`}
   `);
@@ -800,7 +820,7 @@ async function prospectPage(env, url){
         <h1>${esc(r.negocio)}</h1>
         <p class="mono">${esc(r.categoria || "")}</p>
       </div>
-      <p class="tags">${priorityTag(r.prioridad)} ${stageTag(r.etapa)} <span class="tag t-net">${esc(NETWORK[r.estado_redes] || r.estado_redes || "")}</span></p>
+      <p class="tags">${ballTag(r.prioridad, r.score, true)} ${stageTag(r.etapa)} <span class="tag t-net">${esc(NETWORK[r.estado_redes] || r.estado_redes || "")}</span></p>
     </header>
     <div class="pgrid">
       <section class="sub">
@@ -1200,7 +1220,16 @@ function page(title, content, status = 200, script = "", shell = false){
   a.biz:hover{color:var(--accent)}
   .sub2{display:block;font-size:11px}
   .due{color:var(--b1)}
-  .tag.pr-A{background:var(--accent)} .tag.pr-B{background:var(--b2);color:#fff} .tag.pr-C{background:var(--b1)} .tag.pr-D{background:var(--iron);color:#fff}
+  .pball{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ash)}
+  .pb{--c:#888;position:relative;display:inline-grid;place-items:center;flex:none;width:26px;height:26px;border-radius:50%;font-style:normal;
+    background:var(--c);box-shadow:inset -3px -4px 6px rgba(0,0,0,.4),inset 2px 2px 4px rgba(255,255,255,.3)}
+  .pb::before{content:"";position:absolute;width:13px;height:13px;border-radius:50%;background:#fffdf5}
+  .pb b{position:relative;font:600 9px/1 Inter,sans-serif;color:#111}
+  .pb1{--c:#f4c20d} .pb2{--c:#4d7dff} .pb3{--c:#ff5c6e} .pb4{--c:#a375d8} .pb5{--c:#ff9d3d}
+  .pb8{--c:#0b0b0b;box-shadow:inset -3px -4px 6px rgba(0,0,0,.6),inset 2px 2px 4px rgba(255,255,255,.18),0 0 0 1px #2a2e31}
+  .ballpill{display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 5px}
+  .ballpill .pb{width:22px;height:22px;font-size:9px}
+  .ballpill .pb::before{width:11px;height:11px}
   .tag.st-por_contactar{background:transparent;color:var(--ash);border:1px solid var(--line)}
   .tag.st-contactado{background:var(--b2);color:#fff} .tag.st-respondio{background:var(--b1)} .tag.st-reunion{background:#ff9d3d}
   .tag.st-propuesta{background:var(--b4);color:#fff} .tag.st-cliente{background:var(--accent)} .tag.st-descartado{background:#2a2e31;color:var(--ash)}
