@@ -291,6 +291,7 @@ async function admin(request, env, url, path){
   if(path === "/admin/prospecto"){
     return request.method === "POST" ? updateProspect(request, env, url) : prospectPage(env, url);
   }
+  if(path === "/admin/mapa"){ return mapPage(env, url); }
   if(path === "/admin/recursos"){ return resourcesPage(env); }
   if(path === "/admin/recurso"){ return resourcePage(env, url); }
 
@@ -341,6 +342,7 @@ const MENU = [
   { group:null, items:[{ key:"inicio", href:"/admin", label:"Inicio" }] },
   { group:"Ventas", items:[
     { key:"prospectos", href:"/admin/prospectos", label:"Prospectos", hint:"para hoy" },
+    { key:"mapa", href:"/admin/mapa", label:"Mapa" },
     { key:"recursos", href:"/admin/recursos", label:"Recursos" }
   ]},
   { group:"Lo que llega", items:[
@@ -803,7 +805,10 @@ async function prospectPage(env, url){
   try{ d = JSON.parse(r.data); }catch(e){}
   const v = d.redes_verificacion || {};
   const back = "/admin/prospectos?c=" + encodeURIComponent(r.campaign);
-  const maps = r.direccion ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(r.direccion + ", Medellín") : null;
+  /* the map point, when the research has one, is more exact than the address */
+  const maps = typeof d.lat === "number" && typeof d.lon === "number"
+    ? "https://www.google.com/maps/search/?api=1&query=" + d.lat + "," + d.lon
+    : r.direccion ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(r.direccion + ", Medellín") : null;
   const link = (u, label) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(label || u.replace(/^https?:\/\/(www\.)?/, ""))}</a>` : "";
   const profiles = (v.perfiles || []).map(x => `
     <li><b>${esc(x.red)}</b> ${link(x.url)}${x.visible_sin_sesion
@@ -826,6 +831,7 @@ async function prospectPage(env, url){
       <section class="sub">
         <h3>Dónde y cómo</h3>
         <p><b>Dirección</b>${esc(r.direccion || "Sin dato")}${r.dir_fuente ? ` <span class="mono">(${esc(r.dir_fuente)})</span>` : ""}${maps ? `<br>${link(maps, "Abrir en Google Maps")}` : ""}</p>
+        ${r.lat != null ? `<p><b>En el mapa</b><a href="/admin/mapa?c=${encodeURIComponent(r.campaign)}&amp;id=${encodeURIComponent(r.id)}">Ver dónde queda</a>${r.geo === "barrio" ? " · ubicación aproximada, por barrio" : ""}</p>` : ""}
         <p><b>Barrio</b>${esc(r.barrio || "")}${r.distancia_km != null ? ` · ${r.distancia_km} km del punto de partida` : ""}</p>
         <p><b>Escribir por</b>${r.enlace ? `<a class="pill go-chat" href="${esc(r.enlace)}" target="_blank" rel="noopener">Abrir ${esc(r.canal)}</a>` : esc(r.canal || "")}</p>
         ${r.respaldo ? `<p><b>Respaldo</b>${esc(r.respaldo)}</p>` : ""}
@@ -918,6 +924,104 @@ async function updateProspect(request, env, url){
   if(batch.length){ await env.DB.batch(batch); }
   return Response.redirect(url.origin + "/admin/prospecto?id=" + encodeURIComponent(id) + "#seguimiento", 303);
 }
+
+/* ---------- the map: every prospect of a campaign, as its ball ---------- */
+const GEO = { esquina:"En la esquina exacta", cuadra:"En su cuadra", cercana:"A una cuadra", barrio:"Aproximada, por barrio" };
+
+async function mapPage(env, url){
+  const campaigns = (await env.DB.prepare("SELECT campaign, COUNT(*) AS n FROM prospects GROUP BY campaign ORDER BY campaign DESC").all()).results;
+  if(!campaigns.length){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
+  const campaign = campaigns.some(c => c.campaign === url.searchParams.get("c")) ? url.searchParams.get("c") : campaigns[0].campaign;
+  const { results } = await env.DB.prepare(
+    "SELECT id, code, rank, prioridad, score, negocio, categoria, barrio, direccion, canal, enlace, etapa, proxima_accion, proxima_fecha, lat, lng, geo " +
+    "FROM prospects WHERE campaign = ?1 ORDER BY rank"
+  ).bind(campaign).all();
+  const originRow = await env.DB.prepare("SELECT value FROM settings WHERE key = ?1").bind("origen:" + campaign).first();
+  let origin = null;
+  try{ origin = originRow ? JSON.parse(originRow.value) : null; }catch(e){}
+
+  const placed = [], missing = [];
+  for(const r of results){
+    const item = { id:r.id, code:r.code, rank:r.rank, ball:ballOf(r.prioridad, r.score), negocio:r.negocio, categoria:r.categoria,
+      barrio:r.barrio, direccion:r.direccion, canal:r.canal, enlace:r.enlace, etapa:r.etapa, proxima:r.proxima_accion, fecha:r.proxima_fecha,
+      lat:r.lat, lng:r.lng, geo:r.geo };
+    (r.lat != null ? placed : missing).push(item);
+  }
+  const DATA = { placed, origin, focus:url.searchParams.get("id") || "", balls:BALLS, stages:STAGES, geo:GEO };
+
+  return adminPage(env, "mapa", "Mapa", `
+    <header class="top">
+      <div><p class="kicker">Ventas · mapa</p><h1>Dónde <em>están</em></h1></div>
+      <p class="totals mono">${campaigns.map(c => `<a class="${c.campaign === campaign ? "on" : ""}" href="/admin/mapa?c=${esc(c.campaign)}">${esc(c.campaign)}</a>`).join(" · ")}<br>
+      ${placed.length} en el mapa · ${missing.length} sin dirección</p>
+    </header>
+    <nav class="filters" id="mapBalls">
+      ${Object.keys(BALLS).map(n => `<label class="pill ballpill mapf${n === "8" ? "" : " on"}"><input type="checkbox" value="${n}"${n === "8" ? "" : " checked"} hidden><i class="pb pb${n}"><b>${n}</b></i>${BALLS[n].label}</label>`).join("")}
+    </nav>
+    <nav class="filters" id="mapStages">
+      <span class="mono mapnote">Etapa:</span>
+      ${Object.entries(STAGES).map(([k, l]) => `<label class="pill mapf${k === "descartado" ? "" : " on"}"><input type="checkbox" value="${k}"${k === "descartado" ? "" : " checked"} hidden>${l}</label>`).join("")}
+    </nav>
+    <div class="mapwrap"><div id="map" aria-label="Mapa de prospectos"></div></div>
+    <p class="mono mapnote">El círculo punteado es una ubicación aproximada (solo se conoce el barrio). La bola 16 es el punto de partida${origin && origin.lugar ? ": " + esc(origin.lugar) : ""}.</p>
+    ${missing.length ? `<section class="sub"><h3>Sin dirección (${missing.length})</h3><ul class="plist">${missing.map(m => `
+      <li><span class="pball"><i class="pb pb${m.ball}"><b>${m.ball}</b></i></span> <a class="biz" href="/admin/prospecto?id=${encodeURIComponent(m.id)}">${esc(m.negocio)}</a> <span class="mono">· ${esc(m.direccion || "sin dato")}</span></li>`).join("")}</ul></section>` : ""}
+  `, 200, `
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>window.__MAP = ${JSON.stringify(DATA).replace(/</g, "\\u003c")};</script>
+<script>${MAP_SCRIPT}</script>`);
+}
+
+const MAP_SCRIPT = `
+(function(){
+  var D = window.__MAP, map = L.map("map", { zoomControl:true, scrollWheelZoom:true });
+  /* OpenStreetMap's own tiles: free and without a key; darkened in CSS to sit on the panel */
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom:19,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]; }); }
+  function icon(ball, approx, focus){
+    return L.divIcon({ className:"mk" + (approx ? " approx" : "") + (focus ? " focus" : ""), iconSize:[28, 28], iconAnchor:[14, 14], popupAnchor:[0, -14],
+      html:'<i class="pb pb' + ball + '"><b>' + ball + '</b></i>' });
+  }
+  var markers = [], bounds = [];
+  D.placed.forEach(function(p){
+    var m = L.marker([p.lat, p.lng], { icon:icon(p.ball, p.geo === "barrio", p.id === D.focus), riseOnHover:true, zIndexOffset:(9 - p.ball) * 100 });
+    var dir = "https://www.google.com/maps/dir/?api=1&destination=" + p.lat + "," + p.lng;
+    m.bindPopup('<div class="mpop"><p class="mono">' + esc(p.code) + ' · puesto ' + esc(p.rank) + ' · ' + esc(D.balls[p.ball].label) + '</p>' +
+      '<h4>' + esc(p.negocio) + '</h4><p>' + esc(p.categoria || "") + '</p>' +
+      '<p class="mono">' + esc(p.direccion || p.barrio || "") + '<br>' + esc(D.geo[p.geo] || "") + '</p>' +
+      '<p><span class="tag st-' + esc(p.etapa) + '">' + esc(D.stages[p.etapa] || p.etapa) + '</span>' + (p.proxima ? ' <span class="mono">' + esc(p.proxima) + (p.fecha ? " · " + esc(p.fecha) : "") + '</span>' : "") + '</p>' +
+      '<p class="mlinks"><a href="/admin/prospecto?id=' + encodeURIComponent(p.id) + '">Abrir ficha</a>' +
+      (p.enlace ? '<a href="' + esc(p.enlace) + '" target="_blank" rel="noopener">' + esc(p.canal) + '</a>' : "") +
+      '<a href="' + dir + '" target="_blank" rel="noopener">Cómo llegar</a></p></div>');
+    m._p = p; markers.push(m); bounds.push([p.lat, p.lng]);
+  });
+  if(D.origin){
+    L.marker([D.origin.lat, D.origin.lon], { icon:L.divIcon({ className:"mk origin", iconSize:[30, 30], iconAnchor:[15, 15], html:'<i class="pb pb16"><b>16</b></i>' }), zIndexOffset:2000 })
+      .bindPopup('<div class="mpop"><h4>Punto de partida</h4><p>' + esc(D.origin.lugar || "") + '</p></div>').addTo(map);
+    bounds.push([D.origin.lat, D.origin.lon]);
+  }
+  function apply(){
+    var balls = [].map.call(document.querySelectorAll("#mapBalls input:checked"), function(i){ return +i.value; });
+    var stages = [].map.call(document.querySelectorAll("#mapStages input:checked"), function(i){ return i.value; });
+    markers.forEach(function(m){
+      var on = balls.indexOf(m._p.ball) !== -1 && stages.indexOf(m._p.etapa) !== -1;
+      if(on && !map.hasLayer(m)){ m.addTo(map); } else if(!on && map.hasLayer(m)){ map.removeLayer(m); }
+    });
+  }
+  [].forEach.call(document.querySelectorAll(".mapf input"), function(i){
+    i.addEventListener("change", function(){ i.parentNode.classList.toggle("on", i.checked); apply(); });
+  });
+  apply();
+  var focus = markers.filter(function(m){ return m._p.id === D.focus; })[0];
+  if(focus){ if(!map.hasLayer(focus)){ focus.addTo(map); } map.setView(focus.getLatLng(), 17); focus.openPopup(); }
+  else if(bounds.length){ map.fitBounds(bounds, { padding:[30, 30] }); }
+  else { map.setView([6.2275, -75.602], 14); }
+})();
+`;
 
 async function resourcesPage(env){
   const { results } = await env.DB.prepare("SELECT slug, campaign, title, updated_at FROM resources ORDER BY campaign DESC, title").all();
@@ -1228,6 +1332,33 @@ function page(title, content, status = 200, script = "", shell = false){
   .pb b{position:relative;font:600 9px/1 Inter,sans-serif;color:#111}
   .pb1{--c:#f4c20d} .pb2{--c:#4d7dff} .pb3{--c:#ff5c6e} .pb4{--c:#a375d8} .pb5{--c:#ff9d3d}
   .pb8{--c:#0b0b0b;box-shadow:inset -3px -4px 6px rgba(0,0,0,.6),inset 2px 2px 4px rgba(255,255,255,.18),0 0 0 1px #2a2e31}
+  /* the map */
+  .mapwrap{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:10px}
+  #map{height:min(72vh,720px);background:#0b0c0d}
+  .mapf{cursor:pointer;user-select:none}
+  .mapf:not(.on){opacity:.45}
+  .pill.mapf.on{background:transparent;border-color:var(--ash);color:var(--white)}
+  .ballpill.mapf.on{background:transparent;border-color:var(--ash);color:var(--white)}
+  .mapnote{align-self:center;margin:0 4px 0 0}
+  .mk{background:none;border:0}
+  .mk .pb{width:28px;height:28px;box-shadow:inset -3px -4px 6px rgba(0,0,0,.4),inset 2px 2px 4px rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.7)}
+  .mk.approx .pb{opacity:.75;outline:2px dashed rgba(255,255,255,.55);outline-offset:2px}
+  .mk.focus .pb{outline:3px solid var(--accent);outline-offset:3px}
+  .mk.origin .pb{width:30px;height:30px}
+  .pb16{--c:#0b0b0b;background:linear-gradient(#0b0b0b 0 62%,#f3f1ea 62%)}
+  .pb16 b{font-size:8px}
+  #map .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6)}
+  #map .leaflet-popup-content-wrapper,#map .leaflet-popup-tip{background:#0b0c0d;color:var(--bone);border:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.6)}
+  #map .leaflet-popup-content{margin:14px 16px}
+  #map a.leaflet-popup-close-button{color:var(--ash)}
+  .mpop{min-width:220px;font:14px/1.4 Inter,sans-serif}
+  #map .mpop h4{margin:2px 0 4px;font:400 1.4rem/1.1 "Instrument Serif",serif;color:var(--white)}
+  #map .mpop p{margin:0 0 6px;color:var(--bone)}
+  .mpop .mono{font-size:11px}
+  .mlinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px !important}
+  #map .mlinks a{color:var(--accent)}
+  .leaflet-control-attribution{background:rgba(0,0,0,.6) !important;color:var(--iron) !important}
+  .leaflet-control-attribution a{color:var(--ash) !important}
   .ballpill{display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 5px}
   .ballpill .pb{width:22px;height:22px;font-size:9px}
   .ballpill .pb::before{width:11px;height:11px}

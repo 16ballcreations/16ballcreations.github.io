@@ -96,7 +96,13 @@ Todo vive en un Worker de Cloudflare llamado `page`
      `tmp/prospectos-<campaña>.sql` (también fuera del repositorio), y se carga con
      `npx wrangler d1 execute 16bc --remote --file tmp/prospectos-<campaña>.sql`.
      Cargarla otra vez actualiza la investigación sin tocar el seguimiento.
-  3. En `/admin/prospectos` se filtran por prioridad, etapa o texto; cada uno
+  3. Para el mapa: `node scripts/prospectos-geo.mjs prospectos/<campaña>` ubica
+     cada dirección en la cuadrícula de Medellín (el cruce de la calle y la
+     carrera, con las calles de OpenStreetMap; las que solo dicen el barrio
+     quedan aproximadas) y escribe `tmp/prospectos-geo-<campaña>.sql`, que se
+     carga igual. `/admin/mapa` los muestra como sus bolas, con filtros por
+     bola y etapa, y "Cómo llegar" en Google Maps. Sin claves ni costos.
+  4. En `/admin/prospectos` se filtran por prioridad, etapa o texto; cada uno
      tiene su dirección, el chat al que escribir, el primer mensaje listo para
      copiar, la etapa, el próximo paso y su historial (tablas `prospects` y
      `prospect_events`). `/admin/recursos` muestra el discurso y las notas
