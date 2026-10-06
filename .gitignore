@@ -2,3 +2,8 @@
 .dev.vars*
 node_modules/
 dist/
+
+# Prospect research: clients' data, never in the public repo. It is loaded
+# into the panel database with scripts/prospectos-sql.mjs.
+prospectos/
+tmp/

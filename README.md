@@ -83,6 +83,20 @@ Todo vive en un Worker de Cloudflare llamado `page`
      definitiva; queda con fecha, IP y navegador en la tabla `authorizations`.
      Cualquiera con el enlace puede volver a abrirla y guardarla en PDF.
   Sin `?t=`, `/autorizacion/` sigue siendo la plantilla editable a mano.
+- **Prospectos** (negocios a los que les escribimos, por campaña):
+  1. La investigación de cada campaña vive en `prospectos/<campaña>/` (por
+     ejemplo `prospectos/belen-2026-10/`), que **no se sube al repositorio**:
+     son datos de terceros. Trae el handoff, la verificación en redes, el
+     discurso de venta y `base-panel.json`, que es lo que se carga.
+  2. `node scripts/prospectos-sql.mjs prospectos/<campaña>` escribe
+     `tmp/prospectos-<campaña>.sql` (también fuera del repositorio), y se carga con
+     `npx wrangler d1 execute 16bc --remote --file tmp/prospectos-<campaña>.sql`.
+     Cargarla otra vez actualiza la investigación sin tocar el seguimiento.
+  3. En `/admin/prospectos` se filtran por prioridad, etapa o texto; cada uno
+     tiene su dirección, el chat al que escribir, el primer mensaje listo para
+     copiar, la etapa, el próximo paso y su historial (tablas `prospects` y
+     `prospect_events`). `/admin/recursos` muestra el discurso y las notas
+     de cada campaña (tabla `resources`).
 
 Comandos:
 

@@ -17,6 +17,11 @@
    POST /admin/testimonio/revisado | /borrar   review or delete a testimonial
    GET  /admin/firma            Renne's registered signature: see it, replace it
    POST /admin/firma            save it (cleaned up in the browser before upload)
+   GET  /admin/prospectos       the prospects of every campaign: filters and stages
+   GET  /admin/prospecto?id=    one prospect: contact, message, research, timeline
+   POST /admin/prospecto        move its stage, log what happened, set the next action
+   GET  /admin/recursos         the documents behind the campaigns (script, notes)
+   GET  /admin/recurso?slug=    one of them, rendered
 
    While the site still lives on GitHub Pages too, its pages post here
    across origins, so the API answers CORS for the known origins. */
@@ -282,6 +287,12 @@ async function admin(request, env, url, path){
   if(path === "/admin/firma"){
     return request.method === "POST" ? saveSignature(request, env, url) : signaturePage(env, url);
   }
+  if(path === "/admin/prospectos"){ return prospectsPage(env, url); }
+  if(path === "/admin/prospecto"){
+    return request.method === "POST" ? updateProspect(request, env, url) : prospectPage(env, url);
+  }
+  if(path === "/admin/recursos"){ return resourcesPage(env); }
+  if(path === "/admin/recurso"){ return resourcePage(env, url); }
 
   if(path !== "/admin"){ return Response.redirect(url.origin + "/admin", 303); }
 
@@ -349,6 +360,7 @@ async function admin(request, env, url, path){
     </header>
     <nav class="filters">
       ${link("", "", "Todo")}${link("mira", "", "MIRA")}${link("contacto", "", "Contacto")}${link("autorizaciones", "", "Autorizaciones")}${link("testimonios", "", "Testimonios")}${link(tipo, "pendientes", tipo === "autorizaciones" ? "Solo sin firmar" : "Solo sin revisar")}
+      <a class="pill" href="/admin/prospectos">Prospectos</a>
       <a class="pill" href="/admin/firma">Tu firma</a>
       <a class="pill new" href="/admin/autorizacion">+ Nueva autorización</a>
     </nav>
@@ -556,6 +568,324 @@ async function createAuthorization(request, env, url){
   return Response.redirect(url.origin + "/admin?tipo=autorizaciones&nueva=" + token, 303);
 }
 
+/* ---------- prospects ---------- */
+
+const STAGES = {
+  por_contactar:"Por contactar", contactado:"Contactado", respondio:"Respondió", reunion:"Reunión",
+  propuesta:"Propuesta", cliente:"Cliente", descartado:"Descartado"
+};
+const EVENTS = { mensaje:"Mensaje enviado", respuesta:"Respuesta", visita:"Visita", reunion:"Reunión", nota:"Nota", etapa:"Cambio de etapa" };
+const NETWORK = {
+  verificado:"Redes verificadas", probable:"Redes probables", no_confirmado:"Redes sin confirmar",
+  sin_redes:"Sin redes", fuera_de_zona:"Fuera de la zona", requiere_sesion:"Requiere sesión"
+};
+const PRIORITIES = ["A", "B", "C", "D", "Descartar"];
+
+function todayIso(){
+  return new Date().toLocaleDateString("en-CA", { timeZone:"America/Bogota" });
+}
+function plusDays(iso, n){
+  const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function stageTag(etapa){
+  return `<span class="tag st-${esc(etapa)}">${esc(STAGES[etapa] || etapa)}</span>`;
+}
+function priorityTag(p){
+  return `<span class="tag pr-${esc(String(p || "").slice(0, 1))}">${esc(p || "–")}</span>`;
+}
+
+async function prospectsPage(env, url){
+  const campaigns = (await env.DB.prepare(
+    "SELECT campaign, COUNT(*) AS n FROM prospects GROUP BY campaign ORDER BY campaign DESC"
+  ).all()).results;
+  const head = (h1, extra = "") => `
+    <header class="top">
+      <div>
+        <p class="kicker"><a href="/admin">← Panel</a> · prospectos</p>
+        <h1>${h1}</h1>
+      </div>
+      ${extra}
+    </header>`;
+  if(!campaigns.length){
+    return page("Prospectos", head("Todavía <em>no hay prospectos</em>") + `
+      <p class="empty">Carga una campaña desde su carpeta privada:<br>
+      <code>node scripts/prospectos-sql.mjs prospectos/&lt;campaña&gt;</code> y después
+      <code>npx wrangler d1 execute 16bc --remote --file tmp/prospectos-&lt;campaña&gt;.sql</code></p>`);
+  }
+
+  const p = url.searchParams;
+  const campaign = campaigns.some(c => c.campaign === p.get("c")) ? p.get("c") : campaigns[0].campaign;
+  const prioridad = PRIORITIES.includes(p.get("prioridad")) ? p.get("prioridad") : "";
+  const etapa = STAGES[p.get("etapa")] ? p.get("etapa") : "";
+  const hoy = p.get("ver") === "hoy";
+  const text = (p.get("q") || "").trim().slice(0, 80);
+  const today = todayIso();
+
+  const where = ["campaign = ?1"], binds = [campaign];
+  if(prioridad){ binds.push(prioridad); where.push("prioridad = ?" + binds.length); }
+  if(etapa){ binds.push(etapa); where.push("etapa = ?" + binds.length); }
+  if(hoy){ binds.push(today); where.push("proxima_fecha IS NOT NULL AND proxima_fecha <= ?" + binds.length + " AND etapa NOT IN ('cliente', 'descartado')"); }
+  if(text){ binds.push("%" + text + "%"); const n = binds.length; where.push(`(negocio LIKE ?${n} OR barrio LIKE ?${n} OR categoria LIKE ?${n} OR code LIKE ?${n})`); }
+  const { results } = await env.DB.prepare(
+    "SELECT id, code, rank, prioridad, negocio, categoria, barrio, canal, enlace, etapa, proxima_accion, proxima_fecha FROM prospects WHERE " +
+    where.join(" AND ") + " ORDER BY rank LIMIT 300"
+  ).bind(...binds).all();
+
+  const stages = (await env.DB.prepare(
+    "SELECT etapa, COUNT(*) AS n FROM prospects WHERE campaign = ?1 GROUP BY etapa"
+  ).bind(campaign).all()).results;
+  const sc = Object.fromEntries(stages.map(s => [s.etapa, s.n]));
+  const due = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM prospects WHERE campaign = ?1 AND proxima_fecha IS NOT NULL AND proxima_fecha <= ?2 AND etapa NOT IN ('cliente', 'descartado')"
+  ).bind(campaign, today).first();
+
+  const href = changes => {
+    const q = new URLSearchParams({ c:campaign });
+    const cur = { prioridad, etapa, q:text, ver:hoy ? "hoy" : "" };
+    for(const [k, v] of Object.entries({ ...cur, ...changes })){ if(v){ q.set(k, v); } }
+    return "/admin/prospectos?" + q;
+  };
+  const pill = (changes, label, on) => `<a class="pill${on ? " on" : ""}" href="${href(changes)}">${label}</a>`;
+
+  const rows = results.map(r => `
+    <tr>
+      <td class="mono">${r.rank ?? ""}</td>
+      <td>${priorityTag(r.prioridad)}</td>
+      <td><a class="biz" href="/admin/prospecto?id=${encodeURIComponent(r.id)}">${esc(r.negocio)}</a><span class="mono sub2">${esc(r.code)} · ${esc(r.categoria || "")}</span></td>
+      <td>${esc(r.barrio || "")}</td>
+      <td>${r.enlace ? `<a href="${esc(r.enlace)}" target="_blank" rel="noopener">${esc(r.canal)}</a>` : esc(r.canal || "")}</td>
+      <td>${stageTag(r.etapa)}</td>
+      <td class="mono${r.proxima_fecha && r.proxima_fecha <= today ? " due" : ""}">${esc(r.proxima_accion || "")}${r.proxima_fecha ? "<br>" + esc(r.proxima_fecha) : ""}</td>
+    </tr>`).join("");
+
+  return page("Prospectos", head("Los <em>prospectos</em>", `
+      <p class="totals mono">${campaigns.map(c => `<a class="${c.campaign === campaign ? "on" : ""}" href="/admin/prospectos?c=${esc(c.campaign)}">${esc(c.campaign)} (${c.n})</a>`).join(" · ")}<br>
+      <a href="/admin/recursos">Recursos de las campañas →</a></p>`) + `
+    <nav class="pipeline">
+      ${Object.entries(STAGES).map(([k, label]) => `<a class="${etapa === k ? "on" : ""}" href="${href({ etapa:etapa === k ? "" : k })}"><b>${sc[k] || 0}</b>${label}</a>`).join("")}
+      <a class="${hoy ? "on" : ""} today" href="${href({ ver:hoy ? "" : "hoy" })}"><b>${due.n || 0}</b>Para hoy</a>
+    </nav>
+    <nav class="filters">
+      ${pill({ prioridad:"" }, "Todas", !prioridad)}
+      ${PRIORITIES.map(x => pill({ prioridad:x }, "Prioridad " + x, prioridad === x)).join("")}
+      <form method="get" action="/admin/prospectos" class="search">
+        <input type="hidden" name="c" value="${esc(campaign)}">
+        ${prioridad ? `<input type="hidden" name="prioridad" value="${esc(prioridad)}">` : ""}
+        ${etapa ? `<input type="hidden" name="etapa" value="${esc(etapa)}">` : ""}
+        <input name="q" value="${esc(text)}" placeholder="Buscar negocio, barrio o categoría">
+      </form>
+    </nav>
+    ${results.length ? `
+    <div class="tablewrap"><table class="ptable">
+      <thead><tr><th>#</th><th>Prior.</th><th>Negocio</th><th>Barrio</th><th>Escribir por</th><th>Etapa</th><th>Próximo paso</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>` : `<p class="empty">Ningún prospecto con estos filtros.</p>`}
+  `);
+}
+
+async function prospectPage(env, url){
+  const id = url.searchParams.get("id") || "";
+  const r = await env.DB.prepare("SELECT * FROM prospects WHERE id = ?1").bind(id).first();
+  if(!r){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
+  const { results:events } = await env.DB.prepare(
+    "SELECT * FROM prospect_events WHERE prospect_id = ?1 ORDER BY created_at DESC, id DESC"
+  ).bind(id).all();
+  let d = {};
+  try{ d = JSON.parse(r.data); }catch(e){}
+  const v = d.redes_verificacion || {};
+  const back = "/admin/prospectos?c=" + encodeURIComponent(r.campaign);
+  const maps = r.direccion ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(r.direccion + ", Medellín") : null;
+  const link = (u, label) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(label || u.replace(/^https?:\/\/(www\.)?/, ""))}</a>` : "";
+  const profiles = (v.perfiles || []).map(x => `
+    <li><b>${esc(x.red)}</b> ${link(x.url)}${x.visible_sin_sesion
+      ? ` · ${esc(x.nombre_visible || "")}${x.seguidores != null ? " · " + Number(x.seguidores).toLocaleString("es-CO") + " seg." : ""}${x.publicaciones != null ? " · " + x.publicaciones + " publ." : ""}${x.bio || x.intro ? `<br><span class="bio">«${esc(x.bio || x.intro)}»</span>` : ""}`
+      : " · no se ve sin sesión"}</li>`).join("");
+  const dropped = (v.perfiles_descartados || []).map(x => `<li>${link(x.url)} · ${esc(x.motivo)}</li>`).join("");
+  const timeline = events.map(e => `
+    <li><span class="mono">${esc(whenInBogota(e.created_at))} · ${esc(EVENTS[e.tipo] || e.tipo)}</span>${esc(e.texto).replace(/\n/g, "<br>")}</li>`).join("");
+
+  return page(r.negocio, `
+    <header class="top">
+      <div>
+        <p class="kicker"><a href="${back}">← Prospectos</a> · ${esc(r.campaign)} · ${esc(r.code)} · puesto ${r.rank ?? "–"}</p>
+        <h1>${esc(r.negocio)}</h1>
+        <p class="mono">${esc(r.categoria || "")}</p>
+      </div>
+      <p class="tags">${priorityTag(r.prioridad)} ${stageTag(r.etapa)} <span class="tag t-net">${esc(NETWORK[r.estado_redes] || r.estado_redes || "")}</span></p>
+    </header>
+    <div class="pgrid">
+      <section class="sub">
+        <h3>Dónde y cómo</h3>
+        <p><b>Dirección</b>${esc(r.direccion || "Sin dato")}${r.dir_fuente ? ` <span class="mono">(${esc(r.dir_fuente)})</span>` : ""}${maps ? `<br>${link(maps, "Abrir en Google Maps")}` : ""}</p>
+        <p><b>Barrio</b>${esc(r.barrio || "")}${r.distancia_km != null ? ` · ${r.distancia_km} km del punto de partida` : ""}</p>
+        <p><b>Escribir por</b>${r.enlace ? `<a class="pill go-chat" href="${esc(r.enlace)}" target="_blank" rel="noopener">Abrir ${esc(r.canal)}</a>` : esc(r.canal || "")}</p>
+        ${r.respaldo ? `<p><b>Respaldo</b>${esc(r.respaldo)}</p>` : ""}
+        <p><b>Redes y web</b>${[link(r.instagram), link(r.facebook), link(r.tiktok)].filter(Boolean).join("<br>") || "Ninguna verificada"}${r.web && /^(https?:\/\/|www\.)/.test(r.web) ? "<br>" + link(r.web.startsWith("http") ? r.web : "https://" + r.web) : ""}</p>
+      </section>
+      <section class="sub">
+        <h3>Lo que vimos</h3>
+        <p><b>Gancho</b>${esc(r.gancho || "")}</p>
+        <p><b>Nota de la verificación</b>${esc(r.nota || "")}</p>
+      </section>
+    </div>
+    ${r.mensaje ? `
+    <section class="sub">
+      <h3>Primer mensaje</h3>
+      <textarea class="msg" readonly rows="9">${esc(r.mensaje)}</textarea>
+      <p class="mono hintline">Cambia [tu nombre] antes de enviarlo.</p>
+      <div class="linkrow">
+        <button type="button" data-copy="${esc(r.mensaje)}" data-done="Copiado ✓" data-label="Copiar mensaje">Copiar mensaje</button>
+        ${r.enlace ? `<a class="pill" href="${esc(r.enlace)}" target="_blank" rel="noopener">Abrir el chat</a>` : ""}
+        <form method="post" action="/admin/prospecto"><input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="enviado"><button type="submit">Ya lo envié</button></form>
+      </div>
+    </section>` : ""}
+    <div class="pgrid" id="seguimiento">
+      <section class="sub">
+        <h3>Seguimiento</h3>
+        <form class="pform" method="post" action="/admin/prospecto">
+          <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="seguimiento">
+          <label>Etapa<select name="etapa">${Object.entries(STAGES).map(([k, l]) => `<option value="${k}"${k === r.etapa ? " selected" : ""}>${l}</option>`).join("")}</select></label>
+          <label>Próximo paso<input name="proxima_accion" value="${esc(r.proxima_accion || "")}" placeholder="Ej.: escribir de nuevo, visitar, enviar MIRA"></label>
+          <label>Fecha<input type="date" name="proxima_fecha" value="${esc(r.proxima_fecha || "")}"></label>
+          <button type="submit" class="go">Guardar</button>
+        </form>
+      </section>
+      <section class="sub">
+        <h3>Anotar lo que pasó</h3>
+        <form class="pform" method="post" action="/admin/prospecto">
+          <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="evento">
+          <label>Qué fue<select name="tipo">${["respuesta", "mensaje", "visita", "reunion", "nota"].map(k => `<option value="${k}">${EVENTS[k]}</option>`).join("")}</select></label>
+          <label>Detalle<textarea name="texto" rows="3" required placeholder="Qué dijeron, con quién hablaste, qué quedó pendiente"></textarea></label>
+          <button type="submit" class="go">Anotar</button>
+        </form>
+      </section>
+    </div>
+    <section class="sub">
+      <h3>Historial</h3>
+      ${timeline ? `<ul class="timeline">${timeline}</ul>` : `<p class="empty">Todavía no hay nada anotado.</p>`}
+    </section>
+    <section class="sub">
+      <h3>La investigación</h3>
+      ${profiles ? `<ul class="plist">${profiles}</ul>` : `<p class="empty">No se encontraron perfiles.</p>`}
+      ${dropped ? `<p><b>Descartados</b></p><ul class="plist">${dropped}</ul>` : ""}
+      <p class="mono">Verificado el ${esc(v.fecha || "")}${d.telefono ? " · teléfono del listado: " + esc(d.telefono) : ""}</p>
+    </section>
+  `, 200, COPY_SCRIPT);
+}
+
+async function updateProspect(request, env, url){
+  const form = await request.formData();
+  const id = String(form.get("id") || "");
+  const r = await env.DB.prepare("SELECT id, etapa, canal FROM prospects WHERE id = ?1").bind(id).first();
+  if(!r){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
+  const log = (tipo, texto) => env.DB.prepare("INSERT INTO prospect_events (prospect_id, tipo, texto) VALUES (?1, ?2, ?3)").bind(id, tipo, texto);
+  const accion = form.get("accion");
+  const batch = [];
+
+  if(accion === "enviado"){
+    /* the first message is out: wait three days, then the follow-up */
+    batch.push(log("mensaje", "Primer mensaje enviado por " + (r.canal || "chat") + "."));
+    if(r.etapa === "por_contactar"){ batch.push(log("etapa", "Por contactar → Contactado")); }
+    batch.push(env.DB.prepare(
+      "UPDATE prospects SET etapa = CASE WHEN etapa = 'por_contactar' THEN 'contactado' ELSE etapa END, " +
+      "proxima_accion = 'Seguimiento si no responde', proxima_fecha = ?1, updated_at = datetime('now') WHERE id = ?2"
+    ).bind(plusDays(todayIso(), 3), id));
+  } else if(accion === "seguimiento"){
+    const etapa = STAGES[form.get("etapa")] ? form.get("etapa") : r.etapa;
+    const next = String(form.get("proxima_accion") || "").trim().slice(0, 200);
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(form.get("proxima_fecha") || "") ? form.get("proxima_fecha") : null;
+    if(etapa !== r.etapa){ batch.push(log("etapa", STAGES[r.etapa] + " → " + STAGES[etapa])); }
+    batch.push(env.DB.prepare(
+      "UPDATE prospects SET etapa = ?1, proxima_accion = ?2, proxima_fecha = ?3, updated_at = datetime('now') WHERE id = ?4"
+    ).bind(etapa, next || null, date, id));
+  } else if(accion === "evento"){
+    const tipo = ["respuesta", "mensaje", "visita", "reunion", "nota"].includes(form.get("tipo")) ? form.get("tipo") : "nota";
+    const texto = String(form.get("texto") || "").trim().slice(0, 2000);
+    if(texto){
+      batch.push(log(tipo, texto));
+      batch.push(env.DB.prepare("UPDATE prospects SET updated_at = datetime('now') WHERE id = ?1").bind(id));
+    }
+  }
+  if(batch.length){ await env.DB.batch(batch); }
+  return Response.redirect(url.origin + "/admin/prospecto?id=" + encodeURIComponent(id) + "#seguimiento", 303);
+}
+
+async function resourcesPage(env){
+  const { results } = await env.DB.prepare("SELECT slug, campaign, title, updated_at FROM resources ORDER BY campaign DESC, title").all();
+  return page("Recursos", `
+    <header class="top">
+      <div>
+        <p class="kicker"><a href="/admin/prospectos">← Prospectos</a> · recursos</p>
+        <h1>Los <em>recursos</em></h1>
+      </div>
+    </header>
+    ${results.length ? results.map(r => `
+      <article class="sub">
+        <header><span class="tag t-net">${esc(r.campaign || "general")}</span><h2><a class="biz" href="/admin/recurso?slug=${encodeURIComponent(r.slug)}">${esc(r.title)}</a></h2>
+        <span class="when mono">Actualizado el ${esc(whenInBogota(r.updated_at))}</span></header>
+      </article>`).join("") : `<p class="empty">Todavía no hay recursos cargados.</p>`}
+  `);
+}
+
+async function resourcePage(env, url){
+  const r = await env.DB.prepare("SELECT * FROM resources WHERE slug = ?1").bind(url.searchParams.get("slug") || "").first();
+  if(!r){ return Response.redirect(url.origin + "/admin/recursos", 303); }
+  return page(r.title, `
+    <p class="kicker"><a href="/admin/recursos">← Recursos</a> · ${esc(r.campaign || "")}</p>
+    <article class="md">${markdown(r.body)}</article>
+  `);
+}
+
+/* just enough Markdown for our own documents: headings, tables, quotes, lists */
+function markdown(src){
+  const inline = s => esc(s)
+    .replace(/&lt;br&gt;/g, "<br>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\*)/g, "$1<em>$2</em>")
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  const lines = String(src).replace(/\r/g, "").split("\n");
+  const out = [];
+  for(let i = 0; i < lines.length;){
+    const line = lines[i];
+    if(!line.trim()){ i++; continue; }
+    const h = line.match(/^(#{1,4})\s+(.*)/);
+    if(h){ const n = h[1].length + 1; out.push(`<h${n}>${inline(h[2])}</h${n}>`); i++; continue; }
+    if(/^\s*\|/.test(line)){
+      const rows = [];
+      while(i < lines.length && /^\s*\|/.test(lines[i])){ rows.push(lines[i]); i++; }
+      const cells = l => l.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+      const body = rows.filter((l, k) => !(k === 1 && /^[\s|:-]+$/.test(l)));
+      out.push(`<div class="tablewrap"><table class="ptable"><thead><tr>${cells(body[0]).map(c => `<th>${inline(c)}</th>`).join("")}</tr></thead><tbody>` +
+        body.slice(1).map(l => `<tr>${cells(l).map(c => `<td>${inline(c)}</td>`).join("")}</tr>`).join("") + "</tbody></table></div>");
+      continue;
+    }
+    if(/^>/.test(line)){
+      const q = [];
+      while(i < lines.length && /^>/.test(lines[i])){ q.push(lines[i].replace(/^>\s?/, "")); i++; }
+      out.push(`<blockquote>${q.map(inline).join("<br>")}</blockquote>`);
+      continue;
+    }
+    const li = /^\s*([-*]|\d+\.)\s+/;
+    if(li.test(line)){
+      const ordered = /^\s*\d+\./.test(line), items = [];
+      while(i < lines.length && (li.test(lines[i]) || /^\s{2,}\S/.test(lines[i]) && items.length)){
+        const raw = lines[i], deep = /^\s{2,}/.test(raw);
+        const t = raw.replace(li, "").replace(/^\s+/, "").replace(/^\[ \]\s*/, "☐ ").replace(/^\[x\]\s*/i, "☑ ");
+        items.push(`<li${deep ? ' class="deep"' : ""}>${inline(t)}</li>`); i++;
+      }
+      out.push(ordered ? `<ol>${items.join("")}</ol>` : `<ul>${items.join("")}</ul>`);
+      continue;
+    }
+    const para = [];
+    while(i < lines.length && lines[i].trim() && !/^(#{1,4}\s|\s*\||>|\s*([-*]|\d+\.)\s)/.test(lines[i])){ para.push(lines[i]); i++; }
+    out.push(`<p>${inline(para.join(" "))}</p>`);
+  }
+  return out.join("\n");
+}
+
 /* copy buttons in the list */
 const COPY_SCRIPT = `<script>
 document.addEventListener("submit", function(e){
@@ -565,7 +895,8 @@ document.addEventListener("submit", function(e){
 document.addEventListener("click", function(e){
   var b = e.target.closest("[data-copy]");
   if(!b){ return; }
-  navigator.clipboard.writeText(b.getAttribute("data-copy")).then(function(){ b.textContent = "Copiado ✓"; setTimeout(function(){ b.textContent = "Copiar enlace"; }, 1800); });
+  var label = b.getAttribute("data-label") || "Copiar enlace";
+  navigator.clipboard.writeText(b.getAttribute("data-copy")).then(function(){ b.textContent = "Copiado ✓"; setTimeout(function(){ b.textContent = label; }, 1800); });
 });
 </script>`;
 
@@ -761,6 +1092,54 @@ function page(title, content, status = 200, script = ""){
   .newauth label input[type=file]{padding:10px;color:var(--ash)}
   .padwrap[hidden]{display:none}
   .padtools .pill{color:#111;border-color:#c9c8c2}
+  .totals a{color:var(--ash)} .totals a.on{color:var(--accent)}
+  .pipeline{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:18px}
+  .pipeline a{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;color:var(--ash);text-decoration:none;font:11px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.05em}
+  .pipeline b{font:400 1.9rem/1 "Instrument Serif",serif;color:var(--white);letter-spacing:0}
+  .pipeline a.on{border-color:var(--accent)} .pipeline a.on b{color:var(--accent)}
+  .pipeline a.today{border-style:dashed}
+  .search{margin-left:auto}
+  .search input,.pform input,.pform select,.pform textarea{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:14px Inter,sans-serif}
+  .search input{min-width:260px;border-radius:999px}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-bottom:18px}
+  .ptable{width:100%;border-collapse:collapse;font-size:14px}
+  .ptable th{text-align:left;padding:10px 12px;font:400 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron);border-bottom:1px solid var(--line)}
+  .ptable td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .ptable tr:last-child td{border-bottom:0}
+  .ptable .tag{white-space:nowrap}
+  .ptable a{color:var(--bone)}
+  a.biz{color:var(--white);text-decoration:none;font-weight:500}
+  a.biz:hover{color:var(--accent)}
+  .sub2{display:block;font-size:11px}
+  .due{color:var(--b1)}
+  .tag.pr-A{background:var(--accent)} .tag.pr-B{background:var(--b2);color:#fff} .tag.pr-C{background:var(--b1)} .tag.pr-D{background:var(--iron);color:#fff}
+  .tag.st-por_contactar{background:transparent;color:var(--ash);border:1px solid var(--line)}
+  .tag.st-contactado{background:var(--b2);color:#fff} .tag.st-respondio{background:var(--b1)} .tag.st-reunion{background:#ff9d3d}
+  .tag.st-propuesta{background:var(--b4);color:#fff} .tag.st-cliente{background:var(--accent)} .tag.st-descartado{background:#2a2e31;color:var(--ash)}
+  .tag.t-net{background:transparent;color:var(--ash);border:1px solid var(--line)}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .pgrid .sub{margin-bottom:16px}
+  .sub h3{margin-bottom:14px}
+  .sub a{color:var(--accent)}
+  .pill.go-chat{display:inline-block;margin-top:4px;border-color:var(--accent);color:var(--accent)}
+  textarea.msg{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#0b0c0d;color:var(--bone);font:15px/1.5 Inter,sans-serif;resize:vertical}
+  .pform{display:flex;flex-direction:column;gap:12px}
+  .pform label{display:flex;flex-direction:column;gap:6px;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+  .pform .go{align-self:flex-start;background:var(--white);color:#000;border-color:var(--white)}
+  .timeline,.plist{list-style:none;margin:0;padding:0}
+  .timeline li,.plist li{padding:10px 0;border-bottom:1px solid var(--line)}
+  .timeline li:last-child,.plist li:last-child{border-bottom:0}
+  .timeline .mono{display:block;margin-bottom:4px}
+  .plist .bio{color:var(--ash);font-size:13px}
+  .md{max-width:900px}
+  .md h2{font:400 2.6rem/1.05 "Instrument Serif",serif;color:var(--white);margin:0 0 18px}
+  .md h3{font:400 1.8rem/1.1 "Instrument Serif",serif;color:var(--white);text-transform:none;letter-spacing:0;margin:34px 0 12px}
+  .md h4{font:400 1.35rem/1.2 "Instrument Serif",serif;color:var(--white);margin:24px 0 8px}
+  .md h5{font:500 12px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ash);margin:18px 0 8px}
+  .md blockquote{margin:12px 0;padding:12px 16px;border-left:2px solid var(--accent);background:rgba(255,255,255,.03);color:var(--bone)}
+  .md a{color:var(--accent)} .md li.deep{margin-left:22px;color:var(--ash)}
+  @media (max-width:900px){.pipeline{grid-template-columns:repeat(4,1fr)}.pgrid{grid-template-columns:1fr}}
   @media (max-width:720px){.mira{grid-template-columns:1fr}.when{margin-left:0}.newauth{grid-template-columns:1fr}}
 </style></head><body><main>${content}</main>${script}</body></html>`, {
     status,
