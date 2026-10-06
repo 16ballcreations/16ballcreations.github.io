@@ -705,6 +705,29 @@ function ballTag(prioridad, score, withLabel = false){
   return `<span class="pball" title="Bola ${n} · ${BALLS[n].label}"><i class="pb pb${n}"><b>${n}</b></i>${withLabel ? `<span>${BALLS[n].label}</span>` : ""}</span>`;
 }
 
+/* campaigns are "zone-yyyy-mm" (e.g. "laureles-2026-10"). They are many and
+   growing, so they go in a dropdown grouped by month, newest first. */
+const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+function campaignParts(id){
+  const m = String(id).match(/^(.*)-(\d{4})-(\d{2})$/);
+  const words = (m ? m[1] : id).split("-").map(w => w ? w[0].toUpperCase() + w.slice(1) : w).join(" ");
+  const zone = words.replace(/\bBelen\b/g, "Belén");
+  if(!m){ return { zone, group:"Otras", order:"0000-00" }; }
+  const month = MONTHS[+m[3] - 1] || m[3];
+  return { zone, group:month[0].toUpperCase() + month.slice(1) + " " + m[2], order:m[2] + "-" + m[3] };
+}
+function campaignPicker(campaigns, current, base){
+  const groups = new Map();
+  for(const c of campaigns.map(c => ({ ...c, ...campaignParts(c.campaign) })).sort((a, b) => b.order.localeCompare(a.order) || a.zone.localeCompare(b.zone, "es"))){
+    if(!groups.has(c.group)){ groups.set(c.group, []); }
+    groups.get(c.group).push(c);
+  }
+  const options = [...groups].map(([g, list]) => `<optgroup label="${esc(g)}">${list.map(c =>
+    `<option value="${esc(c.campaign)}"${c.campaign === current ? " selected" : ""}>${esc(c.zone)}${c.n != null ? " (" + c.n + ")" : ""}</option>`).join("")}</optgroup>`).join("");
+  return `<form class="campaign" method="get" action="${base}"><label><span>Campaña</span>
+    <select name="c" onchange="this.form.submit()">${options}</select></label><noscript><button type="submit">Ver</button></noscript></form>`;
+}
+
 async function prospectsPage(env, url){
   const campaigns = (await env.DB.prepare(
     "SELECT campaign, COUNT(*) AS n FROM prospects GROUP BY campaign ORDER BY campaign DESC"
@@ -770,8 +793,8 @@ async function prospectsPage(env, url){
     </tr>`).join("");
 
   return adminPage(env, "prospectos", "Prospectos", head("Los <em>prospectos</em>", `
-      <p class="totals mono">${campaigns.map(c => `<a class="${c.campaign === campaign ? "on" : ""}" href="/admin/prospectos?c=${esc(c.campaign)}">${esc(c.campaign)} (${c.n})</a>`).join(" · ")}<br>
-      <a href="/admin/recursos">Recursos de las campañas →</a></p>`) + `
+      <div class="totals mono">${campaignPicker(campaigns, campaign, "/admin/prospectos")}
+      <a href="/admin/recursos">Recursos de las campañas →</a></div>`) + `
     <nav class="pipeline">
       ${Object.entries(STAGES).map(([k, label]) => `<a class="${etapa === k ? "on" : ""}" href="${href({ etapa:etapa === k ? "" : k })}"><b>${sc[k] || 0}</b>${label}</a>`).join("")}
       <a class="${hoy ? "on" : ""} today" href="${href({ ver:hoy ? "" : "hoy" })}"><b>${due.n || 0}</b>Para hoy</a>
@@ -952,8 +975,8 @@ async function mapPage(env, url){
   return adminPage(env, "mapa", "Mapa", `
     <header class="top">
       <div><p class="kicker">Ventas · mapa</p><h1>Dónde <em>están</em></h1></div>
-      <p class="totals mono">${campaigns.map(c => `<a class="${c.campaign === campaign ? "on" : ""}" href="/admin/mapa?c=${esc(c.campaign)}">${esc(c.campaign)}</a>`).join(" · ")}<br>
-      ${placed.length} en el mapa · ${missing.length} sin dirección</p>
+      <div class="totals mono">${campaignPicker(campaigns, campaign, "/admin/mapa")}
+      <span class="pickline">${placed.length} en el mapa · ${missing.length} sin dirección</span></div>
     </header>
     <nav class="filters" id="mapBalls">
       ${Object.keys(BALLS).map(n => `<label class="pill ballpill mapf${n === "8" ? "" : " on"}"><input type="checkbox" value="${n}"${n === "8" ? "" : " checked"} hidden><i class="pb pb${n}"><b>${n}</b></i>${BALLS[n].label}</label>`).join("")}
@@ -1305,6 +1328,18 @@ function page(title, content, status = 200, script = "", shell = false){
   .padwrap[hidden]{display:none}
   .padtools .pill{color:#111;border-color:#c9c8c2}
   .totals a{color:var(--ash)} .totals a.on{color:var(--accent)}
+  .campaign label{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+  .campaign span{font:11px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
+  .campaign select{min-width:230px;padding:9px 36px 9px 14px;border-radius:999px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);
+    font:14px Inter,sans-serif;cursor:pointer;appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--ash) 50%),linear-gradient(135deg,var(--ash) 50%,transparent 50%);
+    background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+  .campaign select:focus{outline:2px solid var(--accent);outline-offset:2px}
+  .campaign optgroup{font-style:normal;color:var(--iron);background:#0b0c0d}
+  .campaign option{color:var(--white);background:#0b0c0d}
+  .totals{text-align:right}
+  .totals .campaign ~ a,.totals .pickline{display:inline-block;margin-top:10px}
+  @media (max-width:720px){.totals{text-align:left}.campaign label{justify-content:flex-start}}
   .pipeline{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:18px}
   .pipeline a{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;color:var(--ash);text-decoration:none;font:11px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.05em}
   .pipeline b{font:400 1.9rem/1 "Instrument Serif",serif;color:var(--white);letter-spacing:0}
