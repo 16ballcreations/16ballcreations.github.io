@@ -21,9 +21,9 @@ const SITE = [
   "assets",
   "mira",
   "autorizacion",
-  "testimonio",
-  "v1",
-  "v2"
+  "testimonio"
+  /* v1/ and v2/, the earlier versions of the home page, are kept in the
+     repository as reference only: they are not published */
 ];
 
 await rm(dist, { recursive: true, force: true });

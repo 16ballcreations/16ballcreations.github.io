@@ -56,8 +56,9 @@ Inter y JetBrains Mono).
 - `marca/`: **guía para agentes de IA** que crean documentos PDF a nombre de la
   marca (`GUIA-DOCUMENTOS-PDF.md`) y su plantilla (`plantilla-documento.html`).
   No se publica. Para convertir: `node scripts/pdf.mjs entrada.html salida.pdf`
-- `v1/`: la versión anterior del sitio, publicada en /v1/
-- `v2/`: la primera iteración de la mesa (sin vidrio ni esfera), guardada como referencia en /v2/
+- `v1/`: la versión anterior del sitio. Solo en el repositorio, no se publica
+- `v2/`: la primera iteración de la mesa (sin vidrio ni esfera). Solo en el
+  repositorio como referencia, no se publica
 - La House of Demons vive en su propio repositorio: https://github.com/16ballcreations/lhod (se publica en /lhod/)
 
 ## Cloudflare: el sitio, los formularios y el panel
@@ -134,7 +135,7 @@ Para probar en local, la clave del panel va en `.dev.vars`
   sus servicios, el fundador, las redes y Modularity.
 - `robots.txt` deja entrar a todo menos `/admin` y `/api/`, y apunta a
   `sitemap.xml`. Las páginas privadas (`/mira/`, `/testimonio/`,
-  `/autorizacion/`) y las versiones viejas (`/v1/`, `/v2/`) llevan `noindex`.
+  `/autorizacion/`) llevan `noindex`.
 - Cuando el sitio cambie, avisa a Bing y compañía con IndexNow (la clave es el
   `.txt` de 32 caracteres en la raíz):
   ```

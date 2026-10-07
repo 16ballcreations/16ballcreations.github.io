@@ -2,7 +2,7 @@
 User-agent: *
 Allow: /
 # the panel and the forms' API. The private pages (/mira/, /testimonio/,
-# /autorizacion/) and the old versions (/v1/, /v2/) stay crawlable on purpose:
+# /autorizacion/) stay crawlable on purpose:
 # each one carries its own noindex, and Google only reads it if it may enter.
 Disallow: /admin
 Disallow: /api/
