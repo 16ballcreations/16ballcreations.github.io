@@ -293,6 +293,9 @@ async function admin(request, env, url, path){
     return request.method === "POST" ? saveSignature(request, env, url) : signaturePage(env, url);
   }
   if(path === "/admin/prospectos"){ return prospectsPage(env, url); }
+  if(path === "/admin/prospecto/nuevo"){
+    return request.method === "POST" ? createProspect(request, env, url) : newProspectPage(env, url);
+  }
   if(path === "/admin/prospecto"){
     return request.method === "POST" ? updateProspect(request, env, url) : prospectPage(env, url);
   }
@@ -677,7 +680,8 @@ const NETWORK = {
 /* The order to go after prospects, as pool balls: 1 first, 5 last, and the 8
    for the discarded (6 and 7 are skipped on purpose). The research ranks them
    A to D; D is wide, so it splits by score: 25 and up is the 4, below is the 5.
-   Derived when shown, so reloading a campaign keeps working. */
+   Derived when shown, so reloading a campaign keeps working. A ball picked
+   by hand in the panel (column bola) wins over the research. */
 const BALLS = {
   1:{ label:"Primero", sql:"prioridad = 'A'" },
   2:{ label:"Muy probable", sql:"prioridad = 'B'" },
@@ -687,7 +691,11 @@ const BALLS = {
   8:{ label:"Descartado", sql:"prioridad = 'Descartar'" }
 };
 const OLD_PRIORITY = { A:"1", B:"2", C:"3", Descartar:"8" };
-function ballOf(prioridad, score){
+/* the same rule in SQL, for filtering and ordering */
+const BALL_SQL = "COALESCE(bola, CASE WHEN prioridad = 'A' THEN 1 WHEN prioridad = 'B' THEN 2 WHEN prioridad = 'C' THEN 3 " +
+  "WHEN prioridad = 'D' AND score >= 25 THEN 4 WHEN prioridad = 'D' THEN 5 ELSE 8 END)";
+function ballOf(prioridad, score, bola){
+  if(BALLS[bola]){ return +bola; }
   if(prioridad === "A"){ return 1; }
   if(prioridad === "B"){ return 2; }
   if(prioridad === "C"){ return 3; }
@@ -705,8 +713,8 @@ function plusDays(iso, n){
 function stageTag(etapa){
   return `<span class="tag st-${esc(etapa)}">${esc(STAGES[etapa] || etapa)}</span>`;
 }
-function ballTag(prioridad, score, withLabel = false){
-  const n = ballOf(prioridad, score);
+function ballTag(prioridad, score, withLabel = false, bola = null){
+  const n = ballOf(prioridad, score, bola);
   return `<span class="pball" title="Bola ${n} · ${BALLS[n].label}"><i class="pb pb${n}"><b>${n}</b></i>${withLabel ? `<span>${BALLS[n].label}</span>` : ""}</span>`;
 }
 
@@ -749,7 +757,8 @@ async function prospectsPage(env, url){
     return adminPage(env, "prospectos", "Prospectos", head("Todavía <em>no hay prospectos</em>") + `
       <p class="empty">Carga una campaña desde su carpeta privada:<br>
       <code>node scripts/prospectos-sql.mjs prospectos/&lt;campaña&gt;</code> y después
-      <code>npx wrangler d1 execute 16bc --remote --file tmp/prospectos-&lt;campaña&gt;.sql</code></p>`);
+      <code>npx wrangler d1 execute 16bc --remote --file tmp/prospectos-&lt;campaña&gt;.sql</code></p>
+      <p><a class="pill new" href="/admin/prospecto/nuevo">+ Agregar uno a mano</a></p>`);
   }
 
   const p = url.searchParams;
@@ -761,13 +770,13 @@ async function prospectsPage(env, url){
   const today = todayIso();
 
   const where = ["campaign = ?1"], binds = [campaign];
-  if(bola){ where.push("(" + BALLS[bola].sql + ")"); }
+  if(bola){ where.push(BALL_SQL + " = " + Number(bola)); }
   if(etapa){ binds.push(etapa); where.push("etapa = ?" + binds.length); }
   if(hoy){ binds.push(today); where.push("proxima_fecha IS NOT NULL AND proxima_fecha <= ?" + binds.length + " AND etapa NOT IN ('cliente', 'descartado')"); }
   if(text){ binds.push("%" + text + "%"); const n = binds.length; where.push(`(negocio LIKE ?${n} OR barrio LIKE ?${n} OR categoria LIKE ?${n} OR code LIKE ?${n})`); }
   const { results } = await env.DB.prepare(
-    "SELECT id, code, rank, prioridad, score, negocio, categoria, barrio, canal, enlace, etapa, proxima_accion, proxima_fecha FROM prospects WHERE " +
-    where.join(" AND ") + " ORDER BY rank LIMIT 300"
+    "SELECT id, code, rank, prioridad, score, bola, negocio, categoria, barrio, canal, enlace, etapa, proxima_accion, proxima_fecha FROM prospects WHERE " +
+    where.join(" AND ") + " ORDER BY " + BALL_SQL + ", rank LIMIT 300"
   ).bind(...binds).all();
 
   const stages = (await env.DB.prepare(
@@ -789,7 +798,7 @@ async function prospectsPage(env, url){
   const rows = results.map(r => `
     <tr>
       <td class="mono">${r.rank ?? ""}</td>
-      <td>${ballTag(r.prioridad, r.score)}</td>
+      <td>${ballTag(r.prioridad, r.score, false, r.bola)}</td>
       <td><a class="biz" href="/admin/prospecto?id=${encodeURIComponent(r.id)}">${esc(r.negocio)}</a><span class="mono sub2">${esc(r.code)} · ${esc(r.categoria || "")}</span></td>
       <td>${esc(r.barrio || "")}</td>
       <td>${r.enlace ? `<a href="${esc(r.enlace)}" target="_blank" rel="noopener">${esc(r.canal)}</a>` : esc(r.canal || "")}</td>
@@ -798,6 +807,7 @@ async function prospectsPage(env, url){
     </tr>`).join("");
 
   return adminPage(env, "prospectos", "Prospectos", head("Los <em>prospectos</em>", `
+      <a class="pill new addp" href="/admin/prospecto/nuevo?c=${encodeURIComponent(campaign)}">+ Nuevo prospecto</a>
       <div class="totals mono">${campaignPicker(campaigns, campaign, "/admin/prospectos")}
       <a href="/admin/recursos">Recursos de las campañas →</a></div>`) + `
     <nav class="pipeline">
@@ -832,6 +842,11 @@ async function prospectPage(env, url){
   let d = {};
   try{ d = JSON.parse(r.data); }catch(e){}
   const v = d.redes_verificacion || {};
+  const centre = r.lat != null ? null : await env.DB.prepare(
+    "SELECT AVG(lat) AS lat, AVG(lng) AS lng FROM prospects WHERE campaign = ?1 AND lat IS NOT NULL"
+  ).bind(r.campaign).first();
+  const MINI = { lat:r.lat, lng:r.lng, ball:ballOf(r.prioridad, r.score, r.bola),
+    centre:centre && centre.lat != null ? [centre.lat, centre.lng] : [6.2442, -75.5812] };
   const back = "/admin/prospectos?c=" + encodeURIComponent(r.campaign);
   /* the map point, when the research has one, is more exact than the address */
   const maps = typeof d.lat === "number" && typeof d.lon === "number"
@@ -853,7 +868,7 @@ async function prospectPage(env, url){
         <h1>${esc(r.negocio)}</h1>
         <p class="mono">${esc(r.categoria || "")}</p>
       </div>
-      <p class="tags">${ballTag(r.prioridad, r.score, true)} ${stageTag(r.etapa)} <span class="tag t-net">${esc(NETWORK[r.estado_redes] || r.estado_redes || "")}</span></p>
+      <p class="tags">${ballTag(r.prioridad, r.score, true, r.bola)} ${stageTag(r.etapa)}${r.estado_redes ? ` <span class="tag t-net">${esc(NETWORK[r.estado_redes] || r.estado_redes)}</span>` : ""}</p>
     </header>
     <div class="pgrid">
       <section class="sub">
@@ -882,6 +897,33 @@ async function prospectPage(env, url){
         <form method="post" action="/admin/prospecto"><input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="enviado"><button type="submit">Ya lo envié</button></form>
       </div>
     </section>` : ""}
+    <div class="pgrid" id="jerarquia">
+      <section class="sub">
+        <h3>Jerarquía</h3>
+        <form class="pform" method="post" action="/admin/prospecto">
+          <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="bola">
+          <div class="ballpick" role="radiogroup" aria-label="Bola">
+            ${Object.keys(BALLS).map(n => `<label title="${BALLS[n].label}"><input type="radio" name="bola" value="${n}"${ballOf(r.prioridad, r.score, r.bola) === +n ? " checked" : ""}><i class="pb pb${n}"><b>${n}</b></i><span>${BALLS[n].label}</span></label>`).join("")}
+          </div>
+          <p class="mono hintline">${r.bola ? "Elegida a mano." + (r.prioridad ? ` La investigación decía bola ${ballOf(r.prioridad, r.score)}.` : "") : "Viene de la investigación."} Si eliges la 8, pasa también a «Descartado».</p>
+          <div class="linkrow">
+            <button type="submit" class="go">Cambiar la bola</button>
+            ${r.bola && r.prioridad ? `<button type="submit" name="reset" value="1">Volver a la de la investigación</button>` : ""}
+          </div>
+        </form>
+      </section>
+      <section class="sub" id="ubicacion">
+        <h3>Ubicación</h3>
+        <form class="pform" method="post" action="/admin/prospecto" id="placeForm">
+          <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="ubicar">
+          <input type="hidden" name="lat" value="${r.lat ?? ""}"><input type="hidden" name="lng" value="${r.lng ?? ""}">
+          <div class="searchrow"><input id="placeQuery" value="${esc(r.direccion || "")}" placeholder="Buscar una dirección o un lugar"><button type="button" id="placeFind">Buscar</button></div>
+          <div id="map" class="minimap"></div>
+          <p class="mono hintline" id="placeMsg">${r.lat != null ? esc(GEO[r.geo] || "Ubicado") + ". Toca el mapa para moverlo." : "Todavía no está en el mapa. Busca la dirección o toca el punto exacto."}</p>
+          <button type="submit" class="go" id="placeSave" disabled>Guardar la ubicación</button>
+        </form>
+      </section>
+    </div>
     <div class="pgrid" id="seguimiento">
       <section class="sub">
         <h3>Seguimiento</h3>
@@ -911,16 +953,17 @@ async function prospectPage(env, url){
       <h3>La investigación</h3>
       ${profiles ? `<ul class="plist">${profiles}</ul>` : `<p class="empty">No se encontraron perfiles.</p>`}
       ${dropped ? `<p><b>Descartados</b></p><ul class="plist">${dropped}</ul>` : ""}
-      <p class="mono">Verificado el ${esc(v.fecha || "")}${d.telefono ? " · teléfono del listado: " + esc(d.telefono) : ""}</p>
+      <p class="mono">${d.origen === "manual" ? "Agregado a mano el " + esc(d.creado || "") : "Verificado el " + esc(v.fecha || "")}${d.telefono ? " · teléfono: " + esc(d.telefono) : ""}</p>
     </section>
-  `, 200, COPY_SCRIPT);
+  `, 200, COPY_SCRIPT + LEAFLET + `<script>window.__MINI = ${JSON.stringify(MINI)};</script><script>${MINI_MAP_SCRIPT}</script>`);
 }
 
 async function updateProspect(request, env, url){
   const form = await request.formData();
   const id = String(form.get("id") || "");
-  const r = await env.DB.prepare("SELECT id, etapa, canal FROM prospects WHERE id = ?1").bind(id).first();
+  const r = await env.DB.prepare("SELECT id, etapa, canal, prioridad, score, bola FROM prospects WHERE id = ?1").bind(id).first();
   if(!r){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
+  let anchor = "#seguimiento";
   const log = (tipo, texto) => env.DB.prepare("INSERT INTO prospect_events (prospect_id, tipo, texto) VALUES (?1, ?2, ?3)").bind(id, tipo, texto);
   const accion = form.get("accion");
   const batch = [];
@@ -941,6 +984,28 @@ async function updateProspect(request, env, url){
     batch.push(env.DB.prepare(
       "UPDATE prospects SET etapa = ?1, proxima_accion = ?2, proxima_fecha = ?3, updated_at = datetime('now') WHERE id = ?4"
     ).bind(etapa, next || null, date, id));
+  } else if(accion === "bola"){
+    anchor = "#jerarquia";
+    const before = ballOf(r.prioridad, r.score, r.bola);
+    const choice = form.get("reset") ? "auto" : form.get("bola");
+    const next = choice === "auto" ? null : (BALLS[choice] ? +choice : r.bola);
+    const after = ballOf(r.prioridad, r.score, next);
+    if(next !== r.bola){
+      batch.push(env.DB.prepare("UPDATE prospects SET bola = ?1, updated_at = datetime('now') WHERE id = ?2").bind(next, id));
+      if(after !== before){ batch.push(log("nota", `Jerarquía: bola ${before} (${BALLS[before].label}) → bola ${after} (${BALLS[after].label})${choice === "auto" ? ", la de la investigación" : ""}.`)); }
+      /* the 8 is the discarded ball: the stage follows */
+      if(after === 8 && r.etapa !== "descartado"){
+        batch.push(env.DB.prepare("UPDATE prospects SET etapa = 'descartado' WHERE id = ?1").bind(id));
+        batch.push(log("etapa", STAGES[r.etapa] + " → " + STAGES.descartado));
+      }
+    }
+  } else if(accion === "ubicar"){
+    anchor = "#ubicacion";
+    const lat = parseFloat(form.get("lat")), lng = parseFloat(form.get("lng"));
+    if(lat >= -5 && lat <= 13 && lng >= -82 && lng <= -66){
+      batch.push(env.DB.prepare("UPDATE prospects SET lat = ?1, lng = ?2, geo = 'manual', updated_at = datetime('now') WHERE id = ?3").bind(lat, lng, id));
+      batch.push(log("nota", "Ubicación marcada a mano en el mapa."));
+    }
   } else if(accion === "evento"){
     const tipo = ["respuesta", "mensaje", "visita", "reunion", "nota"].includes(form.get("tipo")) ? form.get("tipo") : "nota";
     const texto = String(form.get("texto") || "").trim().slice(0, 2000);
@@ -950,18 +1015,97 @@ async function updateProspect(request, env, url){
     }
   }
   if(batch.length){ await env.DB.batch(batch); }
-  return Response.redirect(url.origin + "/admin/prospecto?id=" + encodeURIComponent(id) + "#seguimiento", 303);
+  return Response.redirect(url.origin + "/admin/prospecto?id=" + encodeURIComponent(id) + anchor, 303);
+}
+
+/* ---------- adding a prospect by hand ---------- */
+function bogotaMonth(){ return todayIso().slice(0, 7); }
+function slug(text){
+  return String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+}
+
+async function newProspectPage(env, url, error = "", values = {}){
+  const campaigns = (await env.DB.prepare("SELECT campaign, COUNT(*) AS n FROM prospects GROUP BY campaign ORDER BY campaign DESC").all()).results;
+  const chosen = values.campaign || url.searchParams.get("c") || (campaigns[0] && campaigns[0].campaign) || "";
+  const v = k => esc(values[k] || "");
+  const options = campaigns.map(c => ({ ...c, ...campaignParts(c.campaign) }))
+    .map(c => `<option value="${esc(c.campaign)}"${c.campaign === chosen ? " selected" : ""}>${esc(c.zone)} · ${esc(c.group)} (${c.n})</option>`).join("");
+  const ball = values.bola || "3";
+  return adminPage(env, "prospectos", "Nuevo prospecto", `
+    <header class="top"><div><p class="kicker"><a href="/admin/prospectos${chosen ? "?c=" + encodeURIComponent(chosen) : ""}">← Prospectos</a> · nuevo</p><h1>Un prospecto <em>nuevo</em></h1></div></header>
+    ${error ? `<p class="errline">${esc(error)}</p>` : ""}
+    <form class="newauth" method="post" action="/admin/prospecto/nuevo">
+      <label>Zona<select name="campaign" id="campSel">${options}<option value="__nueva"${chosen === "__nueva" || !campaigns.length ? " selected" : ""}>+ Una zona nueva…</option></select></label>
+      <label id="zoneBox">Nombre de la zona nueva<input name="zona" value="${v("zona")}" placeholder="Ej.: Envigado, Laureles, Sabaneta"></label>
+      <label>Negocio<input name="negocio" required value="${v("negocio")}" placeholder="Nombre del negocio"></label>
+      <label>Categoría<input name="categoria" value="${v("categoria")}" placeholder="Ej.: café, barbería, veterinaria"></label>
+      <label>Barrio<input name="barrio" value="${v("barrio")}"></label>
+      <label>Dirección<input name="direccion" value="${v("direccion")}" placeholder="Ej.: Cra. 76 #30-49"></label>
+      <label>Escribir por<select name="canal">${["Instagram (DM)", "WhatsApp", "Facebook (Messenger)", "Visita al local", "Correo", "Llamada"].map(c => `<option${values.canal === c ? " selected" : ""}>${c}</option>`).join("")}</select></label>
+      <label>Enlace del chat<input name="enlace" value="${v("enlace")}" placeholder="https://instagram.com/… o https://wa.me/57…"></label>
+      <label>Instagram<input name="instagram" value="${v("instagram")}" placeholder="https://www.instagram.com/…"></label>
+      <label>Facebook<input name="facebook" value="${v("facebook")}" placeholder="https://www.facebook.com/…"></label>
+      <label>Teléfono<input name="telefono" value="${v("telefono")}"></label>
+      <label>Página web<input name="web" value="${v("web")}" placeholder="https://"></label>
+      <label class="wide">Lo que vimos (el gancho para escribirle)<textarea name="gancho" rows="2" placeholder="Ej.: tres nombres distintos entre Instagram, Google y el letrero">${v("gancho")}</textarea></label>
+      <label class="wide">Primer mensaje (opcional)<textarea name="mensaje" rows="4">${v("mensaje")}</textarea></label>
+      <div class="wide"><span class="flabel">Bola</span>
+        <div class="ballpick" role="radiogroup" aria-label="Bola">
+          ${Object.keys(BALLS).map(n => `<label title="${BALLS[n].label}"><input type="radio" name="bola" value="${n}"${String(ball) === n ? " checked" : ""}><i class="pb pb${n}"><b>${n}</b></i><span>${BALLS[n].label}</span></label>`).join("")}
+        </div>
+      </div>
+      <p class="mono hintline">Al guardarlo te llevo a su ficha para ubicarlo en el mapa.</p>
+      <button type="submit" class="go">Agregar el prospecto</button>
+    </form>
+    <script>
+      (function(){ var s = document.getElementById("campSel"), z = document.getElementById("zoneBox");
+        function sync(){ z.hidden = s.value !== "__nueva"; z.querySelector("input").required = s.value === "__nueva"; }
+        s.addEventListener("change", sync); sync(); })();
+    </script>`);
+}
+
+async function createProspect(request, env, url){
+  const form = await request.formData();
+  const values = Object.fromEntries([...form.entries()].map(([k, x]) => [k, String(x).trim().slice(0, k === "mensaje" || k === "gancho" ? 2000 : 300)]));
+  if(!values.negocio){ return newProspectPage(env, url, "Falta el nombre del negocio.", values); }
+  let campaign = values.campaign;
+  if(campaign === "__nueva"){
+    const zone = slug(values.zona || "");
+    if(!zone){ return newProspectPage(env, url, "Escribe el nombre de la zona nueva.", values); }
+    campaign = zone + "-" + bogotaMonth();
+  } else if(!/^[a-z0-9-]+$/.test(campaign || "")){
+    return newProspectPage(env, url, "Elige una zona.", values);
+  }
+  const bola = BALLS[values.bola] ? +values.bola : 3;
+  const stats = await env.DB.prepare(
+    "SELECT MAX(rank) AS r, MAX(CASE WHEN code LIKE 'N%' THEN CAST(SUBSTR(code, 2) AS INTEGER) END) AS n FROM prospects WHERE campaign = ?1"
+  ).bind(campaign).first();
+  const code = "N" + String((stats.n || 0) + 1).padStart(3, "0");
+  const id = campaign + ":" + code;
+  const link = u => /^https?:\/\//.test(u || "") ? u : null;
+  const data = { origen:"manual", creado:todayIso(), telefono:values.telefono || null };
+  await env.DB.batch([
+    env.DB.prepare(
+      "INSERT INTO prospects (id, campaign, code, negocio, categoria, barrio, direccion, dir_fuente, rank, canal, enlace, instagram, facebook, web, gancho, mensaje, data, bola, etapa) " +
+      "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'manual', ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18)"
+    ).bind(id, campaign, code, values.negocio, values.categoria || null, values.barrio || null, values.direccion || null, (stats.r || 0) + 1,
+      values.canal || null, link(values.enlace), link(values.instagram), link(values.facebook), values.web || null,
+      values.gancho || null, values.mensaje || null, JSON.stringify(data), bola, bola === 8 ? "descartado" : "por_contactar"),
+    env.DB.prepare("INSERT INTO prospect_events (prospect_id, tipo, texto) VALUES (?1, 'nota', ?2)")
+      .bind(id, `Agregado a mano en el panel, con la bola ${bola} (${BALLS[bola].label}).`)
+  ]);
+  return Response.redirect(url.origin + "/admin/prospecto?id=" + encodeURIComponent(id) + "#ubicacion", 303);
 }
 
 /* ---------- the map: every prospect of a campaign, as its ball ---------- */
-const GEO = { esquina:"En la esquina exacta", cuadra:"En su cuadra", cercana:"A una cuadra", barrio:"Aproximada, por barrio" };
+const GEO = { esquina:"En la esquina exacta", cuadra:"En su cuadra", cercana:"A una cuadra", barrio:"Aproximada, por barrio", manual:"Marcada a mano" };
 
 async function mapPage(env, url){
   const campaigns = (await env.DB.prepare("SELECT campaign, COUNT(*) AS n FROM prospects GROUP BY campaign ORDER BY campaign DESC").all()).results;
   if(!campaigns.length){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
   const campaign = campaigns.some(c => c.campaign === url.searchParams.get("c")) ? url.searchParams.get("c") : campaigns[0].campaign;
   const { results } = await env.DB.prepare(
-    "SELECT id, code, rank, prioridad, score, negocio, categoria, barrio, direccion, canal, enlace, etapa, proxima_accion, proxima_fecha, lat, lng, geo " +
+    "SELECT id, code, rank, prioridad, score, bola, negocio, categoria, barrio, direccion, canal, enlace, etapa, proxima_accion, proxima_fecha, lat, lng, geo " +
     "FROM prospects WHERE campaign = ?1 ORDER BY rank"
   ).bind(campaign).all();
   const originRow = await env.DB.prepare("SELECT value FROM settings WHERE key = ?1").bind("origen:" + campaign).first();
@@ -970,7 +1114,7 @@ async function mapPage(env, url){
 
   const placed = [], missing = [];
   for(const r of results){
-    const item = { id:r.id, code:r.code, rank:r.rank, ball:ballOf(r.prioridad, r.score), negocio:r.negocio, categoria:r.categoria,
+    const item = { id:r.id, code:r.code, rank:r.rank, ball:ballOf(r.prioridad, r.score, r.bola), negocio:r.negocio, categoria:r.categoria,
       barrio:r.barrio, direccion:r.direccion, canal:r.canal, enlace:r.enlace, etapa:r.etapa, proxima:r.proxima_accion, fecha:r.proxima_fecha,
       lat:r.lat, lng:r.lng, geo:r.geo };
     (r.lat != null ? placed : missing).push(item);
@@ -995,11 +1139,47 @@ async function mapPage(env, url){
     ${missing.length ? `<section class="sub"><h3>Sin dirección (${missing.length})</h3><ul class="plist">${missing.map(m => `
       <li><span class="pball"><i class="pb pb${m.ball}"><b>${m.ball}</b></i></span> <a class="biz" href="/admin/prospecto?id=${encodeURIComponent(m.id)}">${esc(m.negocio)}</a> <span class="mono">· ${esc(m.direccion || "sin dato")}</span></li>`).join("")}</ul></section>` : ""}
   `, 200, `
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+${LEAFLET}
 <script>window.__MAP = ${JSON.stringify(DATA).replace(/</g, "\\u003c")};</script>
 <script>${MAP_SCRIPT}</script>`);
 }
+
+const LEAFLET = `
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>`;
+
+/* on a prospect's page: tap the map, or search, to put it where it is */
+const MINI_MAP_SCRIPT = `
+(function(){
+  var M = window.__MINI, form = document.getElementById("placeForm");
+  if(!form || !window.L){ return; }
+  var map = L.map("map", { scrollWheelZoom:false });
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+  var icon = L.divIcon({ className:"mk", iconSize:[28, 28], iconAnchor:[14, 14], html:'<i class="pb pb' + M.ball + '"><b>' + M.ball + '</b></i>' });
+  var marker = null, save = document.getElementById("placeSave"), msg = document.getElementById("placeMsg");
+  function put(lat, lng, why){
+    if(marker){ marker.setLatLng([lat, lng]); } else { marker = L.marker([lat, lng], { icon:icon, draggable:true }).addTo(map); marker.on("dragend", function(){ var p = marker.getLatLng(); put(p.lat, p.lng, "Movido. Guarda para dejarlo ahí."); }); }
+    form.lat.value = lat.toFixed(6); form.lng.value = lng.toFixed(6);
+    save.disabled = false; msg.textContent = why;
+  }
+  if(M.lat != null){ marker = L.marker([M.lat, M.lng], { icon:icon, draggable:true }).addTo(map); map.setView([M.lat, M.lng], 17);
+    marker.on("dragend", function(){ var p = marker.getLatLng(); put(p.lat, p.lng, "Movido. Guarda para dejarlo ahí."); }); }
+  else { map.setView(M.centre, 15); }
+  map.on("click", function(e){ put(e.latlng.lat, e.latlng.lng, "Marcado. Guarda para dejarlo ahí."); });
+  var q = document.getElementById("placeQuery");
+  function find(){
+    if(!q.value.trim()){ return; }
+    msg.textContent = "Buscando…";
+    fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=co&viewbox=-75.72,6.36,-75.48,6.10&q=" + encodeURIComponent(q.value + ", Medellín"))
+      .then(function(r){ return r.json(); }).then(function(j){
+        if(!j[0]){ msg.textContent = "No la encontré. Toca el punto en el mapa."; return; }
+        map.setView([+j[0].lat, +j[0].lon], 17); put(+j[0].lat, +j[0].lon, "Encontrado: revisa que esté bien y guarda. Si no, toca el punto exacto.");
+      }).catch(function(){ msg.textContent = "No pude buscar ahora. Toca el punto en el mapa."; });
+  }
+  document.getElementById("placeFind").addEventListener("click", find);
+  q.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); find(); } });
+})();
+`;
 
 const MAP_SCRIPT = `
 (function(){
@@ -1372,6 +1552,24 @@ function page(title, content, status = 200, script = "", shell = false){
   .pb b{position:relative;font:600 9px/1 Inter,sans-serif;color:#111}
   .pb1{--c:#f4c20d} .pb2{--c:#4d7dff} .pb3{--c:#ff5c6e} .pb4{--c:#a375d8} .pb5{--c:#ff9d3d}
   .pb8{--c:#0b0b0b;box-shadow:inset -3px -4px 6px rgba(0,0,0,.6),inset 2px 2px 4px rgba(255,255,255,.18),0 0 0 1px #2a2e31}
+  /* the ball picker */
+  .ballpick{display:flex;flex-wrap:wrap;gap:8px}
+  form .ballpick label{position:relative;display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border:1px solid var(--line);border-radius:999px;cursor:pointer;
+    font:11px "JetBrains Mono",monospace;letter-spacing:.04em;text-transform:none;color:var(--ash);flex-direction:row;gap:8px}
+  .ballpick input{position:absolute;opacity:0;pointer-events:none}
+  .ballpick label:has(input:checked){border-color:var(--white);color:var(--white);background:rgba(255,255,255,.05)}
+  .ballpick label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+  .ballpick .pb{width:24px;height:24px}
+  .searchrow{display:flex;gap:8px}
+  .searchrow input{flex:1}
+  .minimap{height:300px !important;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .pform button[disabled]{opacity:.4;cursor:not-allowed}
+  .newauth select,.newauth textarea{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:15px Inter,sans-serif;text-transform:none;letter-spacing:0}
+  .newauth .wide{grid-column:1 / -1}
+  .newauth label[hidden]{display:none}
+  .flabel{display:block;margin-bottom:8px;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+  .errline{color:var(--b3);margin:0 0 18px}
+  .top .addp{align-self:flex-end;margin-bottom:10px}
   /* the map */
   .mapwrap{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:10px}
   #map{height:min(72vh,720px);background:#0b0c0d}

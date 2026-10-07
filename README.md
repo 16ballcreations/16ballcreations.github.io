@@ -102,7 +102,12 @@ Todo vive en un Worker de Cloudflare llamado `page`
      quedan aproximadas) y escribe `tmp/prospectos-geo-<campaña>.sql`, que se
      carga igual. `/admin/mapa` los muestra como sus bolas, con filtros por
      bola y etapa, y "Cómo llegar" en Google Maps. Sin claves ni costos.
-  4. En `/admin/prospectos` se filtran por prioridad, etapa o texto; cada uno
+  4. **A mano, en el panel:** "+ Nuevo prospecto" (`/admin/prospecto/nuevo`) agrega uno a
+     una zona existente o crea una zona nueva (`zona-año-mes`); queda con código `N001`,
+     `N002`… En la ficha de cada prospecto, **Jerarquía** cambia su bola (columna `bola`,
+     que gana sobre la investigación y no se pierde al recargar la campaña; la 8 lo pasa
+     a Descartado) y **Ubicación** lo pone en el mapa buscando la dirección o tocando el punto.
+  5. En `/admin/prospectos` se filtran por prioridad, etapa o texto; cada uno
      tiene su dirección, el chat al que escribir, el primer mensaje listo para
      copiar, la etapa, el próximo paso y su historial (tablas `prospects` y
      `prospect_events`). `/admin/recursos` muestra el discurso y las notas
@@ -114,7 +119,7 @@ Comandos:
 npm install                 # una vez
 npm run dev                 # el sitio con el Worker en http://localhost:8787
 npm run deploy              # publica en Cloudflare
-npm run db:migrate          # aplica migraciones nuevas a la base de producción
+npm run db:migrate          # aplica migraciones nuevas a la base de producción (ANTES de deploy)
 npx wrangler secret put ADMIN_PASSWORD   # crea o cambia la clave del panel
 ```
 
