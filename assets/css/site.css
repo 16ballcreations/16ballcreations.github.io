@@ -659,6 +659,8 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
   .is-menu .menu-bars{background:transparent}
   .is-menu .menu-bars::before{transform:translateY(6px) rotate(45deg)}
   .is-menu .menu-bars::after{transform:translateY(-6px) rotate(-45deg)}
+  /* the price in pesos is long: shrink it on the narrowest phones so it stays one line inside the card */
+  .price-big{font-size:min(2.6rem,11vw)}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;transition:none}

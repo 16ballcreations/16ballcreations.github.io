@@ -61,8 +61,9 @@ entenderse sin explicaciones.
   **No ofrecemos apps móviles.**
 - **MIRA** = Marca, Imagen, Redes y Alineación: el levantamiento que hacemos
   después de la primera llamada. Se escribe en mayúsculas.
-- **Precios:** los proyectos van "desde US$200". Nunca inventes cifras: si el
-  pedido no trae precios, deja `US$ 000` visible y avísalo al entregar.
+- **Precios:** en pesos colombianos; los proyectos van "desde $1.500.000 COP".
+  Nunca inventes cifras: si el pedido no trae precios, deja `$ 000` visible y
+  avísalo al entregar.
 
 ## 3. El sistema visual
 
@@ -154,7 +155,7 @@ entera; el encabezado y el pie se repiten en cada una.
   dibujes, no la recrees.
 - **Nunca inventes datos del cliente** (documentos de identidad, redes, cifras,
   fechas de entrega). Lo que falte se deja con un marcador visible
-  (`Documento:` vacío, `US$ 000`, `@usuario`) y se reporta.
+  (`Documento:` vacío, `$ 000`, `@usuario`) y se reporta.
 - **Los documentos de clientes no van al repositorio.** `C:\Dev\16bc-site` se
   publica en GitHub de forma pública. Guarda el HTML y el PDF fuera del
   repositorio, donde el usuario indique; si no lo dice, pregunta.
