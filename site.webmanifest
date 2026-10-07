@@ -1,0 +1,14 @@
+{
+  "name": "16 Ball Creations",
+  "short_name": "16BC",
+  "description": "Marca, páginas web, tiendas en línea y sistemas para tu negocio. Si no existe, lo creamos.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "es-CO",
+  "icons": [
+    { "src": "/assets/img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/img/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

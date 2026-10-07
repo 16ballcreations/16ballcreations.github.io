@@ -121,6 +121,24 @@ npx wrangler secret put ADMIN_PASSWORD   # crea o cambia la clave del panel
 Para probar en local, la clave del panel va en `.dev.vars`
 (`ADMIN_PASSWORD="…"`), que no se sube al repositorio.
 
+## Buscadores (SEO)
+
+- `index.html` lleva título y descripción con lo que hacemos y dónde, la imagen
+  para compartir (`assets/img/og-16ballcreations.jpg`, 1200x630) y los datos
+  estructurados (JSON-LD): el estudio como `ProfessionalService` en Medellín,
+  sus servicios, el fundador, las redes y Modularity.
+- `robots.txt` deja entrar a todo menos `/admin` y `/api/`, y apunta a
+  `sitemap.xml`. Las páginas privadas (`/mira/`, `/testimonio/`,
+  `/autorizacion/`) y las versiones viejas (`/v1/`, `/v2/`) llevan `noindex`.
+- Cuando el sitio cambie, avisa a Bing y compañía con IndexNow (la clave es el
+  `.txt` de 32 caracteres en la raíz):
+  ```
+  curl -X POST https://api.indexnow.org/indexnow -H "Content-Type: application/json" -d "{\"host\":\"page.16ballcreations.workers.dev\",\"key\":\"<clave>\",\"urlList\":[\"https://page.16ballcreations.workers.dev/\"]}"
+  ```
+- Google no usa IndexNow: el sitio se registra en Google Search Console y ahí
+  se envía `sitemap.xml`. Si una página nueva se vuelve pública, súmala al
+  sitemap y a `scripts/build.mjs`.
+
 ## Movimiento reducido
 
 Con `prefers-reduced-motion`, la mesa aparece quieta con las bolas ya

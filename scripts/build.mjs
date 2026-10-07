@@ -11,6 +11,13 @@ const dist = join(root, "dist");
 
 const SITE = [
   "index.html",
+  /* for search engines: what to crawl, the icon, the app manifest, and the
+     IndexNow key that lets us tell Bing and others when the site changes */
+  "robots.txt",
+  "sitemap.xml",
+  "favicon.ico",
+  "site.webmanifest",
+  "44b6eb8c5cbb6e059ea61f162a867345.txt",
   "assets",
   "mira",
   "autorizacion",
