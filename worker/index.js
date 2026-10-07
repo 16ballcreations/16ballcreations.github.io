@@ -45,6 +45,11 @@ export default {
       if(request.method === "POST"){ return receive(request, env, url, path === "/api/mira" ? "mira" : "contacto"); }
       return json({ ok:false, error:"Método no permitido" }, 405, request, url);
     }
+    /* Google Search Console checks this exact address. As a static file the
+       asset handling would redirect it to drop the .html, so it is served here */
+    if(url.pathname === "/googlee3f0630cfd72f21f.html"){
+      return new Response("google-site-verification: googlee3f0630cfd72f21f.html", { headers:{ "Content-Type":"text/html; charset=utf-8" } });
+    }
     if(path === "/api/testimonio"){
       if(request.method === "OPTIONS"){ return preflight(request, url); }
       if(request.method === "POST"){ return receiveTestimonial(request, env, url); }
