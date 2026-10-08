@@ -44,7 +44,10 @@ Inter y JetBrains Mono).
   `assets/css/mira.css`, lógica en `assets/js/mira.js`; las respuestas se envían
   por correo, como el formulario de contacto. Es el primer paso del embudo, antes de
   la llamada: es pública, se indexa y se enlaza desde el inicio, la bio de Instagram
-  y los mensajes. El enlace personal saluda y rellena: `mira/?nombre=Ana&marca=Café%20La%20Esquina`
+  y los mensajes. El enlace saluda y rellena: `mira/?nombre=Ana&marca=Café%20La%20Esquina`.
+  `?o=` dice de dónde llegó (`ig`, `bio`, `historia`, `web`, `referido`, `whatsapp`,
+  `facebook`, `visita`), y `?t=` es el código del **enlace personal** de un prospecto
+  (ver "La MIRA y los prospectos" más abajo)
 - `testimonio/`: el formulario de testimonios, tres preguntas sobre la persona
   (qué cambió en ella, cómo se sintió, satisfacción de 1 a 5) y cómo quiere
   aparecer (con nombre, con iniciales o sin publicar). Se envía al cerrar un
@@ -113,6 +116,39 @@ Todo vive en un Worker de Cloudflare llamado `page`
      copiar, la etapa, el próximo paso y su historial (tablas `prospects` y
      `prospect_events`). `/admin/recursos` muestra el discurso y las notas
      de cada campaña (tabla `resources`).
+  6. El **primer mensaje** se edita en la ficha mientras el prospecto está en
+     «Por contactar» (Guardar cambios, Copiar mensaje, Ya lo envié). Al marcarlo
+     como enviado queda fijo y su texto pasa al historial. Un mensaje editado se
+     marca (`mensaje_editado`) y recargar la campaña ya no lo reemplaza.
+- **La MIRA y los prospectos.** La MIRA es el primer filtro, antes de la llamada:
+  1. Cada prospecto tiene un **enlace personal** en su ficha (Copiar enlace de
+     MIRA): `/mira/?t=<código>&marca=…&o=ig`. El código (`prospects.mira_token`, 6
+     caracteres) se crea la primera vez que se abre la ficha y no cambia al recargar
+     la campaña. Una MIRA que llega con ese código se vincula sola a su prospecto.
+  2. Cualquier otra MIRA (bio, inicio, referidos) llega **sin prospecto** y se
+     vincula a mano en `/admin/mira`: «Vincular a un prospecto» sugiere por Instagram
+     y por nombre, y tiene buscador; «Crear prospecto» lo arma con los datos de la
+     MIRA en la campaña `entrantes-<año>-<mes>`. «Desvincular» deshace un error sin
+     cambiar la etapa.
+  3. Al vincularse, el prospecto pasa a «Respondió» (si estaba antes; uno en
+     «Reunión» o después no retrocede, y uno descartado se reabre) con el próximo
+     paso «Agendar llamada» para hoy. La ficha muestra sus respuestas M·I·R·A.
+- **La llamada**, en la ficha del prospecto (sección «La llamada»):
+  1. **Agendar**: fecha, hora y medio (videollamada, visita o llamada). Pasa a
+     «Reunión» con el próximo paso «Registrar llamada».
+  2. **Registrar**: asistió, duración, meta y dolor en sus palabras, quién decide,
+     fecha clave, presupuesto, bola candidata (el paquete: 1, 3, 5 u 8; no cambia
+     la jerarquía del prospecto), temperatura, objeciones, resultado, próximo paso y
+     aprendizaje. «Sigue a MIRA escrita» deja «Enviar MIRA» a dos días hábiles; «No
+     encaja» lo descarta; «Lo piensa» usa la fecha acordada; si no se presentó o
+     reprogramó, queda «Reagendar». Se guarda como evento `reunion` con sus campos
+     en `prospect_events.data`.
+  3. El inicio del panel cuenta las **MIRA sin agendar** (últimos 30 días, sin
+     prospecto o en «Respondió») y las **llamadas sin registrar** (agendadas hace
+     más de 2 horas). La meta es que la segunda siempre esté en 0.
+  4. `/admin/embudo.csv` descarga una fila por prospecto: etapa, bola, origen y
+     fecha de la MIRA, llamada agendada, asistencia, temperatura, resultado y bola
+     candidata.
 
 Comandos:
 

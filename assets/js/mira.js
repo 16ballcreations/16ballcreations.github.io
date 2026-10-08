@@ -11,6 +11,9 @@
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var HEX = { 1:"#f4c20d",2:"#4d7dff",3:"#ff5c6e",4:"#a375d8",5:"#ff9d3d",6:"#3ad389",7:"#e0765f",8:"#e8e8e8" };
   var STORE = "mira-v1";
+  /* the personal link and the channel, kept apart from the answers */
+  var ref = {};
+  try{ ref = JSON.parse(localStorage.getItem(STORE + ":ref") || "{}") || {}; }catch(e){}
   var MAIL = "16ballcreations@gmail.com";
 
   function setAccent(n){ if(HEX[n]){ root.style.setProperty("--accent", HEX[n]); } }
@@ -73,7 +76,8 @@
       publico: picked("publico"), publicoDetalle: val("qWho"),
       objetivos: picked("objetivos"),
       tiene: picked("tiene"), enlaces: val("qLinks"),
-      nombre: val("qPerson"), contacto: val("qReach")
+      nombre: val("qPerson"), contacto: val("qReach"),
+      token: ref.token, origen: ref.origen
     };
   }
 
@@ -246,7 +250,7 @@
       sendBtn.innerHTML = "Enviada ✓";
       done.textContent = "¡Recibida, " + a.nombre + "! Te escribimos en menos de 24 horas para agendar la llamada.";
       done.classList.add("is-ok");
-      try{ localStorage.removeItem(STORE); }catch(e){}
+      try{ localStorage.removeItem(STORE); localStorage.removeItem(STORE + ":ref"); }catch(e){}
     }).catch(function(){
       sendBtn.disabled = false;
       done.textContent = "Usamos tu correo para enviarla.";
@@ -270,6 +274,12 @@
   });
   restore();
   var params = new URLSearchParams(location.search);
+  /* where the visitor came from: the personal link's code (?t=) ties the
+     MIRA to its prospect; ?o= is the channel. Both outlive a reload. */
+  var t = (params.get("t") || "").trim().toLowerCase(), o = (params.get("o") || "").trim().toLowerCase();
+  if(/^[a-z2-9]{6}$/.test(t)){ ref.token = t; }
+  if(/^[a-z]{2,12}$/.test(o)){ ref.origen = o; }
+  try{ localStorage.setItem(STORE + ":ref", JSON.stringify(ref)); }catch(e){}
   var pName = (params.get("nombre") || "").trim(), pBrand = (params.get("marca") || "").trim();
   if(pName && !val("qPerson")){ document.getElementById("qPerson").value = pName; }
   if(pBrand && !val("qName")){ document.getElementById("qName").value = pBrand; }

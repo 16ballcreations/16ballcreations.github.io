@@ -8,7 +8,8 @@
 
    The folder must have base-panel.json ({ campaign, prospectos[], recursos[] }).
    Loading it again refreshes the research of each prospect but never touches
-   what was tracked in the panel: stage, next action and the timeline.
+   what was tracked in the panel: stage, next action, the timeline, the MIRA
+   link code and a first message edited by hand.
 
    Usage: node scripts/prospectos-sql.mjs prospectos/belen-2026-10 */
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -34,7 +35,10 @@ for(const p of base.prospectos){
   const vals = [id, campaign, p.code, ...FIELDS.map(f => p[f]), JSON.stringify(p.data || {})];
   sql.push(
     `INSERT INTO prospects (${cols.join(", ")}) VALUES (${vals.map(q).join(", ")})\n` +
-    `  ON CONFLICT(id) DO UPDATE SET ${[...FIELDS, "data"].map(f => `${f} = excluded.${f}`).join(", ")}, updated_at = datetime('now');`
+    /* a first message edited in the panel wins over the research's */
+    `  ON CONFLICT(id) DO UPDATE SET ${[...FIELDS, "data"].map(f => f === "mensaje"
+      ? "mensaje = CASE WHEN mensaje_editado = 1 THEN mensaje ELSE excluded.mensaje END"
+      : `${f} = excluded.${f}`).join(", ")}, updated_at = datetime('now');`
   );
   /* a prospect outside the zone starts discarded, with the reason on its timeline */
   if(p.prioridad === "Descartar"){

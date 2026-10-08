@@ -22,6 +22,10 @@
    POST /admin/prospecto        move its stage, log what happened, set the next action
    GET  /admin/recursos         the documents behind the campaigns (script, notes)
    GET  /admin/recurso?slug=    one of them, rendered
+   GET  /admin/mira/vincular?id=   link a MIRA that came without a prospect: suggestions and search
+   POST /admin/mira/vincular       link it to the prospect picked
+   POST /admin/mira/desvincular    undo a link (the stage stays as it is)
+   GET  /admin/embudo.csv       one row per prospect: MIRA, call and result, for the funnel review
 
    While the site still lives on GitHub Pages too, its pages post here
    across origins, so the API answers CORS for the known origins. */
@@ -134,11 +138,110 @@ async function receive(request, env, url, kind){
     if(!name || !data.idea){ return json({ ok:false, error:"Faltan el nombre o la idea" }, 400, request, url); }
   }
 
-  await env.DB.prepare(
-    "INSERT INTO submissions (kind, name, brand, contact, data) VALUES (?1, ?2, ?3, ?4, ?5)"
-  ).bind(kind, name, brand, contact, JSON.stringify(data)).run();
+  /* a MIRA may come from a prospect's personal link (?t=) and says where it
+     came from (?o=); neither is part of the answers */
+  const token = kind === "mira" && /^[a-z2-9]{6}$/.test(data.token || "") ? data.token : null;
+  const origen = kind === "mira" && ORIGINS[data.origen] ? data.origen : null;
+  delete data.token; delete data.origen;
+
+  const saved = await env.DB.prepare(
+    "INSERT INTO submissions (kind, name, brand, contact, data, origen) VALUES (?1, ?2, ?3, ?4, ?5, ?6) RETURNING id"
+  ).bind(kind, name, brand, contact, JSON.stringify(data), origen).first();
+
+  /* only the personal link ties it to a prospect on its own; anything else
+     waits in the panel to be linked by hand. The answer is the same either
+     way, so the page never tells whether a code exists. */
+  if(token && saved){
+    const p = await env.DB.prepare("SELECT id, etapa FROM prospects WHERE mira_token = ?1").bind(token).first();
+    if(p){ await env.DB.batch(linkMira(env, saved.id, p, "enlace", origen)); }
+  }
 
   return json({ ok:true }, 201, request, url);
+}
+
+/* ---------- a MIRA and its prospect ---------- */
+
+const ORIGINS = { ig:"Instagram", bio:"la bio de Instagram", historia:"una historia", web:"el sitio", referido:"un referido",
+  whatsapp:"WhatsApp", facebook:"Facebook", visita:"una visita" };
+/* the stages a MIRA moves forward: it is the prospect's answer */
+const BEFORE_CALL = ["por_contactar", "contactado", "descartado", "respondio"];
+
+/* The same steps for the personal link and for a link made by hand: the MIRA
+   points to the prospect, the timeline says so, and an early stage moves to
+   "respondió" with the call to schedule today. A prospect already past it
+   (reunión, propuesta, cliente) keeps its stage. */
+function linkMira(env, subId, p, how, origen){
+  const log = (tipo, texto) => env.DB.prepare("INSERT INTO prospect_events (prospect_id, tipo, texto) VALUES (?1, ?2, ?3)").bind(p.id, tipo, texto);
+  const out = [
+    env.DB.prepare("UPDATE submissions SET prospect_id = ?1, vinculo = ?2 WHERE id = ?3").bind(p.id, how, subId),
+    log("nota", `MIRA recibida · ${how === "enlace" ? "enlace personal" : "vinculada a mano"} · origen: ${ORIGINS[origen] || "sin dato"} · /admin/mira#m${subId}`)
+  ];
+  if(BEFORE_CALL.includes(p.etapa)){
+    if(p.etapa !== "respondio"){
+      out.push(log("etapa", STAGES[p.etapa] + " → " + STAGES.respondio + (p.etapa === "descartado" ? " · reabierto: llenó la MIRA" : "")));
+    }
+    out.push(env.DB.prepare(
+      "UPDATE prospects SET etapa = 'respondio', proxima_accion = 'Agendar llamada', proxima_fecha = ?1, updated_at = datetime('now') WHERE id = ?2"
+    ).bind(todayIso(), p.id));
+  } else {
+    out.push(env.DB.prepare("UPDATE prospects SET updated_at = datetime('now') WHERE id = ?1").bind(p.id));
+  }
+  return out;
+}
+
+/* comparing names: no accents, no case, words only */
+function plain(text){
+  return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9@._]+/g, " ").trim();
+}
+function igHandles(text){
+  const out = new Set(), t = String(text || "").toLowerCase();
+  for(const m of t.matchAll(/instagram\.com\/([a-z0-9._]{2,30})/g)){ out.add(m[1].replace(/\.+$/, "")); }
+  for(const m of t.matchAll(/(?:^|[\s,(])@([a-z0-9._]{2,30})/g)){ out.add(m[1].replace(/\.+$/, "")); }
+  return out;
+}
+/* how much a prospect looks like the brand that filled in a MIRA: the same
+   Instagram is near certain, the same name is strong, shared words are weak */
+function likeness(d, p){
+  let score = 0;
+  const handles = igHandles(d.enlaces), theirs = igHandles(p.instagram);
+  for(const h of handles){ if(theirs.has(h)){ score += 100; } }
+  const brand = plain(d.marca), biz = plain(p.negocio);
+  if(brand && biz){
+    if(brand === biz){ score += 80; }
+    else if(brand.length > 3 && biz.length > 3 && (biz.includes(brand) || brand.includes(biz))){ score += 40; }
+    const words = new Set(biz.split(" ").filter(w => w.length > 2));
+    for(const w of brand.split(" ")){ if(w.length > 2 && words.has(w)){ score += 15; } }
+  }
+  return score;
+}
+
+/* a short code for the personal MIRA link: no 0/o or 1/l to misread */
+const CODE_CHARS = "abcdefghijkmnpqrstuvwxyz23456789";
+function miraCode(){
+  const bytes = new Uint8Array(6);
+  crypto.getRandomValues(bytes);
+  return [...bytes].map(b => CODE_CHARS[b % CODE_CHARS.length]).join("");
+}
+/* the code is made the first time the prospect's page asks for its link */
+async function miraTokenFor(env, r){
+  if(r.mira_token){ return r.mira_token; }
+  for(let i = 0; i < 4; i++){
+    try{
+      await env.DB.prepare("UPDATE prospects SET mira_token = ?1 WHERE id = ?2 AND mira_token IS NULL").bind(miraCode(), r.id).run();
+      const back = await env.DB.prepare("SELECT mira_token FROM prospects WHERE id = ?1").bind(r.id).first();
+      if(back && back.mira_token){ return back.mira_token; }
+    }catch(e){ /* the code was taken: try another one */ }
+  }
+  return null;
+}
+/* the channel the link goes out by, as the MIRA's origin */
+function originOfChannel(canal){
+  const c = String(canal || "").toLowerCase();
+  if(c.includes("instagram")){ return "ig"; }
+  if(c.includes("whatsapp")){ return "whatsapp"; }
+  if(c.includes("facebook")){ return "facebook"; }
+  if(c.includes("visita")){ return "visita"; }
+  return "ig";
 }
 
 /* ---------- testimonials ---------- */
@@ -303,6 +406,11 @@ async function admin(request, env, url, path){
   if(path === "/admin/recursos"){ return resourcesPage(env); }
   if(path === "/admin/recurso"){ return resourcePage(env, url); }
 
+  if(path === "/admin/mira/vincular"){
+    return request.method === "POST" ? linkMiraByHand(request, env, url) : linkMiraPage(env, url);
+  }
+  if(path === "/admin/mira/desvincular" && request.method === "POST"){ return unlinkMira(request, env, url); }
+  if(path === "/admin/embudo.csv"){ return funnelCsv(env); }
   if(path === "/admin/mira" || path === "/admin/contacto"){ return submissionsPage(env, url, path.slice(7)); }
   if(path === "/admin/autorizaciones"){ return authorizationsPage(env, url); }
   if(path === "/admin/testimonios"){ return testimonialsPage(env, url); }
@@ -389,10 +497,26 @@ async function adminPage(env, active, title, content, status = 200, script = "")
 async function dashboardPage(env){
   const a = await attention(env);
   const today = todayIso();
-  const due = (await env.DB.prepare(
-    "SELECT id, negocio, proxima_accion, proxima_fecha FROM prospects WHERE proxima_fecha IS NOT NULL AND proxima_fecha <= ?1 " +
-    "AND etapa NOT IN ('cliente', 'descartado') ORDER BY proxima_fecha, rank LIMIT 8"
-  ).bind(today).all()).results;
+  const [{ results:due }, { results:unscheduled }, { results:unrecorded }] = await env.DB.batch([
+    env.DB.prepare(
+      "SELECT id, negocio, proxima_accion, proxima_fecha FROM prospects WHERE proxima_fecha IS NOT NULL AND proxima_fecha <= ?1 " +
+      "AND etapa NOT IN ('cliente', 'descartado') ORDER BY proxima_fecha, rank LIMIT 8"
+    ).bind(today),
+    /* MIRAs of the last 30 days still waiting for their call to be scheduled */
+    env.DB.prepare(
+      "SELECT COUNT(*) AS n, SUM(CASE WHEN s.prospect_id IS NULL THEN 1 ELSE 0 END) AS sueltas FROM submissions s LEFT JOIN prospects p ON p.id = s.prospect_id " +
+      "WHERE s.kind = 'mira' AND s.created_at >= datetime('now', '-30 days') AND (s.prospect_id IS NULL OR p.etapa = 'respondio')"
+    ),
+    /* calls whose time passed more than two hours ago and nobody recorded: the goal is zero */
+    env.DB.prepare(
+      "SELECT p.id, p.negocio, json_extract(e.data, '$.fecha') AS fecha, json_extract(e.data, '$.medio') AS medio " +
+      "FROM prospect_events e JOIN prospects p ON p.id = e.prospect_id " +
+      "WHERE e.tipo = 'reunion' AND e.data IS NOT NULL " +
+      "AND e.id = (SELECT MAX(x.id) FROM prospect_events x WHERE x.prospect_id = e.prospect_id AND x.tipo = 'reunion' AND x.data IS NOT NULL) " +
+      "AND json_extract(e.data, '$.estado') = 'agendada' AND json_extract(e.data, '$.fecha') <= ?1 ORDER BY fecha"
+    ).bind(bogotaStamp(120))
+  ]);
+  const miraWaiting = unscheduled[0].n || 0, miraLoose = unscheduled[0].sueltas || 0;
   const tile = (href, label, big, line, hot) => `
     <a class="tile${hot ? " hot" : ""}" href="${href}"><span class="tile-label">${label}</span><b>${big}</b><span class="tile-line">${line}</span></a>`;
   const plural = (n, one, many) => n + " " + (n === 1 ? one : many);
@@ -401,11 +525,19 @@ async function dashboardPage(env){
     <section class="tiles">
       ${tile("/admin/prospectos?ver=hoy", "Prospectos para hoy", a.prospectos.p, `${plural(a.prospectos.vivos, "conversación abierta", "conversaciones abiertas")} · ${plural(a.prospectos.nuevos, "por contactar", "por contactar")}`, a.prospectos.p)}
       ${tile("/admin/contacto?ver=pendientes", "Contacto sin revisar", a.contacto.p, plural(a.contacto.n, "mensaje en total", "mensajes en total"), a.contacto.p)}
-      ${tile("/admin/mira?ver=pendientes", "MIRA sin revisar", a.mira.p, plural(a.mira.n, "recibida", "recibidas"), a.mira.p)}
+      ${tile("/admin/mira?ver=sinagendar", "MIRA sin agendar", miraWaiting, miraLoose ? plural(miraLoose, "sin prospecto", "sin prospecto") + " · últimos 30 días" : "Últimos 30 días", miraWaiting)}
+      ${tile(unrecorded.length ? "/admin/prospecto?id=" + encodeURIComponent(unrecorded[0].id) + "#llamada" : "/admin/prospectos", "Llamadas sin registrar", unrecorded.length, unrecorded.length ? "La meta es 0" : "Al día", unrecorded.length)}
+      ${tile("/admin/mira?ver=pendientes", "MIRA sin revisar", a.mira.p, plural(a.mira.n, "recibida", "recibidas"), 0)}
       ${tile("/admin/autorizaciones?ver=pendientes", "Autorizaciones sin firmar", a.autorizaciones.p, plural(a.autorizaciones.n, "creada", "creadas"), 0)}
       ${tile("/admin/testimonios?ver=pendientes", "Testimonios sin revisar", a.testimonios.p, plural(a.testimonios.n, "recibido", "recibidos"), a.testimonios.p)}
       ${tile("/admin/prospectos", "Clientes desde prospectos", a.prospectos.clientes, plural(a.prospectos.n, "prospecto en la base", "prospectos en la base"), 0)}
     </section>
+    ${unrecorded.length ? `
+    <section class="sub">
+      <h3>Llamadas sin registrar</h3>
+      <ul class="timeline">${unrecorded.map(c => `<li><a class="biz" href="/admin/prospecto?id=${encodeURIComponent(c.id)}#llamada">${esc(c.negocio)}</a>
+        <span class="mono due"> · ${esc(callWhen(c.fecha))} · ${esc(MEDIOS[c.medio] || c.medio || "")}</span></li>`).join("")}</ul>
+    </section>` : ""}
     <section class="sub">
       <h3>Seguimientos de prospectos para hoy</h3>
       ${due.length ? `<ul class="timeline">${due.map(r => `<li><a class="biz" href="/admin/prospecto?id=${encodeURIComponent(r.id)}">${esc(r.negocio)}</a>
@@ -424,18 +556,95 @@ function sectionHead(group, h1, extra = ""){
 
 /* ---------- MIRA and contact ---------- */
 async function submissionsPage(env, url, kind){
-  const pendientes = url.searchParams.get("ver") === "pendientes";
+  const ver = url.searchParams.get("ver");
+  const pendientes = ver === "pendientes";
+  const isMira = kind === "mira";
+  /* "sin agendar": the MIRAs of the last 30 days whose call is still to be
+     scheduled, because nobody linked them or their prospect is in "respondió" */
+  const unscheduled = isMira && ver === "sinagendar";
   const { results } = await env.DB.prepare(
-    "SELECT * FROM submissions WHERE kind = ?1" + (pendientes ? " AND reviewed = 0" : "") + " ORDER BY created_at DESC, id DESC LIMIT 200"
+    "SELECT s.*, p.negocio AS p_negocio, p.etapa AS p_etapa FROM submissions s LEFT JOIN prospects p ON p.id = s.prospect_id WHERE s.kind = ?1" +
+    (pendientes ? " AND s.reviewed = 0" : "") +
+    (unscheduled ? " AND s.created_at >= datetime('now', '-30 days') AND (s.prospect_id IS NULL OR p.etapa = 'respondio')" : "") +
+    " ORDER BY s.created_at DESC, s.id DESC LIMIT 200"
   ).bind(kind).all();
   const here = url.pathname + url.search;
-  const isMira = kind === "mira";
+  const pills = isMira
+    ? `<nav class="filters"><a class="pill${!pendientes && !unscheduled ? " on" : ""}" href="/admin/mira">Todo</a><a class="pill${pendientes ? " on" : ""}" href="/admin/mira?ver=pendientes">Solo sin revisar</a><a class="pill${unscheduled ? " on" : ""}" href="/admin/mira?ver=sinagendar">Sin agendar</a></nav>`
+    : pendingPills("/admin/" + kind, pendientes, "Solo sin revisar");
   return adminPage(env, kind, isMira ? "MIRA" : "Contacto", `
     ${sectionHead(isMira ? "Clientes · MIRA" : "Lo que llega · contacto", isMira ? "Las <em>MIRA</em>" : "Lo que <em>escriben</em>",
-      `<p class="totals mono">${isMira ? "Marca, Imagen, Redes y Alineación, después de la primera llamada" : "El formulario de contacto del sitio"}</p>`)}
-    ${pendingPills("/admin/" + kind, pendientes, "Solo sin revisar")}
-    ${results.length ? results.map(r => card(r, here)).join("") : `<p class="empty">No hay ${isMira ? "MIRA" : "mensajes"} ${pendientes ? "sin revisar " : ""}todavía.</p>`}
+      `<p class="totals mono">${isMira ? "Marca, Imagen, Redes y Alineación: el primer filtro, antes de la llamada" : "El formulario de contacto del sitio"}</p>`)}
+    ${pills}
+    ${results.length ? results.map(r => card(r, here)).join("") : `<p class="empty">No hay ${isMira ? "MIRA" : "mensajes"} ${pendientes ? "sin revisar " : unscheduled ? "sin agendar " : ""}todavía.</p>`}
   `, 200, COPY_SCRIPT);
+}
+
+/* linking by hand: the prospects that look like the brand first, then a search */
+async function linkMiraPage(env, url){
+  const id = parseInt(url.searchParams.get("id"), 10);
+  const sub = id ? await env.DB.prepare("SELECT * FROM submissions WHERE id = ?1 AND kind = 'mira'").bind(id).first() : null;
+  if(!sub){ return Response.redirect(url.origin + "/admin/mira", 303); }
+  if(sub.prospect_id){ return Response.redirect(url.origin + "/admin/mira#m" + id, 303); }
+  let d = {};
+  try{ d = JSON.parse(sub.data); }catch(e){}
+  const q = (url.searchParams.get("q") || "").trim().slice(0, 80);
+  const all = (await env.DB.prepare(
+    "SELECT id, campaign, code, negocio, categoria, barrio, instagram, etapa, prioridad, score, bola FROM prospects"
+  ).all()).results;
+  const suggested = all.map(p => ({ p, n:likeness(d, p) })).filter(x => x.n >= 15).sort((a, b) => b.n - a.n).slice(0, 5);
+  const needle = plain(q);
+  const found = needle ? all.filter(p => plain([p.negocio, p.instagram, p.code, p.barrio, p.categoria].join(" ")).includes(needle)).slice(0, 20) : [];
+  const item = (p, why) => `
+    <li class="pick">
+      <div>${ballTag(p.prioridad, p.score, false, p.bola)} <a class="biz" href="/admin/prospecto?id=${encodeURIComponent(p.id)}" target="_blank" rel="noopener">${esc(p.negocio)}</a>
+        <span class="mono sub2">${esc(p.campaign)} · ${esc(p.code)}${p.barrio ? " · " + esc(p.barrio) : ""}${p.instagram ? " · " + esc(p.instagram.replace(/^https?:\/\/(www\.)?/, "")) : ""}${why ? " · " + why : ""}</span></div>
+      <span>${stageTag(p.etapa)}</span>
+      <form method="post" action="/admin/mira/vincular"><input type="hidden" name="id" value="${id}"><input type="hidden" name="prospect" value="${esc(p.id)}"><button type="submit" class="go">Vincular a este</button></form>
+    </li>`;
+  const why = n => n >= 100 ? "mismo Instagram" : n >= 80 ? "mismo nombre" : n >= 40 ? "nombre parecido" : "palabras en común";
+  return adminPage(env, "mira", "Vincular MIRA", `
+    <header class="top"><div><p class="kicker"><a href="/admin/mira#m${id}">← Las MIRA</a> · vincular</p><h1>¿De quién es <em>esta MIRA</em>?</h1>
+      <p class="mono">${esc(d.marca || sub.brand || "")} · respondió ${esc(d.nombre || sub.name || "")} · ${esc(d.contacto || sub.contact || "")}${d.enlaces ? " · " + esc(d.enlaces) : ""}</p></div></header>
+    <section class="sub">
+      <h3>Se parecen</h3>
+      ${suggested.length ? `<ul class="picks">${suggested.map(x => item(x.p, why(x.n))).join("")}</ul>` : `<p class="empty">Ningún prospecto se parece por nombre ni por Instagram.</p>`}
+      <p class="mono hintline">Son sugerencias: nada se vincula hasta que elijas uno.</p>
+    </section>
+    <section class="sub">
+      <h3>Buscar</h3>
+      <form method="get" action="/admin/mira/vincular" class="search"><input type="hidden" name="id" value="${id}"><input name="q" value="${esc(q)}" placeholder="Negocio, Instagram, código o barrio" autofocus></form>
+      ${q ? (found.length ? `<ul class="picks">${found.map(p => item(p, "")).join("")}</ul>` : `<p class="empty">Nada con «${esc(q)}».</p>`) : ""}
+    </section>
+    <section class="sub">
+      <h3>No está en la base</h3>
+      <p>Si es alguien nuevo, crea el prospecto con los datos de la MIRA. Queda en la campaña de entrantes del mes, en «Respondió».</p>
+      <div class="linkrow"><a class="pill new" href="/admin/prospecto/nuevo?mira=${id}">+ Crear prospecto con esta MIRA</a></div>
+    </section>`);
+}
+
+async function linkMiraByHand(request, env, url){
+  const form = await request.formData();
+  const id = parseInt(form.get("id"), 10);
+  const sub = id ? await env.DB.prepare("SELECT id, prospect_id, origen FROM submissions WHERE id = ?1 AND kind = 'mira'").bind(id).first() : null;
+  const p = await env.DB.prepare("SELECT id, etapa FROM prospects WHERE id = ?1").bind(String(form.get("prospect") || "")).first();
+  if(sub && !sub.prospect_id && p){ await env.DB.batch(linkMira(env, sub.id, p, "manual", sub.origen)); }
+  return Response.redirect(url.origin + "/admin/mira#m" + (id || ""), 303);
+}
+
+/* a link made by mistake comes undone; the stage is left for Renne to judge */
+async function unlinkMira(request, env, url){
+  const form = await request.formData();
+  const id = parseInt(form.get("id"), 10);
+  const sub = id ? await env.DB.prepare("SELECT id, prospect_id FROM submissions WHERE id = ?1 AND kind = 'mira'").bind(id).first() : null;
+  if(sub && sub.prospect_id){
+    await env.DB.batch([
+      env.DB.prepare("UPDATE submissions SET prospect_id = NULL, vinculo = NULL WHERE id = ?1").bind(id),
+      env.DB.prepare("INSERT INTO prospect_events (prospect_id, tipo, texto) VALUES (?1, 'nota', ?2)")
+        .bind(sub.prospect_id, `MIRA desvinculada (/admin/mira#m${id}). La etapa no cambió.`)
+    ]);
+  }
+  return Response.redirect(url.origin + "/admin/mira#m" + (id || ""), 303);
 }
 
 /* ---------- authorisations ---------- */
@@ -836,9 +1045,13 @@ async function prospectPage(env, url){
   const id = url.searchParams.get("id") || "";
   const r = await env.DB.prepare("SELECT * FROM prospects WHERE id = ?1").bind(id).first();
   if(!r){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
-  const { results:events } = await env.DB.prepare(
-    "SELECT * FROM prospect_events WHERE prospect_id = ?1 ORDER BY created_at DESC, id DESC"
-  ).bind(id).all();
+  const [{ results:events }, { results:miras }] = await env.DB.batch([
+    env.DB.prepare("SELECT * FROM prospect_events WHERE prospect_id = ?1 ORDER BY created_at DESC, id DESC").bind(id),
+    env.DB.prepare("SELECT * FROM submissions WHERE prospect_id = ?1 AND kind = 'mira' ORDER BY created_at DESC, id DESC").bind(id)
+  ]);
+  const token = await miraTokenFor(env, r);
+  const miraLink = token ? url.origin + "/mira/?" + new URLSearchParams({ t:token, marca:r.negocio, o:originOfChannel(r.canal) }) : "";
+  const call = lastCall(events);
   let d = {};
   try{ d = JSON.parse(r.data); }catch(e){}
   const v = d.redes_verificacion || {};
@@ -886,17 +1099,45 @@ async function prospectPage(env, url){
         <p><b>Nota de la verificación</b>${esc(r.nota || "")}</p>
       </section>
     </div>
-    ${r.mensaje ? `
-    <section class="sub">
+    ${r.etapa === "por_contactar" ? `
+    <section class="sub" id="mensaje">
       <h3>Primer mensaje</h3>
-      <textarea class="msg" readonly rows="9">${esc(r.mensaje)}</textarea>
-      <p class="mono hintline">Cambia [tu nombre] antes de enviarlo.</p>
-      <div class="linkrow">
-        <button type="button" data-copy="${esc(r.mensaje)}" data-done="Copiado ✓" data-label="Copiar mensaje">Copiar mensaje</button>
-        ${r.enlace ? `<a class="pill" href="${esc(r.enlace)}" target="_blank" rel="noopener">Abrir el chat</a>` : ""}
-        <form method="post" action="/admin/prospecto"><input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="enviado"><button type="submit">Ya lo envié</button></form>
-      </div>
+      <form class="pform" method="post" action="/admin/prospecto">
+        <input type="hidden" name="id" value="${esc(r.id)}">
+        <textarea class="msg" name="mensaje" id="msgText" rows="9" placeholder="Escribe aquí el primer mensaje">${esc(r.mensaje || "")}</textarea>
+        <p class="mono hintline">Se puede editar hasta que lo marques como enviado.${/\[tu nombre\]/i.test(r.mensaje || "") ? " Cambia [tu nombre] antes de enviarlo." : ""}${miraLink ? " Para invitarlo a la MIRA, usa su enlace personal (abajo)." : ""}${r.mensaje_editado ? " Editado en el panel: recargar la campaña no lo cambia." : ""}</p>
+        <div class="linkrow">
+          <button type="button" data-copy-from="msgText" data-label="Copiar mensaje">Copiar mensaje</button>
+          ${r.enlace ? `<a class="pill" href="${esc(r.enlace)}" target="_blank" rel="noopener">Abrir el chat</a>` : ""}
+          <button type="submit" name="accion" value="mensaje">Guardar cambios</button>
+          <button type="submit" name="accion" value="enviado" class="go">Ya lo envié</button>
+        </div>
+      </form>
+    </section>` : r.mensaje ? `
+    <section class="sub" id="mensaje">
+      <h3>Primer mensaje</h3>
+      <textarea class="msg" readonly rows="6">${esc(r.mensaje)}</textarea>
+      <p class="mono hintline">Quedó fijo al registrar el primer contacto.</p>
     </section>` : ""}
+    <div class="pgrid" id="mira">
+      <section class="sub">
+        <h3>Su MIRA</h3>
+        ${miraLink ? `<p><b>Enlace personal</b><span class="mono linkline">${esc(miraLink)}</span></p>
+        <div class="linkrow"><button type="button" data-copy="${esc(miraLink)}" data-label="Copiar enlace de MIRA">Copiar enlace de MIRA</button></div>
+        <p class="mono hintline">Quien llena la MIRA con este enlace queda vinculado solo a este prospecto.</p>` : `<p class="empty">No se pudo crear el enlace. Recarga la página.</p>`}
+        ${miras.length ? `<p class="okline">${miras.length === 1 ? "Llenó su MIRA" : "Llenó " + miras.length + " MIRA"} · la más reciente el ${esc(whenInBogota(miras[0].created_at))} · <a href="/admin/mira#m${miras[0].id}">verla en las MIRA</a></p>` : `<p class="mono">Todavía no ha llenado la MIRA.</p>`}
+      </section>
+      <section class="sub" id="llamada">
+        <h3>La llamada</h3>
+        ${callBlock(r, call)}
+      </section>
+    </div>
+    ${miras.length ? (() => { let m = {}; try{ m = JSON.parse(miras[0].data); }catch(e){} return `
+    <section class="sub">
+      <h3>Sus respuestas · la base de la llamada</h3>
+      ${miraAnswers(m)}
+      <p class="who mono">Respondió ${esc(m.nombre)} · ${esc(m.contacto)}</p>
+    </section>`; })() : ""}
     <div class="pgrid" id="jerarquia">
       <section class="sub">
         <h3>Jerarquía</h3>
@@ -958,19 +1199,113 @@ async function prospectPage(env, url){
   `, 200, COPY_SCRIPT + LEAFLET + `<script>window.__MINI = ${JSON.stringify(MINI)};</script><script>${MINI_MAP_SCRIPT}</script>`);
 }
 
+/* ---------- the call: scheduled, then recorded ---------- */
+
+const MEDIOS = { videollamada:"Videollamada", visita:"Visita", llamada:"Llamada" };
+const ATTENDED = { si:"Sí", no:"No se presentó", reprogramo:"Reprogramó" };
+const TEMPERATURE = { caliente:"Caliente", tibio:"Tibio", frio:"Frío" };
+const OUTCOME = { sigue:"Sigue a MIRA escrita", no_encaja:"No encaja", lo_piensa:"Lo piensa" };
+const PACKAGES = { 1:"Bola 1 · La Página", 3:"Bola 3 · Marca + Página", 5:"Bola 5 · La Tienda", 8:"Bola 8 · El Sistema" };
+
+/* the latest call event with fields (scheduled or recorded); events come newest first */
+function lastCall(events){
+  for(const e of events){
+    if(e.tipo !== "reunion" || !e.data){ continue; }
+    try{ return { e, data:JSON.parse(e.data) }; }catch(err){}
+  }
+  return null;
+}
+/* "2026-10-14T10:00" is already Bogotá time: shown as it is written */
+function callWhen(stamp){
+  const d = new Date(String(stamp) + ":00Z");
+  if(isNaN(d)){ return String(stamp || ""); }
+  return d.toLocaleString("es-CO", { timeZone:"UTC", day:"numeric", month:"short", hour:"numeric", minute:"2-digit" });
+}
+function bogotaStamp(minutesAgo = 0){
+  return new Date(Date.now() - minutesAgo * 60000).toLocaleString("sv-SE", { timeZone:"America/Bogota" }).replace(" ", "T").slice(0, 16);
+}
+function plusWorkdays(iso, n){
+  let d = iso;
+  while(n > 0){ d = plusDays(d, 1); const day = new Date(d + "T12:00:00Z").getUTCDay(); if(day !== 0 && day !== 6){ n--; } }
+  return d;
+}
+
+function callBlock(r, call){
+  const opts = (map, chosen = "") => Object.entries(map).map(([k, l]) => `<option value="${k}"${k === chosen ? " selected" : ""}>${l}</option>`).join("");
+  const schedule = (label, data = {}) => `
+        <form class="pform" method="post" action="/admin/prospecto">
+          <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="agendar">
+          <div class="frow">
+            <label>Fecha<input type="date" name="fecha" required value="${esc(String(data.fecha || "").slice(0, 10))}"></label>
+            <label>Hora<input type="time" name="hora" required value="${esc(String(data.fecha || "").slice(11, 16))}"></label>
+            <label>Medio<select name="medio">${opts(MEDIOS, data.medio || "videollamada")}</select></label>
+          </div>
+          <button type="submit" class="go">${label}</button>
+        </form>`;
+  const record = `
+        <form class="pform" method="post" action="/admin/prospecto">
+          <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="registrar">
+          <div class="frow">
+            <label>Asistió<select name="asistio">${opts(ATTENDED)}</select></label>
+            <label>Duración (min)<input type="number" name="duracion" min="0" max="240" inputmode="numeric" placeholder="30"></label>
+            <label>Temperatura<select name="temperatura"><option value="">—</option>${opts(TEMPERATURE)}</select></label>
+          </div>
+          <label>Meta, en sus palabras<input name="meta" maxlength="300"></label>
+          <label>Dolor, en sus palabras<input name="dolor" maxlength="300"></label>
+          <div class="frow">
+            <label>Decide<input name="decide" maxlength="120" placeholder="Solo / con su socio…"></label>
+            <label>Fecha clave<input name="fecha_clave" maxlength="120" placeholder="Ej.: abre en diciembre"></label>
+          </div>
+          <div class="frow">
+            <label>Presupuesto<input name="presupuesto" maxlength="120" placeholder="Lo que mencionó, o vacío"></label>
+            <label>Bola candidata<select name="paquete"><option value="">—</option>${opts(PACKAGES)}</select></label>
+          </div>
+          <label>Objeciones<input name="objeciones" maxlength="300"></label>
+          <div class="frow">
+            <label>Resultado<select name="resultado">${opts(OUTCOME)}</select></label>
+            <label>Próximo paso<input name="proximo" maxlength="200" placeholder="Si lo piensa: qué quedó"></label>
+            <label>Fecha<input type="date" name="proximo_fecha"></label>
+          </div>
+          <label>Aprendizaje (una línea)<input name="aprendizaje" maxlength="200"></label>
+          <p class="mono hintline">Si no se presentó o reprogramó, basta con «Asistió»: queda para reagendar.</p>
+          <button type="submit" class="go">Guardar el registro</button>
+        </form>`;
+  if(call && call.data.estado === "agendada"){
+    const late = String(call.data.fecha) <= bogotaStamp(120);
+    return `
+        <p class="${late ? "due" : "okline"}">Agendada · ${esc(callWhen(call.data.fecha))} · ${esc(MEDIOS[call.data.medio] || call.data.medio || "")}${late ? " · ya pasó: falta registrarla" : ""}</p>
+        <details${late ? " open" : ""}><summary>Registrar la llamada</summary>${record}</details>
+        <details><summary>Cambiar la fecha</summary>${schedule("Guardar la nueva fecha", call.data)}</details>`;
+  }
+  const last = call ? `<p class="mono">Última: ${esc(String(call.e.texto).split("\n")[0])}</p>` : "";
+  return `${last}${schedule("Agendar la llamada")}
+        <details><summary>Registrar una llamada que no se agendó</summary>${record}</details>`;
+}
+
 async function updateProspect(request, env, url){
   const form = await request.formData();
   const id = String(form.get("id") || "");
-  const r = await env.DB.prepare("SELECT id, etapa, canal, prioridad, score, bola FROM prospects WHERE id = ?1").bind(id).first();
+  const r = await env.DB.prepare("SELECT id, etapa, canal, prioridad, score, bola, mensaje FROM prospects WHERE id = ?1").bind(id).first();
   if(!r){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
   let anchor = "#seguimiento";
   const log = (tipo, texto) => env.DB.prepare("INSERT INTO prospect_events (prospect_id, tipo, texto) VALUES (?1, ?2, ?3)").bind(id, tipo, texto);
   const accion = form.get("accion");
   const batch = [];
 
-  if(accion === "enviado"){
+  const logData = (tipo, texto, data) => env.DB.prepare("INSERT INTO prospect_events (prospect_id, tipo, texto, data) VALUES (?1, ?2, ?3, ?4)").bind(id, tipo, texto, JSON.stringify(data));
+  /* the first message can be edited until it is sent; then it stays as sent */
+  const typed = form.has("mensaje") ? String(form.get("mensaje") || "").replace(/\r\n/g, "\n").trim().slice(0, 4000) : null;
+  const editable = r.etapa === "por_contactar" && typed !== null;
+  if(editable && typed !== (r.mensaje || "").trim() && (accion === "mensaje" || accion === "enviado")){
+    batch.push(env.DB.prepare("UPDATE prospects SET mensaje = ?1, mensaje_editado = 1, updated_at = datetime('now') WHERE id = ?2").bind(typed || null, id));
+  }
+
+  if(accion === "mensaje"){
+    anchor = "#mensaje";
+  } else if(accion === "enviado"){
     /* the first message is out: wait three days, then the follow-up */
-    batch.push(log("mensaje", "Primer mensaje enviado por " + (r.canal || "chat") + "."));
+    const sent = editable ? typed : (r.mensaje || "");
+    batch.push(log("mensaje", "Primer mensaje enviado por " + (r.canal || "chat") + "." + (sent ? "\n\n" + sent : "")));
     if(r.etapa === "por_contactar"){ batch.push(log("etapa", "Por contactar → Contactado")); }
     batch.push(env.DB.prepare(
       "UPDATE prospects SET etapa = CASE WHEN etapa = 'por_contactar' THEN 'contactado' ELSE etapa END, " +
@@ -1006,6 +1341,55 @@ async function updateProspect(request, env, url){
       batch.push(env.DB.prepare("UPDATE prospects SET lat = ?1, lng = ?2, geo = 'manual', updated_at = datetime('now') WHERE id = ?3").bind(lat, lng, id));
       batch.push(log("nota", "Ubicación marcada a mano en el mapa."));
     }
+  } else if(accion === "agendar"){
+    anchor = "#llamada";
+    const fecha = /^\d{4}-\d{2}-\d{2}$/.test(form.get("fecha") || "") ? form.get("fecha") : null;
+    const hora = /^\d{2}:\d{2}$/.test(form.get("hora") || "") ? form.get("hora") : null;
+    const medio = MEDIOS[form.get("medio")] ? form.get("medio") : "videollamada";
+    if(fecha && hora){
+      const stamp = fecha + "T" + hora;
+      batch.push(logData("reunion", `Llamada agendada · ${callWhen(stamp)} · ${MEDIOS[medio].toLowerCase()}`, { estado:"agendada", fecha:stamp, medio }));
+      if(BEFORE_CALL.includes(r.etapa)){ batch.push(log("etapa", STAGES[r.etapa] + " → " + STAGES.reunion)); }
+      batch.push(env.DB.prepare(
+        "UPDATE prospects SET etapa = CASE WHEN etapa IN ('por_contactar', 'contactado', 'descartado', 'respondio') THEN 'reunion' ELSE etapa END, " +
+        "proxima_accion = 'Registrar llamada', proxima_fecha = ?1, updated_at = datetime('now') WHERE id = ?2"
+      ).bind(fecha, id));
+    }
+  } else if(accion === "registrar"){
+    anchor = "#llamada";
+    const f = k => String(form.get(k) || "").trim().slice(0, 300);
+    const asistio = ATTENDED[f("asistio")] ? f("asistio") : "si";
+    const resultado = OUTCOME[f("resultado")] ? f("resultado") : "lo_piensa";
+    const today = todayIso();
+    const proximoFecha = /^\d{4}-\d{2}-\d{2}$/.test(f("proximo_fecha")) ? f("proximo_fecha") : null;
+    const data = {
+      estado:asistio === "si" ? "realizada" : asistio === "no" ? "no_asistio" : "reprogramada",
+      asistio, duracion:parseInt(f("duracion"), 10) || null, meta:f("meta"), dolor:f("dolor"), decide:f("decide"),
+      fecha_clave:f("fecha_clave"), presupuesto:f("presupuesto"), paquete:PACKAGES[f("paquete")] ? +f("paquete") : null,
+      temperatura:TEMPERATURE[f("temperatura")] ? f("temperatura") : null, objeciones:f("objeciones"),
+      resultado:asistio === "si" ? resultado : null, proximo:f("proximo"), proximo_fecha:proximoFecha, aprendizaje:f("aprendizaje")
+    };
+    let etapa = r.etapa, next, nextDate, texto;
+    if(asistio !== "si"){
+      texto = asistio === "no" ? "LLAMADA NO REALIZADA · no se presentó" : "LLAMADA REPROGRAMADA";
+      next = "Reagendar"; nextDate = proximoFecha || plusDays(today, 1);
+    } else {
+      const lines = [
+        ["Meta", data.meta], ["Dolor", data.dolor], ["Decide", data.decide], ["Fecha clave", data.fecha_clave],
+        ["Presupuesto", data.presupuesto || "no lo mencionó"], ["Bola candidata", data.paquete ? PACKAGES[data.paquete] : ""],
+        ["Objeciones", data.objeciones], ["Próximo paso", [data.proximo, data.proximo_fecha].filter(Boolean).join(" · ")], ["Aprendizaje", data.aprendizaje]
+      ].filter(([, x]) => x).map(([k, x]) => k + ": " + x);
+      texto = ["LLAMADA REALIZADA", data.duracion ? data.duracion + " min" : "", data.temperatura ? TEMPERATURE[data.temperatura].toLowerCase() : "", OUTCOME[resultado]]
+        .filter(Boolean).join(" · ") + (lines.length ? "\n" + lines.join("\n") : "");
+      if(resultado === "sigue"){ next = "Enviar MIRA"; nextDate = plusWorkdays(today, 2); }
+      else if(resultado === "lo_piensa"){ next = data.proximo || "Seguimiento: lo está pensando"; nextDate = proximoFecha || plusDays(today, 3); }
+      else { etapa = "descartado"; next = null; nextDate = null; }
+    }
+    if(etapa !== "descartado" && BEFORE_CALL.includes(r.etapa)){ etapa = "reunion"; }
+    batch.push(logData("reunion", texto, data));
+    if(etapa !== r.etapa){ batch.push(log("etapa", STAGES[r.etapa] + " → " + STAGES[etapa] + (etapa === "descartado" ? " · no encaja" : ""))); }
+    batch.push(env.DB.prepare("UPDATE prospects SET etapa = ?1, proxima_accion = ?2, proxima_fecha = ?3, updated_at = datetime('now') WHERE id = ?4")
+      .bind(etapa, next, nextDate, id));
   } else if(accion === "evento"){
     const tipo = ["respuesta", "mensaje", "visita", "reunion", "nota"].includes(form.get("tipo")) ? form.get("tipo") : "nota";
     const texto = String(form.get("texto") || "").trim().slice(0, 2000);
@@ -1018,23 +1402,76 @@ async function updateProspect(request, env, url){
   return Response.redirect(url.origin + "/admin/prospecto?id=" + encodeURIComponent(id) + anchor, 303);
 }
 
+/* ---------- the funnel, one row per prospect, for the weekly review ---------- */
+async function funnelCsv(env){
+  const [{ results:pros }, { results:miras }, { results:calls }] = await env.DB.batch([
+    env.DB.prepare("SELECT id, campaign, code, negocio, etapa, prioridad, score, bola FROM prospects ORDER BY campaign, rank"),
+    env.DB.prepare("SELECT prospect_id, origen, created_at FROM submissions WHERE kind = 'mira' AND prospect_id IS NOT NULL ORDER BY created_at"),
+    env.DB.prepare("SELECT prospect_id, data FROM prospect_events WHERE tipo = 'reunion' AND data IS NOT NULL ORDER BY id")
+  ]);
+  const mira = new Map(), scheduled = new Map(), recorded = new Map();
+  for(const m of miras){ if(!mira.has(m.prospect_id)){ mira.set(m.prospect_id, m); } }
+  for(const c of calls){
+    let d = {};
+    try{ d = JSON.parse(c.data); }catch(e){ continue; }
+    if(d.estado === "agendada"){ scheduled.set(c.prospect_id, d); } else { recorded.set(c.prospect_id, d); }
+  }
+  const cell = v => { const t = v == null ? "" : String(v); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+  const head = ["campana", "codigo", "negocio", "etapa", "bola", "mira_origen", "mira_fecha", "llamada_agendada", "asistio", "temperatura", "resultado", "bola_candidata"];
+  const rows = pros.map(p => {
+    const m = mira.get(p.id), s = scheduled.get(p.id), c = recorded.get(p.id);
+    return [p.campaign, p.code, p.negocio, p.etapa, ballOf(p.prioridad, p.score, p.bola), m ? m.origen || "" : "", m ? m.created_at.slice(0, 10) : "",
+      s ? s.fecha : "", c ? c.asistio : "", c ? c.temperatura || "" : "", c ? c.resultado || "" : "", c && c.paquete ? c.paquete : ""].map(cell).join(",");
+  });
+  return new Response("\ufeff" + [head.join(","), ...rows].join("\r\n"), { headers:{
+    "Content-Type":"text/csv; charset=utf-8", "Content-Disposition":`attachment; filename="embudo-${todayIso()}.csv"`, "Cache-Control":"no-store"
+  } });
+}
+
 /* ---------- adding a prospect by hand ---------- */
 function bogotaMonth(){ return todayIso().slice(0, 7); }
 function slug(text){
   return String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
 }
 
+/* what a MIRA already says about a brand, as the fields of a new prospect */
+function prospectFromMira(sub){
+  let d = {};
+  try{ d = JSON.parse(sub.data); }catch(e){}
+  const handle = [...igHandles(d.enlaces)][0];
+  const contact = String(d.contacto || sub.contact || "");
+  const digits = contact.replace(/\D/g, "");
+  const phone = digits.length >= 7 ? contact : "";
+  const wa = digits.length === 10 && digits[0] === "3" ? "https://wa.me/57" + digits : digits.length === 12 && digits.startsWith("57") ? "https://wa.me/" + digits : "";
+  const web = (String(d.enlaces || "").match(/(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+\.[a-z.]{2,}(?:\/\S*)?/i) || [""])[0];
+  return {
+    negocio:d.marca || sub.brand || "", categoria:d.queHace ? String(d.queHace).slice(0, 80) : "",
+    canal:handle ? "Instagram (DM)" : wa ? "WhatsApp" : /@/.test(contact) ? "Correo" : "Llamada",
+    enlace:handle ? "https://www.instagram.com/" + handle : wa,
+    instagram:handle ? "https://www.instagram.com/" + handle : "",
+    telefono:phone, web:web && !/instagram\.com/i.test(web) ? web : "", bola:"3"
+  };
+}
+
 async function newProspectPage(env, url, error = "", values = {}){
   const campaigns = (await env.DB.prepare("SELECT campaign, COUNT(*) AS n FROM prospects GROUP BY campaign ORDER BY campaign DESC").all()).results;
+  /* from a MIRA nobody linked: its data, in this month's campaign of people who came on their own */
+  const miraId = parseInt(values.mira || url.searchParams.get("mira"), 10) || null;
+  const sub = miraId ? await env.DB.prepare("SELECT * FROM submissions WHERE id = ?1 AND kind = 'mira' AND prospect_id IS NULL").bind(miraId).first() : null;
+  const incoming = "entrantes-" + bogotaMonth();
+  if(sub && !values.negocio){ values = { ...prospectFromMira(sub), campaign:incoming, ...values }; }
   const chosen = values.campaign || url.searchParams.get("c") || (campaigns[0] && campaigns[0].campaign) || "";
   const v = k => esc(values[k] || "");
-  const options = campaigns.map(c => ({ ...c, ...campaignParts(c.campaign) }))
+  const listed = sub && !campaigns.some(c => c.campaign === incoming) ? [{ campaign:incoming, n:0 }, ...campaigns] : campaigns;
+  const options = listed.map(c => ({ ...c, ...campaignParts(c.campaign) }))
     .map(c => `<option value="${esc(c.campaign)}"${c.campaign === chosen ? " selected" : ""}>${esc(c.zone)} · ${esc(c.group)} (${c.n})</option>`).join("");
   const ball = values.bola || "3";
   return adminPage(env, "prospectos", "Nuevo prospecto", `
-    <header class="top"><div><p class="kicker"><a href="/admin/prospectos${chosen ? "?c=" + encodeURIComponent(chosen) : ""}">← Prospectos</a> · nuevo</p><h1>Un prospecto <em>nuevo</em></h1></div></header>
+    <header class="top"><div><p class="kicker"><a href="${sub ? "/admin/mira#m" + sub.id : "/admin/prospectos" + (chosen ? "?c=" + encodeURIComponent(chosen) : "")}">← ${sub ? "Las MIRA" : "Prospectos"}</a> · nuevo</p><h1>Un prospecto <em>nuevo</em></h1>
+      ${sub ? `<p class="mono">Con los datos de la MIRA de ${esc(sub.brand || sub.name || "")}. Queda en «Respondió», vinculado a esa MIRA.</p>` : ""}</div></header>
     ${error ? `<p class="errline">${esc(error)}</p>` : ""}
     <form class="newauth" method="post" action="/admin/prospecto/nuevo">
+      ${sub ? `<input type="hidden" name="mira" value="${sub.id}">` : ""}
       <label>Zona<select name="campaign" id="campSel">${options}<option value="__nueva"${chosen === "__nueva" || !campaigns.length ? " selected" : ""}>+ Una zona nueva…</option></select></label>
       <label id="zoneBox">Nombre de la zona nueva<input name="zona" value="${v("zona")}" placeholder="Ej.: Envigado, Laureles, Sabaneta"></label>
       <label>Negocio<input name="negocio" required value="${v("negocio")}" placeholder="Nombre del negocio"></label>
@@ -1077,24 +1514,29 @@ async function createProspect(request, env, url){
     return newProspectPage(env, url, "Elige una zona.", values);
   }
   const bola = BALLS[values.bola] ? +values.bola : 3;
+  const miraId = parseInt(values.mira, 10) || null;
+  const sub = miraId ? await env.DB.prepare("SELECT id, origen FROM submissions WHERE id = ?1 AND kind = 'mira' AND prospect_id IS NULL").bind(miraId).first() : null;
   const stats = await env.DB.prepare(
     "SELECT MAX(rank) AS r, MAX(CASE WHEN code LIKE 'N%' THEN CAST(SUBSTR(code, 2) AS INTEGER) END) AS n FROM prospects WHERE campaign = ?1"
   ).bind(campaign).first();
   const code = "N" + String((stats.n || 0) + 1).padStart(3, "0");
   const id = campaign + ":" + code;
   const link = u => /^https?:\/\//.test(u || "") ? u : null;
-  const data = { origen:"manual", creado:todayIso(), telefono:values.telefono || null };
+  const data = { origen:sub ? "mira" : "manual", creado:todayIso(), telefono:values.telefono || null };
+  /* from a MIRA it starts where the MIRA leaves it: answered, the call to schedule */
+  const etapa = bola === 8 ? "descartado" : sub ? "respondio" : "por_contactar";
   await env.DB.batch([
     env.DB.prepare(
       "INSERT INTO prospects (id, campaign, code, negocio, categoria, barrio, direccion, dir_fuente, rank, canal, enlace, instagram, facebook, web, gancho, mensaje, data, bola, etapa) " +
       "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'manual', ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18)"
     ).bind(id, campaign, code, values.negocio, values.categoria || null, values.barrio || null, values.direccion || null, (stats.r || 0) + 1,
       values.canal || null, link(values.enlace), link(values.instagram), link(values.facebook), values.web || null,
-      values.gancho || null, values.mensaje || null, JSON.stringify(data), bola, bola === 8 ? "descartado" : "por_contactar"),
+      values.gancho || null, values.mensaje || null, JSON.stringify(data), bola, etapa),
     env.DB.prepare("INSERT INTO prospect_events (prospect_id, tipo, texto) VALUES (?1, 'nota', ?2)")
-      .bind(id, `Agregado a mano en el panel, con la bola ${bola} (${BALLS[bola].label}).`)
+      .bind(id, `Agregado ${sub ? "desde su MIRA" : "a mano en el panel"}, con la bola ${bola} (${BALLS[bola].label}).`),
+    ...(sub ? linkMira(env, sub.id, { id, etapa }, "manual", sub.origen) : [])
   ]);
-  return Response.redirect(url.origin + "/admin/prospecto?id=" + encodeURIComponent(id) + "#ubicacion", 303);
+  return Response.redirect(url.origin + "/admin/prospecto?id=" + encodeURIComponent(id) + (sub ? "#mira" : "#ubicacion"), 303);
 }
 
 /* ---------- the map: every prospect of a campaign, as its ball ---------- */
@@ -1313,10 +1755,12 @@ document.addEventListener("submit", function(e){
   if(f && !confirm(f.getAttribute("data-confirm"))){ e.preventDefault(); }
 });
 document.addEventListener("click", function(e){
-  var b = e.target.closest("[data-copy]");
+  var b = e.target.closest("[data-copy],[data-copy-from]");
   if(!b){ return; }
   var label = b.getAttribute("data-label") || "Copiar enlace";
-  navigator.clipboard.writeText(b.getAttribute("data-copy")).then(function(){ b.textContent = "Copiado ✓"; setTimeout(function(){ b.textContent = label; }, 1800); });
+  var from = b.getAttribute("data-copy-from"), field = from && document.getElementById(from);
+  var text = field ? field.value : b.getAttribute("data-copy");
+  navigator.clipboard.writeText(text).then(function(){ b.textContent = "Copiado ✓"; setTimeout(function(){ b.textContent = label; }, 1800); });
 });
 </script>`;
 
@@ -1399,20 +1843,41 @@ function row(label, value){
   return `<p><b>${esc(label)}</b>${value ? esc(value).replace(/\n/g, "<br>") : '<span class="none">Sin respuesta</span>'}</p>`;
 }
 
+/* the four parts of a MIRA, as the panel shows them */
+function miraAnswers(d){
+  return `
+      <div class="mira">
+        <section><h3><i>M</i> Marca</h3>${row("Nombre", d.marca)}${row("Qué hace", d.queHace)}${row("Su historia", d.historia)}</section>
+        <section><h3><i>I</i> Imagen</h3>${row("Ya cuenta con", list(d.tiene))}</section>
+        <section><h3><i>R</i> Redes</h3>${row("Dónde encontrarla", d.enlaces)}</section>
+        <section><h3><i>A</i> Alineación</h3>${row("Le habla a", [list(d.publico), d.publicoDetalle].filter(Boolean).join(", "))}${row("Quiere que sientan", list(d.objetivos))}</section>
+      </div>`;
+}
+
+/* where a MIRA came from and whose it is, with what can be done about it */
+function miraLinkLine(r){
+  const origin = `<span class="tag t-net">${r.origen ? "Desde " + esc(ORIGINS[r.origen] || r.origen) : "Sin origen"}</span>`;
+  if(r.prospect_id){
+    return `<div class="mlink">${origin}
+      <span class="tag t-ok">${r.vinculo === "enlace" ? "Enlace personal" : "Vinculada a mano"}</span>
+      <a class="biz" href="/admin/prospecto?id=${encodeURIComponent(r.prospect_id)}">${esc(r.p_negocio || r.prospect_id)}</a>${r.p_etapa ? " " + stageTag(r.p_etapa) : ""}
+      <form method="post" action="/admin/mira/desvincular" data-confirm="¿Desvincular esta MIRA de ${esc(r.p_negocio || "su prospecto")}? La etapa del prospecto no cambia.">
+        <input type="hidden" name="id" value="${r.id}"><button type="submit">Desvincular</button></form>
+    </div>`;
+  }
+  return `<div class="mlink">${origin}<span class="tag t-wait">Sin prospecto</span>
+      <a class="pill" href="/admin/mira/vincular?id=${r.id}">Vincular a un prospecto</a>
+      <a class="pill" href="/admin/prospecto/nuevo?mira=${r.id}">Crear prospecto</a>
+    </div>`;
+}
+
 function card(r, here){
   let d = {};
   try{ d = JSON.parse(r.data); }catch(e){}
   const when = new Date(r.created_at.replace(" ", "T") + "Z").toLocaleString("es-CO", { timeZone:"America/Bogota", dateStyle:"medium", timeStyle:"short" });
   let body;
   if(r.kind === "mira"){
-    const tiene = list(d.tiene);
-    body = `
-      <div class="mira">
-        <section><h3><i>M</i> Marca</h3>${row("Nombre", d.marca)}${row("Qué hace", d.queHace)}${row("Su historia", d.historia)}</section>
-        <section><h3><i>I</i> Imagen</h3>${row("Ya cuenta con", tiene)}</section>
-        <section><h3><i>R</i> Redes</h3>${row("Dónde encontrarla", d.enlaces)}</section>
-        <section><h3><i>A</i> Alineación</h3>${row("Le habla a", [list(d.publico), d.publicoDetalle].filter(Boolean).join(", "))}${row("Quiere que sientan", list(d.objetivos))}</section>
-      </div>
+    body = `${miraLinkLine(r)}${miraAnswers(d)}
       <p class="who mono">Respondió ${esc(d.nombre)} · ${esc(d.contacto)}</p>`;
   } else {
     body = `
@@ -1423,7 +1888,7 @@ function card(r, here){
       <p class="who mono">Escribió ${esc(d.nombre)}${d.contacto ? " · " + esc(d.contacto) : ""}</p>`;
   }
   return `
-    <article class="sub${r.reviewed ? " done" : ""}">
+    <article class="sub${r.reviewed ? " done" : ""}" id="${r.kind === "mira" ? "m" : "c"}${r.id}">
       <header>
         <span class="tag t-${r.kind}">${r.kind === "mira" ? "MIRA" : "Contacto"}</span>
         <h2>${esc(r.kind === "mira" ? (r.brand || r.name) : r.name)}</h2>
@@ -1644,7 +2109,22 @@ function page(title, content, status = 200, script = "", shell = false){
   .side-site{margin-top:auto;padding:8px;color:var(--iron);font:12px "JetBrains Mono",monospace;text-decoration:none}
   .side-site:hover{color:var(--accent)}
   .content{min-width:0;padding:40px 40px 80px;max-width:1240px}
-  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+  @media (max-width:1100px){.tiles{grid-template-columns:repeat(3,1fr)}}
+  /* a MIRA and its prospect */
+  .mlink{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-4px 0 14px}
+  .mlink .biz{margin:0 2px}
+  .picks{list-style:none;margin:0 0 10px;padding:0}
+  .pick{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .pick:last-child{border-bottom:0}
+  .pick .go,.linkrow .go{background:var(--white);color:#000;border-color:var(--white)}
+  .linkline{display:block;word-break:break-all;color:var(--bone)}
+  /* the call forms */
+  .frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  details{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+  details > summary{cursor:pointer;color:var(--accent);font:500 13px Inter,sans-serif}
+  details[open] > summary{margin-bottom:12px}
+  @media (max-width:720px){.pick{grid-template-columns:1fr}}
   .tile{display:flex;flex-direction:column;gap:4px;padding:18px 20px;border:1px solid var(--line);border-radius:16px;text-decoration:none;background:rgba(255,255,255,.02)}
   .tile:hover{border-color:var(--ash)}
   .tile.hot{border-color:var(--b1)}
