@@ -1,7 +1,7 @@
 # 16 Ball Creations
 User-agent: *
 Allow: /
-# the panel and the forms' API. The private pages (/mira/, /testimonio/,
+# the panel and the forms' API. The private pages (/testimonio/,
 # /autorizacion/) stay crawlable on purpose:
 # each one carries its own noindex, and Google only reads it if it may enter.
 Disallow: /admin

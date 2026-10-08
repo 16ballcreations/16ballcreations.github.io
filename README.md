@@ -42,9 +42,9 @@ Inter y JetBrains Mono).
 - `mira/`: **MIRA** (Marca, Imagen, Redes y Alineación), el cuestionario de cinco
   preguntas para entender al cliente antes de proponerle nada. Estilos en
   `assets/css/mira.css`, lógica en `assets/js/mira.js`; las respuestas se envían
-  por correo, como el formulario de contacto. No está enlazado desde el inicio ni
-  se indexa: se envía después de la primera llamada, a quien sabemos que podemos
-  ayudar. El enlace personal saluda y rellena: `mira/?nombre=Ana&marca=Café%20La%20Esquina`
+  por correo, como el formulario de contacto. Es el primer paso del embudo, antes de
+  la llamada: es pública, se indexa y se enlaza desde el inicio, la bio de Instagram
+  y los mensajes. El enlace personal saluda y rellena: `mira/?nombre=Ana&marca=Café%20La%20Esquina`
 - `testimonio/`: el formulario de testimonios, tres preguntas sobre la persona
   (qué cambió en ella, cómo se sintió, satisfacción de 1 a 5) y cómo quiere
   aparecer (con nombre, con iniciales o sin publicar). Se envía al cerrar un
@@ -134,8 +134,8 @@ Para probar en local, la clave del panel va en `.dev.vars`
   estructurados (JSON-LD): el estudio como `ProfessionalService` en Medellín,
   sus servicios, el fundador, las redes y Modularity.
 - `robots.txt` deja entrar a todo menos `/admin` y `/api/`, y apunta a
-  `sitemap.xml`. Las páginas privadas (`/mira/`, `/testimonio/`,
-  `/autorizacion/`) llevan `noindex`.
+  `sitemap.xml`. Las páginas privadas (`/testimonio/`, `/autorizacion/`) llevan
+  `noindex`; `/mira/` es pública y está en el sitemap.
 - Cuando el sitio cambie, avisa a Bing y compañía con IndexNow (la clave es el
   `.txt` de 32 caracteres en la raíz):
   ```

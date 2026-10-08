@@ -244,7 +244,7 @@
     }).then(function(r){
       if(!r.ok){ throw new Error("HTTP " + r.status); }
       sendBtn.innerHTML = "Enviada ✓";
-      done.textContent = "¡Recibida, " + a.nombre + "! Con tu MIRA preparamos la propuesta y te escribimos con los siguientes pasos.";
+      done.textContent = "¡Recibida, " + a.nombre + "! Te escribimos en menos de 24 horas para agendar la llamada.";
       done.classList.add("is-ok");
       try{ localStorage.removeItem(STORE); }catch(e){}
     }).catch(function(){
