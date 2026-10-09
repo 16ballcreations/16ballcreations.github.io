@@ -74,7 +74,14 @@ Todo vive en un Worker de Cloudflare llamado `page`
 - `worker/index.js` atiende lo que no es un archivo:
   - `POST /api/mira` y `POST /api/contacto` guardan cada envío en la base D1
     `16bc` (tabla `submissions`, ver `migrations/`).
-  - `/admin` es el panel. Pide la clave guardada como secreto `ADMIN_PASSWORD`.
+  - `/admin` es el panel. Se entra por **`/admin/entrar`** (una página con la
+    clave, como en KaffeePlatz): la sesión queda en una cookie por 30 días en ese
+    navegador, se renueva sola mientras se usa y se cierra con «Salir» en el menú
+    (tabla `sesiones`). Tras 10 claves equivocadas en 15 minutos, esa IP espera
+    (tabla `intentos`). Todo POST del panel debe venir del mismo sitio (cabecera
+    `Origin`), así que otra página no puede enviar formularios al panel.
+    La clave: el secreto `ADMIN_CLAVE_HASH` (PBKDF2, recomendado) o, si no existe,
+    `ADMIN_PASSWORD` en claro.
     Tiene un menú lateral con una sección para cada cosa: Inicio (lo pendiente
     de hoy), Ventas (`/admin/prospectos`, `/admin/recursos`), Lo que llega
     (`/admin/contacto`), Clientes (`/admin/mira`, `/admin/autorizaciones`,
@@ -157,11 +164,12 @@ npm install                 # una vez
 npm run dev                 # el sitio con el Worker en http://localhost:8787
 npm run deploy              # publica en Cloudflare
 npm run db:migrate          # aplica migraciones nuevas a la base de producción (ANTES de deploy)
-npx wrangler secret put ADMIN_PASSWORD   # crea o cambia la clave del panel
+node scripts/hash-clave.mjs              # una clave al azar y su hash
+npx wrangler secret put ADMIN_CLAVE_HASH # pega el hash: desde ahí, ADMIN_PASSWORD ya no se usa
 ```
 
 Para probar en local, la clave del panel va en `.dev.vars`
-(`ADMIN_PASSWORD="…"`), que no se sube al repositorio.
+(`ADMIN_PASSWORD="…"` o `ADMIN_CLAVE_HASH="pbkdf2$…"`), que no se sube al repositorio.
 
 ## Buscadores (SEO)
 
