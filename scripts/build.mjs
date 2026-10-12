@@ -21,7 +21,10 @@ const SITE = [
   "assets",
   "mira",
   "autorizacion",
-  "testimonio"
+  "testimonio",
+  /* v4/ is the next home page, under evaluation: it carries noindex until
+     it replaces index.html (see scripts/servicios.mjs) */
+  "v4"
   /* v1/ and v2/, the earlier versions of the home page, are kept in the
      repository as reference only: they are not published */
 ];

@@ -14,11 +14,23 @@
    note     Texto pequeño cuando no hay enlace (opcional)
    archived true para los proyectos sin portada propia: salen en el bloque
             "Del archivo", en una línea y sin imagen (opcional)
+
+   Para la portada nueva (v4) y las páginas de servicio:
+   services Los servicios que tocó, por su clave: marca, web, tienda,
+            sistemas, video, asesoria (ver scripts/servicios-data.mjs)
+   status   En qué está hoy: "En línea", "Por estrenar", "Continuo",
+            "En desarrollo"
+   short    Una o dos frases para la tarjeta
+   order    Su lugar en la portada nueva (opcional; sin él va al final)
    --------------------------------------------------------------- */
 
 window.PROJECTS = [
   {
     title: "Rivas Seven",
+    services: ["marca", "asesoria", "web"],
+    status: "Por estrenar",
+    order: 1,
+    short: "Marca personal para un cantautor de Medellín con raíces chocoanas: identidad, colores, redes y un sitio que va, como su música, del duelo a la luz.",
     year: "2026",
     types: ["Marca", "Web"],
     summary: "Acompañamos a Rivas Seven, cantautor de Medellín con raíces chocoanas, a darle forma a su marca personal. Definimos su identidad visual y sus colores, renovamos sus redes para que todas cuenten la misma historia, ordenamos sus perfiles y lo asesoramos en su imagen. El sitio cierra el recorrido: como su música, va del duelo a la luz, de la noche en violeta al amanecer en amarillo.",
@@ -30,6 +42,10 @@ window.PROJECTS = [
   },
   {
     title: "KaffeePlatz",
+    services: ["tienda", "web", "asesoria"],
+    status: "En línea",
+    order: 2,
+    short: "Tienda en línea de accesorios de café con un buscador que recomienda según cómo te gusta el café, pedidos por WhatsApp y redes que se sienten como la misma marca.",
     year: "2026",
     types: ["Marca", "Web"],
     summary: "Nueva tienda en línea para una marca colombiana de accesorios de café: catálogo con filtros, un buscador que recomienda según cómo te gusta el café y pedidos directos por WhatsApp. También los asesoramos en sus redes y en su imagen, para que la tienda y sus perfiles se vean y se sientan como una sola marca.",
@@ -39,7 +55,25 @@ window.PROJECTS = [
     links: [{ label: "kaffeeplatz.co", url: "https://kaffeeplatz.co" }]
   },
   {
+    title: "16 Ball Creations",
+    year: "2013 a hoy",
+    types: ["Marca", "Web"],
+    services: ["marca", "web", "sistemas"],
+    status: "Continuo",
+    order: 4,
+    short: "Nos aplicamos nuestro propio proceso: volvimos a la historia de la bola que falta, ordenamos la marca y la llevamos a un sitio nuevo, una guía para nuestros documentos y un panel propio para cada MIRA y cada llamada.",
+    summary: "El relanzamiento de nuestra propia marca. Volvimos a su origen, la bola dieciséis que no existe, y desde ahí lo ordenamos todo: el sitio nuevo, la MIRA como primer paso, una guía para que cada documento que enviamos se vea y suene igual, y un panel privado donde llevamos cada MIRA, cada llamada y cada autorización.",
+    tags: ["Relanzamiento de marca", "Sitio web", "Guía de documentos", "Sistema propio"],
+    image: "assets/img/projects/16-ball-creations.jpg?v=2",
+    alt: "Portada del sitio de 16 Ball Creations: una mesa de pool con las bolas en juego y el titular «Si no existe, lo creamos»",
+    links: []
+  },
+  {
     title: "Modularity",
+    services: ["sistemas"],
+    status: "En desarrollo",
+    order: 5,
+    short: "Nuestro producto propio: pedidos, inventario, citas y facturas en un solo lugar. Hoy está en desarrollo; la demo se puede probar con datos de ejemplo.",
     year: "2015 a hoy",
     types: ["Producto", "Web"],
     summary: "Nuestro producto estrella: un sistema para administrar negocios, con pedidos, inventario, citas y facturas en un solo lugar. Se adapta a cafés, talleres, salones y clínicas.",
@@ -53,6 +87,10 @@ window.PROJECTS = [
   },
   {
     title: "PsicoFormando",
+    services: ["marca", "video", "asesoria", "web"],
+    status: "Continuo",
+    order: 3,
+    short: "Empezó con nada más que un nombre. Le dimos marca, estilo visual, videos, redes y sitio; hoy es un proyecto de divulgación sobre psicología que se reconoce en cada pieza.",
     year: "Desde 2020",
     types: ["Audiovisual", "Marca", "Web"],
     summary: "PsicoFormando empezó con nada más que un nombre. Desde ahí lo construimos todo: su identidad de marca, el logo, los colores y el estilo visual; la grabación y edición de sus videos; el manejo de sus redes y su sitio web. Hoy es un proyecto de divulgación sobre psicología con más de 18 mil seguidores y una identidad que se reconoce en cada pieza.",
