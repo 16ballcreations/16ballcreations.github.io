@@ -105,7 +105,7 @@ export const SERVICES = [
     slug: "tiendas-en-linea",
     ball: 3,
     name: "Tiendas en línea",
-    title: "Tiendas en línea en Medellín",
+    title: "Tiendas en línea",
     em: "con tu marca de punta a punta",
     line: "Tu catálogo en internet, con pedidos por la página o por WhatsApp, y que se sienta como tu marca.",
     intro: "Una tienda en línea es tu marca atendiendo a alguien que no puede entrar a tu local. Por eso la hacemos con tu voz y tu estilo, no con la cara de una plantilla: un catálogo fácil de recorrer y una forma sencilla de pedir.",
