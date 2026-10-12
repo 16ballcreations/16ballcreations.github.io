@@ -59,19 +59,17 @@ Inter y JetBrains Mono).
 - `marca/`: **guía para agentes de IA** que crean documentos PDF a nombre de la
   marca (`GUIA-DOCUMENTOS-PDF.md`) y su plantilla (`plantilla-documento.html`).
   No se publica. Para convertir: `node scripts/pdf.mjs entrada.html salida.pdf`
-- `v4/`: **la próxima portada, en evaluación** (`/v4/`, con noindex). Proyectos
-  arriba como tarjetas numeradas (servicios, estado y fecha; filtro por
-  servicio), servicios con "lo que incluye", el estudio en tres bloques,
-  Modularity abajo marcado "En desarrollo" y el contacto con dos caminos (MIRA
-  o escribirnos). Estilos en `assets/css/v4.css`, tarjetas en `assets/js/v4.js`.
-  Los proyectos de la v4 son los que tienen `order` en `projects.js`
-- `v4/servicios/`: una página por servicio (lo que incluye, el proceso, los
+- `servicios/`: una página por servicio (lo que incluye, el proceso, los
   proyectos, preguntas frecuentes con datos para Google). **No se editan a
   mano**: el contenido está en `scripts/servicios-data.mjs` y se generan con
   `node scripts/servicios.mjs`, que también escribe `assets/js/servicios.js` y
-  la lista de servicios de `v4/index.html`. Para pasar la v4 a portada: en el
-  script, `BASE = "/"` y `PREVIEW = false`; mover `v4/index.html` a la raíz,
-  correr el script y agregar las páginas al `sitemap.xml`
+  la lista de servicios de `index.html` (entre los marcadores `servicios:inicio`
+  y `servicios-pie:inicio`). Si cambian los servicios, actualiza `sitemap.xml`
+- La portada: proyectos arriba como tarjetas (los de `projects.js` con `order`,
+  dibujados por `assets/js/v4.js`), servicios, proceso, estudio, Modularity en
+  desarrollo y el contacto con dos caminos. Estilos propios en `assets/css/v4.css`
+- `v3/`: la portada anterior (la mesa con el índice de proyectos). Solo en el
+  repositorio, no se publica
 - `v1/`: la versión anterior del sitio. Solo en el repositorio, no se publica
 - `v2/`: la primera iteración de la mesa (sin vidrio ni esfera). Solo en el
   repositorio como referencia, no se publica

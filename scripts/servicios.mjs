@@ -5,17 +5,17 @@
    Los proyectos de cada página salen de assets/js/projects.js.
 
    Uso:  node scripts/servicios.mjs
-   Mientras la v4 se evalúa, BASE es "/v4/" y las páginas llevan noindex.
-   Para publicarla como portada: BASE = "/", PREVIEW = false, y volver a
-   correr el script (las páginas quedan en servicios/ en la raíz). */
+   BASE es la carpeta de la portada ("/"). PREVIEW = true pone noindex a
+   todo: sirve para probar una versión nueva en otra carpeta (p. ej. "/v5/").
+   Si agregas o quitas un servicio, actualiza también sitemap.xml. */
 import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import vm from "node:vm";
 import { SERVICES } from "./servicios-data.mjs";
 
-const BASE = "/v4/";
-const PREVIEW = true;
+const BASE = "/";
+const PREVIEW = false;
 const ORIGIN = "https://page.16ballcreations.workers.dev";
 const PRICE = "$1.500.000";
 
