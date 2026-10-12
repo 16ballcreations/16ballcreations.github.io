@@ -156,7 +156,7 @@ function servicePage(s){
         serviceType: s.name,
         description: s.line + " " + s.intro,
         provider: PROVIDER,
-        areaServed: [{ "@type": "City", name: "Medellín" }, { "@type": "Country", name: "Colombia" }],
+        areaServed: [{ "@type": "Country", name: "Colombia" }, { "@type": "Country", name: "Venezuela" }, { "@type": "Country", name: "Costa Rica" }],
         url: url(path),
         offers: {
           "@type": "Offer",
@@ -323,8 +323,8 @@ function indexPage(){
     ]
   };
   return `${head({
-    title: "Servicios: marca, páginas web, tiendas y redes en Medellín · 16 Ball Creations",
-    description: "Identidad de marca, páginas web, tiendas en línea, sistemas para tu negocio, video para redes y asesoría de imagen, desde Medellín. Todo empieza con tu MIRA, gratis. Proyectos desde " + PRICE + " COP.",
+    title: "Servicios: marca, páginas web, tiendas y redes · 16 Ball Creations",
+    description: "Identidad de marca, páginas web, tiendas en línea, sistemas para tu negocio, video para redes y asesoría de imagen, para marcas de cualquier lugar. Todo empieza con tu MIRA, gratis. Proyectos desde " + PRICE + " COP.",
     path, jsonld
   })}
 <body class="page-svc">

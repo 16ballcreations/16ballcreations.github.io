@@ -31,7 +31,7 @@ const FAQ_PRICE = {
 };
 const FAQ_WHERE = {
   q: "¿Trabajan solo en Medellín?",
-  a: "Estamos en Medellín y podemos visitarte si estás cerca, pero trabajamos por videollamada con cualquier ciudad. Hemos hecho proyectos en Colombia, Venezuela y Costa Rica."
+  a: "Estamos en Medellín y podemos visitarte si estás cerca, pero trabajamos por videollamada con marcas de cualquier lugar. Hemos hecho proyectos en Colombia, Venezuela y Costa Rica."
 };
 const FAQ_START = {
   q: "¿Por dónde empiezo?",
@@ -44,7 +44,7 @@ export const SERVICES = [
     slug: "identidad-de-marca",
     ball: 1,
     name: "Identidad de marca",
-    title: "Identidad de marca en Medellín",
+    title: "Identidad de marca",
     em: "que se reconoce",
     line: "Logo, colores, tipografía y una voz propia, construidos desde la historia de tu marca.",
     intro: "Una marca no empieza en el logo: empieza en por qué existe. Partimos de tu historia, de a quién le hablas y de lo que quieres que sientan, y desde ahí le damos forma a todo lo que se ve. El resultado es una marca que se reconoce en cada pieza, del letrero a la última publicación.",
@@ -74,7 +74,7 @@ export const SERVICES = [
     slug: "paginas-web",
     ball: 2,
     name: "Páginas web",
-    title: "Diseño de páginas web en Medellín",
+    title: "Diseño de páginas web",
     em: "que cuentan quién eres",
     line: "Un sitio hecho a la medida de tu marca, que se ve bien en el celular y hace fácil que te escriban.",
     intro: "Tu página es el lugar donde tu marca habla sin interrupciones. La diseñamos a partir de tu historia, sin plantillas, para que se sienta como el resto de tu marca: tus redes, tu local, tus documentos. Y la dejamos lista para que Google la entienda.",
