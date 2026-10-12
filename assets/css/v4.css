@@ -55,6 +55,13 @@
 .inc{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .inc li{position:relative;padding-left:16px;font-size:.875rem;color:var(--bone)}
 .inc li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--c,var(--accent))}
+/* the whole card is the link: the title's link stretches over it */
+.svc > li.tile:not(.svc-mira){cursor:pointer}
+.svc > li.tile:not(.svc-mira) h3{position:static}
+.svc > li.tile:not(.svc-mira) h3 a::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit}
+.svc > li.tile:not(.svc-mira):hover h3 a{color:var(--accent)}
+.svc > li.tile:not(.svc-mira):focus-within{outline:2px solid var(--accent);outline-offset:3px}
+.svc > li.tile:not(.svc-mira) h3 a:focus-visible{outline:0}
 .svc .more{margin-top:auto;padding-top:8px;font-family:var(--font-mono);font-size:.75rem;color:var(--white)}
 .svc .more span{display:inline-block;transition:transform .25s var(--ease)}
 .svc > li:hover .more span{transform:translateX(5px)}
