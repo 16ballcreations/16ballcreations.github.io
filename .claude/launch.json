@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "lyl-consultores",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:/Dev/lyl-consultores/scripts/servir.mjs", "4321"],
+      "port": 4321
+    }
+  ]
+}

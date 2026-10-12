@@ -27,7 +27,7 @@
   }
 
   function card(p, i){
-    var li = el("li", "card reveal is-visible");
+    var li = el("li", "card tile");
     var first = (p.links || [])[0];
     var media = el(first ? "a" : "div", "card-media");
     if(first){

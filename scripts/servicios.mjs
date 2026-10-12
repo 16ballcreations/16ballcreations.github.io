@@ -64,7 +64,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/site.css?v=6">
-<link rel="stylesheet" href="/assets/css/v4.css?v=1">
+<link rel="stylesheet" href="/assets/css/v4.css?v=4">
 </head>`;
 }
 
@@ -123,7 +123,7 @@ function card(p, i){
   const media = `<img src="/${esc(p.image)}" alt="${esc(p.alt || p.title)}" width="1200" height="750" loading="lazy"><span class="card-n">${String(i + 1).padStart(2, "0")}</span>`;
   const tags = (p.services || []).map(k => SERVICES.find(s => s.key === k)).filter(Boolean)
     .map(s => `<li><a href="${BASE}servicios/${s.slug}/">${esc(s.name)}</a></li>`).join("");
-  return `<li class="card">
+  return `<li class="card tile">
           ${first ? `<a class="card-media" href="${esc(linkUrl(first))}"${ext(first)} aria-label="${esc(p.title + ": " + first.label)}">${media}</a>` : `<div class="card-media">${media}</div>`}
           <div class="card-body">
             <h3>${esc(p.title)}</h3>
@@ -282,7 +282,7 @@ ${s.faq.map((f, i) => `        <details${i === 0 ? " open" : ""}><summary>${esc(
     <div class="wrap">
       <p class="kicker">Otros servicios</p>
       <ul class="others">
-${others.map(o => `        <li><a href="${BASE}servicios/${o.slug}/">${ball(o.ball)}<span>${esc(o.name)}</span></a></li>`).join("\n")}
+${others.map(o => `        <li><a class="tile" href="${BASE}servicios/${o.slug}/">${ball(o.ball)}<span>${esc(o.name)}</span></a></li>`).join("\n")}
       </ul>
     </div>
   </section>
@@ -293,7 +293,7 @@ ${footer()}`;
 
 /* a service as a list item: shared by the overview page and the home page */
 export function serviceItem(s, base = BASE){
-  return `<li class="reveal" style="--c:${HEX[s.ball]}">
+  return `<li class="tile reveal" style="--c:${HEX[s.ball]}">
           ${ball(s.ball)}
           <h3><a href="${base}servicios/${s.slug}/">${esc(s.name)}</a></h3>
           <p>${esc(s.line)}</p>

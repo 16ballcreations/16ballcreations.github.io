@@ -28,7 +28,7 @@ window.PROJECTS = [
   {
     title: "Rivas Seven",
     services: ["marca", "asesoria", "web"],
-    status: "Por estrenar",
+    status: "En línea",
     order: 1,
     short: "Marca personal para un cantautor de Medellín con raíces chocoanas: identidad, colores, redes y un sitio que va, como su música, del duelo a la luz.",
     year: "2026",
@@ -37,8 +37,7 @@ window.PROJECTS = [
     tags: ["Marca personal", "Identidad visual", "Colores de marca", "Redes sociales", "Asesoría de imagen", "Sitio web"],
     image: "assets/img/projects/rivas-seven.jpg",
     alt: "Portada del sitio de Rivas Seven: el artista de noche, en tonos violeta, junto a su nombre en letras grandes",
-    links: [],
-    note: "Muy pronto en línea"
+    links: [{ label: "rivasseven.com", url: "https://rivasseven.com" }]
   },
   {
     title: "KaffeePlatz",
