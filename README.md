@@ -62,9 +62,20 @@ Inter y JetBrains Mono).
 - `servicios/`: una página por servicio (lo que incluye, el proceso, los
   proyectos, preguntas frecuentes con datos para Google). **No se editan a
   mano**: el contenido está en `scripts/servicios-data.mjs` y se generan con
-  `node scripts/servicios.mjs`, que también escribe `assets/js/servicios.js` y
+  `node scripts/servicios.mjs` (en español desde `scripts/servicios-data.mjs` y en
+  inglés desde `scripts/services-en-data.mjs`, con las mismas claves), que también escribe `assets/js/servicios.js` y
   la lista de servicios de `index.html` (entre los marcadores `servicios:inicio`
   y `servicios-pie:inicio`). Si cambian los servicios, actualiza `sitemap.xml`
+- **El sitio en inglés** vive en `en/`: la portada (`en/index.html`), los
+  servicios (`en/services/`) y la MIRA (`en/mira/`). Cada página enlaza a su
+  par en el otro idioma (el botón ES/EN del menú y las etiquetas `hreflang`
+  para Google). Los scripts (`site.js`, `table.js`, `v4.js`, `mira.js`) leen
+  `<html lang>` y hablan en ese idioma. Lo que llega desde la versión en
+  inglés (MIRA o contacto) trae `idioma: "en"` y el panel lo marca "En inglés".
+  Precio en inglés: desde US$400. Los textos de cada proyecto en inglés van en
+  el campo `en` de `projects.js`
+- `scripts/sitemap.mjs`: reescribe `sitemap.xml` con las páginas de los dos
+  idiomas y sus pares. Córrelo después de `scripts/servicios.mjs`
 - La portada: proyectos arriba como tarjetas (los de `projects.js` con `order`,
   dibujados por `assets/js/v4.js`), servicios, proceso, estudio, Modularity en
   desarrollo y el contacto con dos caminos. Estilos propios en `assets/css/v4.css`

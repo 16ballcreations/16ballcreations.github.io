@@ -9,6 +9,8 @@
    A sprite is only redrawn when its ball has turned. */
 (function(){
   "use strict";
+  /* the English pages (/en/) say the same things in English */
+  var T = function(es, en){ return document.documentElement.lang === "en" ? en : es; };
 
   var canvas = document.getElementById("table");
   var hero = document.getElementById("hero");
@@ -319,8 +321,8 @@
     showBall(b.n);
     if(hintText){
       hintText.textContent = b.n === 16
-        ? "Le diste a la 16. La que no existía. Buen tiro."
-        : "Bola " + b.n + ". El sitio ahora es de ese color. Sigue tirando.";
+        ? T("Le diste a la 16. La que no existía. Buen tiro.", "You hit the 16. The one that didn't exist. Nice shot.")
+        : T("Bola " + b.n + ". El sitio ahora es de ese color. Sigue tirando.", "Ball " + b.n + ". The site is that color now. Keep shooting.");
     }
   }
 
@@ -532,7 +534,7 @@
       });
     }
     assembly = { t:0, parts:parts, x:spot[0], y:spot[1], formed:false };
-    if(kicker){ kicker.textContent = "La bola 16 no existe. Todavía."; }
+    if(kicker){ kicker.textContent = T("La bola 16 no existe. Todavía.", "Ball 16 doesn't exist. Yet."); }
     wake();
   }
 
@@ -553,7 +555,7 @@
       as.formed = true;
       ball16.glow = 1;
       balls.push(ball16);
-      if(kicker){ kicker.textContent = "La bola 16 no existía. Nosotros la creamos."; }
+      if(kicker){ kicker.textContent = T("La bola 16 no existía. Nosotros la creamos.", "Ball 16 didn't exist. We created it."); }
       if(window.orbPulse){ window.orbPulse(); }
     }
     if(as.formed){
@@ -652,7 +654,7 @@
 
   /* on a touch screen there is no dragging: a tap shoots */
   if(hintText && window.matchMedia && !window.matchMedia("(pointer: fine)").matches){
-    hintText.textContent = "Toca la mesa para tirar. La bola que golpees pinta el sitio.";
+    hintText.textContent = T("Toca la mesa para tirar. La bola que golpees pinta el sitio.", "Tap the table to shoot. The ball you hit paints the site.");
   }
 
   /* ---------- start ---------- */

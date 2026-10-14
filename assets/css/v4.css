@@ -7,6 +7,13 @@
 /* ---------- the nav: a count over Proyectos, a fixed call to action ---------- */
 .nav sup{margin-left:3px;font-family:var(--font-mono);font-size:.625rem;color:var(--iron);vertical-align:.5em}
 .nav a.is-active sup{color:var(--accent)}
+/* the other language, as a small pill beside the call to action */
+.nav a.lang{padding:5px 9px;border:1px solid var(--hairline);border-radius:999px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;color:var(--ash)}
+.nav a.lang::after{display:none}
+.nav a.lang:hover{color:var(--white);border-color:var(--accent)}
+@media (max-width:720px){
+  .nav a.lang{align-self:flex-start;margin-top:18px;padding:8px 14px;font-family:var(--font-mono);font-size:.8125rem;border:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+}
 
 /* ---------- stats: four across ---------- */
 .stats.stats-4{grid-template-columns:repeat(4,1fr)}

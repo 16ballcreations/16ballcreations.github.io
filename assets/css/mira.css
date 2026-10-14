@@ -135,3 +135,8 @@
 @media (prefers-reduced-motion:reduce){
   .screen.is-on,.q.is-on{animation:none}
 }
+
+/* the other language, a small pill beside "back to home" */
+.head-actions{display:flex;align-items:center;gap:10px}
+.lang-pill{padding:6px 10px;border:1px solid var(--hairline);border-radius:999px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;color:var(--ash);transition:color .15s ease-out,border-color .15s ease-out}
+.lang-pill:hover{color:var(--white);border-color:var(--accent)}

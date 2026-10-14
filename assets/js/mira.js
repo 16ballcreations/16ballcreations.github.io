@@ -2,15 +2,19 @@
    Five shots and the 8 that closes. One question per screen; each one hands
    the page the colour of its ball. Answers are kept in this browser while
    the visitor fills them in, and at the end they are sorted into M·I·R·A and
-   sent by e-mail (GitHub Pages has no server, so the visitor's mail app does
-   the sending). */
+   sent to the Worker (or, if that fails, through the visitor's mail app).
+   The English page (/en/mira/) runs the same script: <html lang="en"> picks
+   the words, keeps its own draft, and marks the answers as English. */
 (function(){
   "use strict";
 
   var root = document.documentElement;
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var HEX = { 1:"#f4c20d",2:"#4d7dff",3:"#ff5c6e",4:"#a375d8",5:"#ff9d3d",6:"#3ad389",7:"#e0765f",8:"#e8e8e8" };
-  var STORE = "mira-v1";
+  var EN = root.lang === "en";
+  function T(es, en){ return EN ? en : es; }
+  /* each language keeps its own draft: the chips' values differ */
+  var STORE = EN ? "mira-en-v1" : "mira-v1";
   /* the personal link and the channel, kept apart from the answers */
   var ref = {};
   try{ ref = JSON.parse(localStorage.getItem(STORE + ":ref") || "{}") || {}; }catch(e){}
@@ -49,7 +53,7 @@
     });
     setAccent(+qs[at].getAttribute("data-ball"));
     back.hidden = at === 0;
-    next.innerHTML = at === qs.length - 1 ? 'Ver mi MIRA <span aria-hidden="true">&rarr;</span>' : 'Siguiente <span aria-hidden="true">&rarr;</span>';
+    next.innerHTML = (at === qs.length - 1 ? T("Ver mi MIRA", "See my MIRA") : T("Siguiente", "Next")) + ' <span aria-hidden="true">&rarr;</span>';
     say("");
     if(focus){
       var first = qs[at].querySelector(".mfield");
@@ -71,7 +75,7 @@
     return box ? $$("input:checked", box).map(function(i){ return i.value; }) : [];
   }
   function answers(){
-    return {
+    var a = {
       marca: val("qName"), queHace: val("qWhat"), historia: val("qStory"),
       publico: picked("publico"), publicoDetalle: val("qWho"),
       objetivos: picked("objetivos"),
@@ -79,6 +83,9 @@
       nombre: val("qPerson"), contacto: val("qReach"),
       token: ref.token, origen: ref.origen
     };
+    /* the panel shows it as English, so the reply goes out in English */
+    if(EN){ a.idioma = "en"; }
+    return a;
   }
 
   /* each shot asks only for what it needs, and says so kindly */
@@ -91,14 +98,14 @@
       return false;
     }
     switch(i){
-      case 0: return a.marca ? true : bad("qName", "Falta el nombre de tu marca, aunque sea provisional.");
-      case 1: return a.historia.length >= 10 ? true : bad("qStory", "Cuéntanos un poco más; dos o tres líneas bastan.");
-      case 2: if(a.publico.length || a.publicoDetalle){ return true; } say("Elige al menos una, o descríbelo con tus palabras.", true); return false;
-      case 3: if(a.objetivos.length){ return true; } say("Elige al menos uno.", true); return false;
-      case 4: if(a.tiene.length){ return true; } say("Marca lo que tienes, o “Nada todavía”.", true); return false;
+      case 0: return a.marca ? true : bad("qName", T("Falta el nombre de tu marca, aunque sea provisional.", "Your brand's name is missing, even a working one."));
+      case 1: return a.historia.length >= 10 ? true : bad("qStory", T("Cuéntanos un poco más; dos o tres líneas bastan.", "Tell us a little more; two or three lines will do."));
+      case 2: if(a.publico.length || a.publicoDetalle){ return true; } say(T("Elige al menos una, o descríbelo con tus palabras.", "Pick at least one, or describe them in your own words."), true); return false;
+      case 3: if(a.objetivos.length){ return true; } say(T("Elige al menos uno.", "Pick at least one."), true); return false;
+      case 4: if(a.tiene.length){ return true; } say(T("Marca lo que tienes, o “Nada todavía”.", "Check what you have, or “Nothing yet”."), true); return false;
       case 5:
-        if(!a.nombre){ return bad("qPerson", "¿Cómo te llamas?"); }
-        if(a.contacto.length < 6){ return bad("qReach", "Déjanos un correo o un WhatsApp para escribirte."); }
+        if(!a.nombre){ return bad("qPerson", T("¿Cómo te llamas?", "What's your name?")); }
+        if(a.contacto.length < 6){ return bad("qReach", T("Déjanos un correo o un WhatsApp para escribirte.", "Leave us an email or a WhatsApp number so we can write to you.")); }
         return true;
     }
     return true;
@@ -140,7 +147,7 @@
       var n = inputs.filter(function(i){ return i.checked; }).length;
       if(max){
         inputs.forEach(function(i){ i.disabled = !i.checked && n >= max; });
-        var c = $("#goalCount"); if(c){ c.textContent = n + " de " + max; }
+        var c = $("#goalCount"); if(c){ c.textContent = n + T(" de ", " of ") + max; }
       }
     }
     inputs.forEach(function(i){
@@ -174,24 +181,26 @@
     at = Math.min(+data.at || 0, qs.length - 1);
     /* someone coming back finds where they left it */
     if(a.marca || a.historia){
-      $$('[data-go="next"]').forEach(function(b){ b.innerHTML = 'Continuar mi MIRA <span aria-hidden="true">&rarr;</span>'; });
+      $$('[data-go="next"]').forEach(function(b){ b.innerHTML = T("Continuar mi MIRA", "Continue my MIRA") + ' <span aria-hidden="true">&rarr;</span>'; });
     }
   }
 
   /* ---------- the result, sorted into M·I·R·A ---------- */
-  var IMAGEN = ["Logo", "Colores definidos"];
-  var REDES = ["Redes sociales", "Página web", "Tienda en línea"];
+  /* the chips' values, in both languages */
+  var IMAGEN = ["Logo", "Colores definidos", "Defined colors"];
+  var REDES = ["Redes sociales", "Página web", "Tienda en línea", "Social media", "Website", "Online store"];
+  var NOTHING = ["Nada todavía", "Nothing yet"];
   function split(list, keep){
-    if(list.indexOf("Nada todavía") !== -1){ return "Empieza desde cero"; }
+    if(list.some(function(x){ return NOTHING.indexOf(x) !== -1; })){ return T("Empieza desde cero", "Starting from scratch"); }
     var l = list.filter(function(x){ return keep.indexOf(x) !== -1; });
     return l.length ? l.join(", ") : "";
   }
   function sections(a){
     return [
-      { letter:"M", title:"Marca", rows:[["Nombre", a.marca], ["Qué hace", a.queHace], ["Su historia", a.historia]] },
-      { letter:"I", title:"Imagen", rows:[["Ya cuenta con", split(a.tiene, IMAGEN) || "Todavía sin logo ni colores definidos"]] },
-      { letter:"R", title:"Redes", rows:[["Ya cuenta con", split(a.tiene, REDES) || "Todavía sin redes ni página"], ["Dónde encontrarla", a.enlaces]] },
-      { letter:"A", title:"Alineación", rows:[["Le habla a", a.publico.concat(a.publicoDetalle ? [a.publicoDetalle] : []).join(", ")], ["Quiere que sientan", a.objetivos.join(", ")]] }
+      { letter:"M", title:T("Marca", "Brand"), rows:[[T("Nombre", "Name"), a.marca], [T("Qué hace", "What it does"), a.queHace], [T("Su historia", "Its story"), a.historia]] },
+      { letter:"I", title:T("Imagen", "Image"), rows:[[T("Ya cuenta con", "Already has"), split(a.tiene, IMAGEN) || T("Todavía sin logo ni colores definidos", "No logo or defined colors yet")]] },
+      { letter:"R", title:T("Redes", "Social media"), rows:[[T("Ya cuenta con", "Already has"), split(a.tiene, REDES) || T("Todavía sin redes ni página", "No social media or website yet")], [T("Dónde encontrarla", "Where to find it"), a.enlaces]] },
+      { letter:"A", title:T("Alineación", "Alignment"), rows:[[T("Le habla a", "Speaks to"), a.publico.concat(a.publicoDetalle ? [a.publicoDetalle] : []).join(", ")], [T("Quiere que sientan", "Wants people to feel"), a.objetivos.join(", ")]] }
     ];
   }
   function el(tag, cls, text){ var n = document.createElement(tag); if(cls){ n.className = cls; } if(text != null){ n.textContent = text; } return n; }
@@ -208,7 +217,7 @@
         var p = el("p");
         p.appendChild(el("b", null, r[0]));
         if(r[1]){ p.appendChild(document.createTextNode(r[1])); }
-        else { p.appendChild(el("span", "empty", "Sin respuesta")); }
+        else { p.appendChild(el("span", "empty", T("Sin respuesta", "No answer"))); }
         card.appendChild(p);
       });
       box.appendChild(card);
@@ -221,15 +230,15 @@
   }
 
   function asText(a){
-    var lines = ["MIRA de " + (a.marca || "mi marca"), ""];
+    var lines = [T("MIRA de ", "MIRA for ") + (a.marca || T("mi marca", "my brand")), ""];
     sections(a).forEach(function(s){
       lines.push(s.letter + " · " + s.title.toUpperCase());
       s.rows.forEach(function(r){ lines.push(r[0] + ": " + (r[1] || "—")); });
       lines.push("");
     });
-    lines.push("CONTACTO");
-    lines.push("Nombre: " + a.nombre);
-    lines.push("Correo o WhatsApp: " + a.contacto);
+    lines.push(T("CONTACTO", "CONTACT"));
+    lines.push(T("Nombre: ", "Name: ") + a.nombre);
+    lines.push(T("Correo o WhatsApp: ", "Email or WhatsApp: ") + a.contacto);
     return lines.join("\n");
   }
 
@@ -240,30 +249,30 @@
     var a = answers();
     var done = $("#doneMsg");
     sendBtn.disabled = true;
-    done.textContent = "Enviando…";
+    done.textContent = T("Enviando…", "Sending…");
     fetch(API + "/api/mira", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body:JSON.stringify({ data:a, website:(form.querySelector(".hp") || {}).value || "" })
     }).then(function(r){
       if(!r.ok){ throw new Error("HTTP " + r.status); }
-      sendBtn.innerHTML = "Enviada ✓";
-      done.textContent = "¡Recibida, " + a.nombre + "! Te escribimos en menos de 24 horas para agendar la llamada.";
+      sendBtn.innerHTML = T("Enviada ✓", "Sent ✓");
+      done.textContent = T("¡Recibida, " + a.nombre + "! Te escribimos en menos de 24 horas para agendar la llamada.", "Got it, " + a.nombre + "! We'll write back within 24 hours to schedule the call.");
       done.classList.add("is-ok");
       try{ localStorage.removeItem(STORE); localStorage.removeItem(STORE + ":ref"); }catch(e){}
     }).catch(function(){
       sendBtn.disabled = false;
-      done.textContent = "Usamos tu correo para enviarla.";
-      var subject = "Mi MIRA: " + (a.marca || "mi marca") + " (" + a.nombre + ")";
+      done.textContent = T("Usamos tu correo para enviarla.", "We're opening your email app to send it.");
+      var subject = T("Mi MIRA: ", "My MIRA: ") + (a.marca || T("mi marca", "my brand")) + " (" + a.nombre + ")";
       window.location.href = "mailto:" + MAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(asText(a));
     });
   });
   $("#copyMira").addEventListener("click", function(){
     var text = asText(answers());
     var done = $("#doneMsg");
-    function ok(){ done.textContent = "Copiado. Pégalo donde prefieras y envíalo a " + MAIL + "."; }
+    function ok(){ done.textContent = T("Copiado. Pégalo donde prefieras y envíalo a ", "Copied. Paste it wherever you like and send it to ") + MAIL + "."; }
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(ok, function(){ done.textContent = "No se pudo copiar; usa “Enviar mi MIRA”."; });
+      navigator.clipboard.writeText(text).then(ok, function(){ done.textContent = T("No se pudo copiar; usa “Enviar mi MIRA”.", "Couldn't copy; use “Send my MIRA”."); });
     }
   });
   $("#editMira").addEventListener("click", function(){ show("quiz"); goTo(0, -1, false); });
@@ -280,9 +289,10 @@
   if(/^[a-z2-9]{6}$/.test(t)){ ref.token = t; }
   if(/^[a-z]{2,12}$/.test(o)){ ref.origen = o; }
   try{ localStorage.setItem(STORE + ":ref", JSON.stringify(ref)); }catch(e){}
-  var pName = (params.get("nombre") || "").trim(), pBrand = (params.get("marca") || "").trim();
+  /* ?nombre= and ?marca= greet and fill in; the English page also takes ?name= and ?brand= */
+  var pName = (params.get("nombre") || params.get("name") || "").trim(), pBrand = (params.get("marca") || params.get("brand") || "").trim();
   if(pName && !val("qPerson")){ document.getElementById("qPerson").value = pName; }
   if(pBrand && !val("qName")){ document.getElementById("qName").value = pBrand; }
-  if(pName){ $("#miraHello").textContent = "Hola, " + pName + " · antes de cada tiro se lee la mesa"; }
+  if(pName){ $("#miraHello").textContent = T("Hola, " + pName + " · antes de cada tiro se lee la mesa", "Hi, " + pName + " · before every shot, you read the table"); }
   if(reduce){ root.style.transition = "none"; }
 })();

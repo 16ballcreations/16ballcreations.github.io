@@ -22,6 +22,8 @@
             "En desarrollo"
    short    Una o dos frases para la tarjeta
    order    Su lugar en la portada nueva (opcional; sin él va al final)
+   en       La versión en inglés (/en/): short, y si cambian, year, alt y
+            links. Lo que falte se toma del español
    --------------------------------------------------------------- */
 
 window.PROJECTS = [
@@ -31,6 +33,10 @@ window.PROJECTS = [
     status: "En línea",
     order: 3,
     short: "Marca personal para un cantautor de Medellín con raíces chocoanas: identidad, colores, redes y un sitio que va, como su música, del duelo a la luz.",
+    en: {
+      short: "A personal brand for a singer-songwriter from Medellín with roots in Chocó: identity, colors, social media and a website that moves, like his music, from grief to light.",
+      alt: "Home page of the Rivas Seven website: the artist at night, in violet tones, next to his name in large letters"
+    },
     year: "2026",
     types: ["Marca", "Web"],
     summary: "Acompañamos a Rivas Seven, cantautor de Medellín con raíces chocoanas, a darle forma a su marca personal. Definimos su identidad visual y sus colores, renovamos sus redes para que todas cuenten la misma historia, ordenamos sus perfiles y lo asesoramos en su imagen. El sitio cierra el recorrido: como su música, va del duelo a la luz, de la noche en violeta al amanecer en amarillo.",
@@ -45,6 +51,10 @@ window.PROJECTS = [
     status: "En línea",
     order: 2,
     short: "Tienda en línea de accesorios de café con un buscador que recomienda según cómo te gusta el café, pedidos por WhatsApp y redes que se sienten como la misma marca.",
+    en: {
+      short: "An online store for coffee accessories, with a finder that recommends gear based on how you like your coffee, WhatsApp ordering, and social profiles that feel like the same brand.",
+      alt: "Home page of the KaffeePlatz website: an AeroPress on a cream background, next to the headline «Eleva tu experiencia cafetera»"
+    },
     year: "2026",
     types: ["Marca", "Web"],
     summary: "Nueva tienda en línea para una marca colombiana de accesorios de café: catálogo con filtros, un buscador que recomienda según cómo te gusta el café y pedidos directos por WhatsApp. También los asesoramos en sus redes y en su imagen, para que la tienda y sus perfiles se vean y se sientan como una sola marca.",
@@ -61,6 +71,11 @@ window.PROJECTS = [
     status: "Continuo",
     order: 4,
     short: "Nos aplicamos nuestro propio proceso: volvimos a la historia de la bola que falta, ordenamos la marca y la llevamos a un sitio nuevo, una guía para nuestros documentos y un panel propio para cada MIRA y cada llamada.",
+    en: {
+      short: "We ran our own process on ourselves: we went back to the story of the missing ball, put the brand in order and carried it into a new website, a guide for our documents and our own panel for every MIRA and every call.",
+      year: "2013 to today",
+      alt: "Home page of the 16 Ball Creations website: a pool table with the balls in play and the headline «Si no existe, lo creamos»"
+    },
     summary: "El relanzamiento de nuestra propia marca. Volvimos a su origen, la bola dieciséis que no existe, y desde ahí lo ordenamos todo: el sitio nuevo, la MIRA como primer paso, una guía para que cada documento que enviamos se vea y suene igual, y un panel privado donde llevamos cada MIRA, cada llamada y cada autorización.",
     tags: ["Relanzamiento de marca", "Sitio web", "Guía de documentos", "Sistema propio"],
     image: "assets/img/projects/16-ball-creations.jpg?v=2",
@@ -73,6 +88,15 @@ window.PROJECTS = [
     status: "En desarrollo",
     order: 5,
     short: "Nuestro producto propio: pedidos, inventario, citas y facturas en un solo lugar. Hoy está en desarrollo; la demo se puede probar con datos de ejemplo.",
+    en: {
+      short: "Our own product: orders, inventory, appointments and invoices in one place. It's in development; you can explore the demo with sample data.",
+      year: "2015 to today",
+      alt: "Main dashboard of Modularity for a demo auto repair shop",
+      links: [
+        { label: "Try the demo", url: "https://modularity.16ballcreations.workers.dev/?demo" },
+        { label: "See details", url: "#modularity" }
+      ]
+    },
     year: "2015 a hoy",
     types: ["Producto", "Web"],
     summary: "Nuestro producto estrella: un sistema para administrar negocios, con pedidos, inventario, citas y facturas en un solo lugar. Se adapta a cafés, talleres, salones y clínicas.",
@@ -90,6 +114,16 @@ window.PROJECTS = [
     status: "Continuo",
     order: 1,
     short: "Empezó con nada más que un nombre. Le dimos marca, estilo visual, videos, redes y sitio; hoy es un proyecto de divulgación sobre psicología que se reconoce en cada pieza.",
+    en: {
+      short: "It started with nothing but a name. We gave it a brand, a visual style, videos, social media and a website; today it's a psychology outreach project people recognize in every piece.",
+      year: "Since 2020",
+      alt: "Home page of the PsicoFormando website",
+      links: [
+        { label: "psicoformando.com", url: "https://psicoformando.com" },
+        { label: "YouTube", url: "https://www.youtube.com/psicoformando" },
+        { label: "Instagram", url: "https://www.instagram.com/psico.formando/" }
+      ]
+    },
     year: "Desde 2020",
     types: ["Audiovisual", "Marca", "Web"],
     summary: "PsicoFormando empezó con nada más que un nombre. Desde ahí lo construimos todo: su identidad de marca, el logo, los colores y el estilo visual; la grabación y edición de sus videos; el manejo de sus redes y su sitio web. Hoy es un proyecto de divulgación sobre psicología con más de 18 mil seguidores y una identidad que se reconoce en cada pieza.",

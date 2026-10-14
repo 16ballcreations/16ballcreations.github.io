@@ -5,6 +5,9 @@
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var header = document.getElementById("siteHeader");
   var fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+  /* the English pages (/en/) say the same things in English */
+  var EN = root.lang === "en";
+  function T(es, en){ return EN ? en : es; }
 
   /* ---------- the accent: whatever ball the visitor last struck ---------- */
   var HEX = { 1:"#f4c20d",2:"#4d7dff",3:"#ff5c6e",4:"#a375d8",5:"#ff9d3d",6:"#3ad389",7:"#e0765f",8:"#e8e8e8" };
@@ -24,7 +27,7 @@
   var manifesto = document.getElementById("manifesto");
   var words = [];
   if(manifesto){
-    var HOT = { "dieciséis":1, "inventamos.":1 };
+    var HOT = { "dieciséis":1, "inventamos.":1, "sixteenth":1, "invented":1 };
     var parts = manifesto.textContent.trim().split(/\s+/);
     manifesto.textContent = "";
     parts.forEach(function(w, i){
@@ -265,7 +268,7 @@
       pos = Math.max(0, Math.min(100, p));
       compare.style.setProperty("--pos", pos + "%");
       handle.setAttribute("aria-valuenow", String(Math.round(pos)));
-      handle.setAttribute("aria-valuetext", pos < 15 ? "Casi todo claro" : pos > 85 ? "Casi todo oscuro" : "Oscuro a la izquierda, claro a la derecha");
+      handle.setAttribute("aria-valuetext", pos < 15 ? T("Casi todo claro", "Mostly light") : pos > 85 ? T("Casi todo oscuro", "Mostly dark") : T("Oscuro a la izquierda, claro a la derecha", "Dark on the left, light on the right"));
       /* each label fades as its side closes */
       tagDark.style.opacity = pos < 14 ? "0" : "1";
       tagLight.style.opacity = pos > 86 ? "0" : "1";
@@ -356,23 +359,26 @@
       fIdea.classList.toggle("is-bad", !idea);
       fReach.classList.toggle("is-bad", reach.length < 6);
       if(!name || !idea || reach.length < 6){
-        say(!name ? "Falta tu nombre." : !idea ? "Cuéntanos la idea, aunque sea en una frase." : "Déjanos un correo o un WhatsApp para responderte.", "bad");
+        say(!name ? T("Falta tu nombre.", "Your name is missing.") : !idea ? T("Cuéntanos la idea, aunque sea en una frase.", "Tell us the idea, even in one sentence.") : T("Déjanos un correo o un WhatsApp para responderte.", "Leave us an email or a WhatsApp number so we can reply."), "bad");
         (!name ? fName : !idea ? fIdea : fReach).focus();
         return;
       }
       sendBtn.disabled = true;
-      say("Enviando…");
+      say(T("Enviando…", "Sending…"));
       var data = { nombre:name, tipo:kind, idea:idea, contacto:reach };
+      if(EN){ data.idioma = "en"; }
       window.send16("contacto", data, brief.querySelector(".hp").value).then(function(){
         brief.reset();
-        say("¡Listo, " + name + "! Recibimos tu idea. Te escribimos para organizar la llamada.", "ok");
+        say(T("¡Listo, " + name + "! Recibimos tu idea. Te escribimos para organizar la llamada.", "Done, " + name + "! We got your idea. We'll write back to set up a call."), "ok");
       }).catch(function(){
         /* the post did not land: hand it to the mail app instead */
         say(msgIdle);
-        var subject = unsure ? "Tengo una idea (" + name + ")" : "Tengo una idea: " + kind + " (" + name + ")";
-        var body = (unsure
-          ? "Hola, me llamo " + name + ". Todavía no sé bien qué necesito, pero esta es la idea:\n\n"
-          : "Hola, me llamo " + name + " y necesito " + kind + ".\n\nLa idea:\n") + idea + "\n\nEscríbeme a: " + reach + "\n";
+        var subject = unsure ? T("Tengo una idea (", "I have an idea (") + name + ")" : T("Tengo una idea: ", "I have an idea: ") + kind + " (" + name + ")";
+        var body = EN
+          ? (unsure ? "Hi, my name is " + name + ". I'm not sure yet what I need, but this is the idea:\n\n"
+                    : "Hi, my name is " + name + " and I need " + kind + ".\n\nThe idea:\n") + idea + "\n\nReach me at: " + reach + "\n"
+          : (unsure ? "Hola, me llamo " + name + ". Todavía no sé bien qué necesito, pero esta es la idea:\n\n"
+                    : "Hola, me llamo " + name + " y necesito " + kind + ".\n\nLa idea:\n") + idea + "\n\nEscríbeme a: " + reach + "\n";
         window.location.href = "mailto:hola@16ballcreations.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
       }).then(function(){ sendBtn.disabled = false; });
     });
@@ -385,7 +391,7 @@
   function setMenu(open){
     root.classList.toggle("is-menu", open);
     menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-    menuBtn.setAttribute("aria-label", open ? "Cerrar el menú" : "Abrir el menú");
+    menuBtn.setAttribute("aria-label", open ? T("Cerrar el menú", "Close the menu") : T("Abrir el menú", "Open the menu"));
     behind.forEach(function(n){ n.inert = open; });
     if(open){
       requestAnimationFrame(function(){

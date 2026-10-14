@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRA — 16 Ball Creations</title>
+<meta name="description" content="MIRA, a first look at your brand. Five short, free questions; we use your answers to prepare a 30-minute call with 16 Ball Creations, a brand studio.">
+<meta name="theme-color" content="#000000">
+<!-- MIRA is the first step, before any call: it is public and shared from Instagram, WhatsApp and the home page -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="MIRA — Before every shot, you read the table">
+<meta property="og:description" content="Five questions about your brand, about three minutes, and free. We use your answers to prepare a 30-minute call.">
+<meta property="og:url" content="https://16ballcreations.com/en/mira/">
+<meta property="og:image" content="https://16ballcreations.com/assets/img/og-16ballcreations.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="es_CO">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MIRA — Before every shot, you read the table">
+<meta name="twitter:description" content="Five questions about your brand, about three minutes, and free.">
+<meta name="twitter:image" content="https://16ballcreations.com/assets/img/og-16ballcreations.jpg">
+<link rel="canonical" href="https://16ballcreations.com/en/mira/">
+<link rel="alternate" hreflang="es" href="https://16ballcreations.com/mira/">
+<link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/mira/">
+<link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/mira/">
+<link rel="icon" href="/assets/img/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=6">
+<link rel="stylesheet" href="/assets/css/mira.css?v=2">
+</head>
+<body class="mira-page">
+
+<!-- the 16, as a sphere of particles, behind everything (orb.js) -->
+<canvas class="orb" id="orb" aria-hidden="true" data-x=".86" data-y=".58" data-r=".42" data-a=".32"></canvas>
+
+<header class="site-header is-stuck" id="siteHeader">
+  <div class="wrap header-inner glass">
+    <a class="brand" href="/en/" aria-label="16 Ball Creations, back to home">
+      <img src="/assets/img/ball-16.png?v=2" alt="" width="340" height="341">
+      <span>16 Ball Creations</span>
+    </a>
+    <div class="head-actions">
+      <a class="lang-pill" href="/mira/" hreflang="es" lang="es" aria-label="Español">ES</a>
+      <a class="btn btn-sm" href="/en/">Back to home</a>
+    </div>
+  </div>
+</header>
+
+<main class="mira" id="mira">
+
+  <!-- 0 · the intro: what MIRA is -->
+  <section class="screen is-on" data-screen="intro" aria-labelledby="miraTitle">
+    <div class="wrap">
+      <p class="kicker" id="miraHello">Before every shot, you read the table</p>
+      <h1 class="mira-title" id="miraTitle">Before we offer you anything,<br>we want to <em>look.</em></h1>
+      <p class="lead">MIRA is Spanish for “look”, and it's how we start every project. Its four letters are the four things we look at:</p>
+      <ul class="letters">
+        <li><b>M</b><span><strong>Marca · Brand</strong>Where it comes from, why it was born and where it wants to go.</span></li>
+        <li><b>I</b><span><strong>Imagen · Image</strong>How people see you today: logo, colors, photos.</span></li>
+        <li><b>R</b><span><strong>Redes · Social media</strong>Every profile, one by one, and how they connect.</span></li>
+        <li><b>A</b><span><strong>Alineación · Alignment</strong>That everything tells the same story, and what to do first.</span></li>
+      </ul>
+      <div class="intro-foot">
+        <p class="lead">Before we talk, we want to get to know your brand. It's five short questions, about three minutes, and it's free. We use your answers to prepare a 30-minute call that starts from you, not from a formula.</p>
+        <button class="btn btn-primary btn-lg" type="button" data-go="next">Start my MIRA <span aria-hidden="true">&rarr;</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- the questions: one shot per screen -->
+  <section class="screen quiz" data-screen="quiz" aria-live="polite">
+    <div class="wrap">
+      <div class="rail-steps" aria-hidden="true">
+        <span class="ball" data-n="1"></span><span class="ball" data-n="2"></span><span class="ball" data-n="3"></span><span class="ball" data-n="4"></span><span class="ball" data-n="5"></span><span class="ball" data-n="8"></span>
+      </div>
+
+      <form class="card glass" id="quiz" novalidate>
+
+        <fieldset class="q" data-q="1" data-ball="1">
+          <legend><span class="q-n mono">Shot 1 of 5 · Brand</span><span class="q-title">What's your brand called, and what does it do?</span></legend>
+          <label class="field-label" for="qName">The name</label>
+          <input class="mfield" id="qName" name="marca" autocomplete="organization" placeholder="E.g.: Corner Café" required>
+          <label class="field-label" for="qWhat">In one sentence, what does it do?</label>
+          <input class="mfield" id="qWhat" name="queHace" placeholder="E.g.: we sell specialty coffee in Austin">
+        </fieldset>
+
+        <fieldset class="q" data-q="2" data-ball="2">
+          <legend><span class="q-n mono">Shot 2 of 5 · Brand</span><span class="q-title">Where does it come from? Why was it born?</span></legend>
+          <p class="q-help">Tell it the way you'd tell a friend. If you're not sure where to start, tap one of these:</p>
+          <div class="starters">
+            <button type="button" class="starter">It all started when…</button>
+            <button type="button" class="starter">It was born because…</button>
+            <button type="button" class="starter">What makes us different is…</button>
+          </div>
+          <label class="sr" for="qStory">Your brand's story</label>
+          <textarea class="mfield marea" id="qStory" name="historia" rows="4" placeholder="Your story, in a few lines…" required></textarea>
+        </fieldset>
+
+        <fieldset class="q" data-q="3" data-ball="3">
+          <legend><span class="q-n mono">Shot 3 of 5 · Alignment</span><span class="q-title">Who do you want to speak to?</span></legend>
+          <p class="q-help">Pick all that apply.</p>
+          <div class="chips-pick" data-name="publico">
+            <label><input type="checkbox" value="Young people"><span>Young people</span></label>
+            <label><input type="checkbox" value="Adults"><span>Adults</span></label>
+            <label><input type="checkbox" value="Families"><span>Families</span></label>
+            <label><input type="checkbox" value="Parents"><span>Parents</span></label>
+            <label><input type="checkbox" value="Professionals"><span>Professionals</span></label>
+            <label><input type="checkbox" value="Businesses"><span>Businesses</span></label>
+            <label><input type="checkbox" value="Tourists"><span>Tourists</span></label>
+          </div>
+          <label class="field-label" for="qWho">Anything else about them? <span class="opt">Optional</span></label>
+          <input class="mfield" id="qWho" name="publicoDetalle" placeholder="E.g.: people who work from home and drink coffee all day">
+        </fieldset>
+
+        <fieldset class="q" data-q="4" data-ball="4">
+          <legend><span class="q-n mono">Shot 4 of 5 · Alignment</span><span class="q-title">What do you want people to feel when they come across your brand?</span></legend>
+          <p class="q-help">Pick up to three. There are no right answers. <span class="count mono" id="goalCount">0 of 3</span></p>
+          <div class="chips-pick" data-name="objetivos" data-max="3">
+            <label><input type="checkbox" value="That they recognize it right away"><span>That they recognize it right away</span></label>
+            <label><input type="checkbox" value="That it feels authentic, like me"><span>That it feels authentic, like me</span></label>
+            <label><input type="checkbox" value="That it makes them trust it"><span>That it makes them trust it</span></label>
+            <label><input type="checkbox" value="That they feel part of something"><span>That they feel part of something</span></label>
+            <label><input type="checkbox" value="That they understand why I do what I do"><span>That they understand why I do what I do</span></label>
+            <label><input type="checkbox" value="That the care shows in every detail"><span>That the care shows in every detail</span></label>
+            <label><input type="checkbox" value="That it grows with me without losing its essence"><span>That it grows with me without losing its essence</span></label>
+            <label><input type="checkbox" value="I'm still figuring it out"><span>I'm still figuring it out</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q" data-q="5" data-ball="5">
+          <legend><span class="q-n mono">Shot 5 of 5 · Image and social media</span><span class="q-title">What do you have today?</span></legend>
+          <p class="q-help">Check what you already have, even if you don't like how it looks.</p>
+          <div class="chips-pick" data-name="tiene">
+            <label><input type="checkbox" value="Logo"><span>Logo</span></label>
+            <label><input type="checkbox" value="Defined colors"><span>Defined colors</span></label>
+            <label><input type="checkbox" value="Social media"><span>Social media</span></label>
+            <label><input type="checkbox" value="Website"><span>Website</span></label>
+            <label><input type="checkbox" value="Online store"><span>Online store</span></label>
+            <label><input type="checkbox" value="Nothing yet" data-alone><span>Nothing yet</span></label>
+          </div>
+          <label class="field-label" for="qLinks">Your Instagram or your website <span class="opt">Optional</span></label>
+          <input class="mfield" id="qLinks" name="enlaces" placeholder="@yourbrand, yourbrand.com">
+        </fieldset>
+
+        <fieldset class="q" data-q="6" data-ball="8">
+          <legend><span class="q-n mono">The 8 ball closes the game</span><span class="q-title">Who's answering this MIRA?</span></legend>
+          <label class="field-label" for="qPerson">Your name</label>
+          <input class="mfield" id="qPerson" name="nombre" autocomplete="name" placeholder="Your name" required>
+          <label class="field-label" for="qReach">Email or WhatsApp</label>
+          <input class="mfield" id="qReach" name="contacto" autocomplete="email" placeholder="you@email.com or +1 555 000 0000" required>
+        </fieldset>
+
+        <!-- people never see this field; bots fill it in -->
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <div class="q-foot">
+          <button type="button" class="btn" id="qBack">&larr; Back</button>
+          <p class="q-msg mono" id="qMsg" role="status"></p>
+          <button type="submit" class="btn btn-primary" id="qNext">Next <span aria-hidden="true">&rarr;</span></button>
+        </div>
+      </form>
+      <p class="q-hint mono">Enter to continue · your answers are kept in this browser while you fill them in</p>
+    </div>
+  </section>
+
+  <!-- the result: the answers, sorted into M·I·R·A -->
+  <section class="screen" data-screen="done" aria-labelledby="doneTitle">
+    <div class="wrap">
+      <p class="kicker">The table has been read</p>
+      <h2 class="mira-title" id="doneTitle">Your <em>MIRA</em> is ready.</h2>
+      <div class="result" id="result"></div>
+      <div class="done-foot">
+        <p class="lead">Send us your MIRA. We'll read it and write back within 24 hours to schedule a 30-minute video call. If we see we can't help you, we'll tell you that too.</p>
+        <div class="actions">
+          <button class="btn btn-primary btn-lg" type="button" id="sendMira">Send my MIRA <span aria-hidden="true">&rarr;</span></button>
+          <button class="btn" type="button" id="copyMira">Copy answers</button>
+          <button class="btn" type="button" id="editMira">Change something</button>
+        </div>
+        <p class="q-msg mono" id="doneMsg" role="status">We only use your details to reply. We never share them.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="/assets/js/mira.js?v=8" defer></script>
+<script src="/assets/js/orb.js?v=2" defer></script>
+</body>
+</html>

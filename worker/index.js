@@ -2079,7 +2079,7 @@ function card(r, here){
   return `
     <article class="sub${r.reviewed ? " done" : ""}" id="${r.kind === "mira" ? "m" : "c"}${r.id}">
       <header>
-        <span class="tag t-${r.kind}">${r.kind === "mira" ? "MIRA" : "Contacto"}</span>
+        <span class="tag t-${r.kind}">${r.kind === "mira" ? "MIRA" : "Contacto"}</span>${d.idioma === "en" ? `<span class="tag t-net" title="Llegó desde la versión en inglés del sitio: respóndele en inglés">En inglés</span>` : ""}
         <h2>${esc(r.kind === "mira" ? (r.brand || r.name) : r.name)}</h2>
         <span class="when mono">${esc(when)}</span>
         <form method="post" action="/admin/revisado">

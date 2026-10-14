@@ -1,6 +1,7 @@
 /* v4: the work as numbered cards, filtered by service.
    Reads window.PROJECTS (assets/js/projects.js) and window.SERVICES
-   (assets/js/servicios.js, written by scripts/servicios.mjs). */
+   (assets/js/servicios.js, written by scripts/servicios.mjs). The page's
+   own language (<html lang>) picks the words: Spanish, or English under /en/. */
 (function(){
   "use strict";
 
@@ -10,14 +11,26 @@
   var countEl = document.getElementById("workCount");
   var navCount = document.getElementById("navWorkCount");
 
+  var EN = document.documentElement.lang === "en";
+  var SERVICES = (EN ? window.SERVICES_EN : window.SERVICES) || [];
+  var SVC_DIR = EN ? "services/" : "servicios/";
+  var STATUS = EN ? { "En línea":"Live", "Por estrenar":"Coming soon", "Continuo":"Ongoing", "En desarrollo":"In development" } : {};
   var SVC = {};
-  (window.SERVICES || []).forEach(function(s){ SVC[s.key] = s; });
+  SERVICES.forEach(function(s){ SVC[s.key] = s; });
+  /* the English text of a project, falling back to the Spanish one */
+  function tr(p){
+    if(!EN || !p.en){ return p; }
+    var o = {}; for(var k in p){ o[k] = p[k]; }
+    for(var e in p.en){ o[e] = p.en[e]; }
+    return o;
+  }
   /* the page may live under a folder (/v4/), the images do not */
   function asset(p){ return /^(https?:)?\/|^#/.test(p) ? p : "/" + p; }
 
   var items = (window.PROJECTS || [])
     .filter(function(p){ return !p.archived && p.order; })
-    .sort(function(a, b){ return a.order - b.order; });
+    .sort(function(a, b){ return a.order - b.order; })
+    .map(tr);
 
   function el(tag, cls, text){
     var n = document.createElement(tag);
@@ -51,11 +64,11 @@
     (p.services || []).forEach(function(k){
       var s = SVC[k]; if(!s){ return; }
       var t = el("li"); var a = el("a", null, s.name);
-      a.href = "servicios/" + s.slug + "/";
+      a.href = SVC_DIR + s.slug + "/";
       t.appendChild(a); tags.appendChild(t);
     });
     foot.appendChild(tags);
-    var st = el("span", "status", p.status + (p.year ? " · " + p.year : ""));
+    var st = el("span", "status", (STATUS[p.status] || p.status) + (p.year ? " · " + p.year : ""));
     st.setAttribute("data-s", p.status || "");
     foot.appendChild(st);
     body.appendChild(foot);
@@ -88,12 +101,12 @@
   /* the filters: every service that has at least one project, with its count */
   if(bar){
     var keys = [""];
-    (window.SERVICES || []).forEach(function(s){
+    SERVICES.forEach(function(s){
       if(items.some(function(p){ return (p.services || []).indexOf(s.key) !== -1; })){ keys.push(s.key); }
     });
     keys.forEach(function(k, i){
       var n = k ? items.filter(function(p){ return (p.services || []).indexOf(k) !== -1; }).length : items.length;
-      var b = el("button", "filter" + (i === 0 ? " is-on" : ""), k ? SVC[k].name : "Todos");
+      var b = el("button", "filter" + (i === 0 ? " is-on" : ""), k ? SVC[k].name : (EN ? "All" : "Todos"));
       b.type = "button";
       b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
       b.appendChild(el("sup", null, String(n)));
