@@ -22,6 +22,8 @@
             "En desarrollo"
    short    Una o dos frases para la tarjeta
    order    Su lugar en la portada nueva (opcional; sin él va al final)
+   wide     true para una tarjeta a todo el ancho, debajo de las demás. La
+            invitación "Aquí podría estar tu proyecto" va justo antes
    en       La versión en inglés (/en/): short, y si cambian, year, alt y
             links. Lo que falte se toma del español
    --------------------------------------------------------------- */
@@ -86,6 +88,7 @@ window.PROJECTS = [
     title: "Modularity",
     services: ["sistemas"],
     status: "En desarrollo",
+    wide: true,
     order: 5,
     short: "Nuestro producto propio: pedidos, inventario, citas y facturas en un solo lugar. Hoy está en desarrollo; la demo se puede probar con datos de ejemplo.",
     en: {

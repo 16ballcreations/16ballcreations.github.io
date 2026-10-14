@@ -89,10 +89,52 @@
     return li;
   }
 
+  /* the empty seat: a card the size of the wide ones, inviting the next project */
+  function invite(){
+    var li = el("li", "card tile card-wide card-invite");
+    var media = el("a", "card-media invite-slot");
+    media.href = EN ? "/en/mira/?o=web" : "/mira/?o=web";
+    media.setAttribute("aria-label", EN ? "Start your free MIRA" : "Haz tu MIRA gratis");
+    var ball = el("img");
+    ball.src = "/assets/img/ball-16.png?v=2"; ball.alt = ""; ball.width = 340; ball.height = 341; ball.loading = "lazy";
+    media.appendChild(ball);
+    media.appendChild(el("span", "card-n", "16"));
+    li.appendChild(media);
+    var body = el("div", "card-body");
+    body.appendChild(el("p", "invite-k mono", EN ? "Ball 16 is yours" : "La bola 16 es la tuya"));
+    var h = el("h3"); h.appendChild(document.createTextNode(EN ? "Your project " : "Aquí podría estar ")); h.appendChild(el("em", null, EN ? "could be here" : "tu proyecto"));
+    body.appendChild(h);
+    body.appendChild(el("p", null, EN
+      ? "Join the brands that tell a single story everywhere, with coherence and a touch of invention. It starts with your MIRA: five questions about your brand and a free 30-minute call."
+      : "Súmate a las marcas que cuentan una sola historia en todas partes, con coherencia y con algo de invención. Empieza con tu MIRA: cinco preguntas sobre tu marca y una llamada de 30 minutos, gratis."));
+    var links = el("div", "card-links");
+    var a1 = el("a", "btn btn-sm btn-primary", EN ? "Start your free MIRA" : "Haz tu MIRA gratis");
+    a1.href = media.href;
+    var a2 = el("a", "btn btn-sm", EN ? "Write to us" : "Escríbenos");
+    a2.href = "#contacto";
+    links.appendChild(a1); links.appendChild(a2);
+    body.appendChild(links);
+    li.appendChild(body);
+    return li;
+  }
+
   function render(key){
     grid.innerHTML = "";
     var shown = items.filter(function(p){ return !key || (p.services || []).indexOf(key) !== -1; });
-    shown.forEach(function(p, i){ grid.appendChild(card(p, i)); });
+    var regular = shown.filter(function(p){ return !p.wide; });
+    var wide = shown.filter(function(p){ return p.wide; });
+    regular.forEach(function(p, i){
+      var c = card(p, i);
+      /* an odd one out at the end spans the row, so the grid never ends on a hole */
+      if(regular.length % 2 && i === regular.length - 1){ c.classList.add("card-wide"); }
+      grid.appendChild(c);
+    });
+    grid.appendChild(invite());
+    wide.forEach(function(p, i){
+      var c = card(p, regular.length + i);
+      c.classList.add("card-wide");
+      grid.appendChild(c);
+    });
     if(countEl){ countEl.textContent = "(" + shown.length + ")"; }
   }
 

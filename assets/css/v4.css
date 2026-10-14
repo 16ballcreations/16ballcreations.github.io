@@ -48,9 +48,24 @@
 .status[data-s="En desarrollo"]::before{background:var(--b5);animation:ping 2.2s ease-out infinite}
 .card-links{display:flex;flex-wrap:wrap;gap:8px}
 /* an odd last card spans the row, so the grid never ends on a hole */
-.work .card:last-child:nth-child(odd){grid-column:1 / -1;flex-direction:row;gap:10px}
-.work .card:last-child:nth-child(odd) .card-media{flex:0 0 55%;aspect-ratio:16/10}
-.work .card:last-child:nth-child(odd) .card-body{padding:22px 22px 18px}
+.work .card:last-child:nth-child(odd),.work .card-wide{grid-column:1 / -1;flex-direction:row;gap:10px}
+.work .card:last-child:nth-child(odd) .card-media,.work .card-wide .card-media{flex:0 0 55%;aspect-ratio:16/10}
+.work .card:last-child:nth-child(odd) .card-body,.work .card-wide .card-body{padding:22px 22px 18px}
+/* the empty seat: a dashed frame where the next project goes, with the 16 waiting in it */
+.card-invite .invite-slot{
+  display:grid;place-items:center;background:
+    radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 62%),
+    repeating-linear-gradient(135deg,transparent 0 14px,rgba(255,255,255,.025) 14px 15px),#050606;
+  border:1px dashed color-mix(in srgb,var(--accent) 45%,var(--hairline));
+}
+.card-invite .invite-slot img{width:min(34%,190px);height:auto;filter:drop-shadow(0 24px 40px rgba(0,0,0,.6));animation:float-16 6s ease-in-out infinite}
+@keyframes float-16{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
+.card-invite:hover .invite-slot img{animation-duration:2.4s}
+.card-invite .card-n{color:var(--void);background:var(--accent);border-color:transparent}
+.invite-k{margin:0;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.card-invite h3 em{font-style:italic;color:var(--accent)}
+.card-invite .card-body{justify-content:center}
+.card-invite .card-links{margin-top:6px}
 
 /* ---------- services: glass tiles with what each one includes ---------- */
 .svc{position:relative;isolation:isolate;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -200,9 +215,9 @@
   .stats.stats-4{grid-template-columns:1fr}
   .stats.stats-4 div:nth-child(3){padding-left:0}
   .work,.svc,.svc.svc-all,.paths,.svc-steps,.others{grid-template-columns:1fr}
-  .work .card:last-child:nth-child(odd){flex-direction:column}
-  .work .card:last-child:nth-child(odd) .card-media{flex:none}
-  .card-body,.work .card:last-child:nth-child(odd) .card-body{padding:18px 12px 14px}
+  .work .card:last-child:nth-child(odd),.work .card-wide{flex-direction:column}
+  .work .card:last-child:nth-child(odd) .card-media,.work .card-wide .card-media{flex:none}
+  .card-body,.work .card:last-child:nth-child(odd) .card-body,.work .card-wide .card-body{padding:18px 12px 14px}
   .path.tile{padding:26px 20px}
   .svc-steps li:nth-child(even){padding-left:0;border-left:0}
   .svc-hero{padding-top:calc(var(--header-h) + 48px)}
