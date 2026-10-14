@@ -89,15 +89,67 @@
     return li;
   }
 
+  /* the 16 as a sketch: the idea of the brand before it exists. A pencil
+     outline that doesn't quite close, a second pass that overshoots, hatched
+     shading, guide lines, a scribbled number and a note in the margin. The
+     lines "boil" (the turbulence changes seed a few times a second), the way
+     hand-drawn animation does, and draw themselves in when the card arrives. */
+  function sketch16(){
+    var seed = 16;
+    function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280 - .5; }
+    var hatch = "";
+    for(var k = -150; k <= 210; k += 7){
+      /* 45° strokes, each a little off: start, end and slant */
+      hatch += "M" + (40 + k + rnd() * 3).toFixed(1) + " " + (170 + rnd() * 4).toFixed(1) +
+               "L" + (180 + k + rnd() * 5).toFixed(1) + " " + (25 + rnd() * 4).toFixed(1);
+    }
+    var note = EN ? "the missing one" : "la que falta";
+    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return '<svg class="sketch16" viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">' +
+      '<defs>' +
+        '<filter id="rough16" x="-5%" y="-5%" width="110%" height="110%">' +
+          '<feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="1" result="n">' +
+            (reduceMotion ? "" : '<animate attributeName="seed" values="1;4;7;2" dur=".6s" calcMode="discrete" repeatCount="indefinite"/>') +
+          '</feTurbulence>' +
+          '<feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/>' +
+        '</filter>' +
+        /* the dark part of the 16: the ball above the band where the white begins */
+        '<clipPath id="dark16"><path d="M58.9 157A95 95 0 1 1 241.1 157Z"/></clipPath>' +
+      '</defs>' +
+      '<g filter="url(#rough16)" fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+        /* construction: a guide circle and the centre, faint */
+        '<circle class="s-guide" cx="154" cy="126" r="101" pathLength="1"/>' +
+        '<path class="s-guide" d="M138 130H162M150 118V142M40 232H262" pathLength="1"/>' +
+        /* hatching over the dark part, and the band where it ends */
+        '<path class="s-hatch" clip-path="url(#dark16)" d="' + hatch + '" pathLength="1"/>' +
+        '<path class="s-line" d="M60 158Q102 149 150 157T241 154" pathLength="1"/>' +
+        /* the outline: one pass that leaves a gap, another that overshoots */
+        '<path class="s-line s-main" d="M239.3 97.5A95 95 0 0 1 60.7 162.5A95 95 0 0 1 232.3 82.5" pathLength="1"/>' +
+        '<path class="s-line s-soft" d="M243.5 148.8A97 97 0 0 1 52.5 115.2A97 97 0 1 1 241.7 157.1" pathLength="1"/>' +
+        /* the number's circle, knocked out of the hatching, and the 16 */
+        '<g transform="rotate(-14 180 98)">' +
+          '<ellipse cx="180" cy="98" rx="31" ry="29" fill="#050606" stroke="none"/>' +
+          '<path class="s-line" d="M210 96C211 79 196 68 180 69C162 70 149 83 150 99C151 116 166 128 182 127C199 126 212 113 209 92" pathLength="1"/>' +
+          '<path class="s-ink" d="M163 88Q167 84 171 78L169 114M163 114H175" pathLength="1"/>' +
+          '<path class="s-ink" d="M196 81Q182 84 181 100Q180 114 190 114Q199 113 198 103Q197 94 187 96Q182 98 181 104" pathLength="1"/>' +
+        '</g>' +
+        /* a glint, and the shadow scribbled under it */
+        '<path class="s-line" d="M86 92Q96 70 120 58M98 104Q103 94 111 88" pathLength="1"/>' +
+        '<path class="s-hatch" d="M88 240L102 233L112 241L126 232L138 242L152 232L164 242L178 232L190 241L203 234L214 240" pathLength="1"/>' +
+        /* the note in the margin */
+        '<path class="s-note" d="M318 74Q290 60 252 92M252 92L262 90M252 92L254 82" pathLength="1"/>' +
+        '<text class="s-text" x="286" y="58">' + note + '</text>' +
+      '</g>' +
+    '</svg>';
+  }
+
   /* the empty seat: a card the size of the wide ones, inviting the next project */
   function invite(){
     var li = el("li", "card tile card-wide card-invite");
     var media = el("a", "card-media invite-slot");
     media.href = EN ? "/en/mira/?o=web" : "/mira/?o=web";
     media.setAttribute("aria-label", EN ? "Start your free MIRA" : "Haz tu MIRA gratis");
-    var ball = el("img");
-    ball.src = "/assets/img/ball-16.png?v=2"; ball.alt = ""; ball.width = 340; ball.height = 341; ball.loading = "lazy";
-    media.appendChild(ball);
+    media.insertAdjacentHTML("beforeend", sketch16());
     media.appendChild(el("span", "card-n", "16"));
     li.appendChild(media);
     var body = el("div", "card-body");
@@ -115,6 +167,13 @@
     links.appendChild(a1); links.appendChild(a2);
     body.appendChild(links);
     li.appendChild(body);
+    /* the sketch draws itself the first time it comes on screen */
+    if("IntersectionObserver" in window){
+      var io = new IntersectionObserver(function(es){
+        if(es[0].isIntersecting){ li.classList.add("is-drawn"); io.disconnect(); }
+      }, { threshold:.35 });
+      io.observe(li);
+    } else { li.classList.add("is-drawn"); }
     return li;
   }
 
