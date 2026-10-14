@@ -41,10 +41,22 @@ const ALLOWED_ORIGINS = [
 const MAX_BODY = 32 * 1024;
 const MAX_TEXT = 3000;
 
+/* The site's own domain. Links the panel hands out (MIRA, authorisations)
+   always use it, whatever address the panel was opened from. */
+const SITE = "https://16ballcreations.com";
+/* Addresses that still answer but now send people to SITE, keeping the path
+   and the query (a MIRA ?t= or an authorisation token survives the move).
+   The API is left alone so a form posted from an old page still arrives. */
+const MOVED_HOSTS = ["page.16ballcreations.workers.dev", "www.16ballcreations.com"];
+
 export default {
   async fetch(request, env){
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "") || "/";
+
+    if(MOVED_HOSTS.includes(url.hostname) && (request.method === "GET" || request.method === "HEAD") && !path.startsWith("/api/")){
+      return Response.redirect(SITE + url.pathname + url.search, 301);
+    }
 
     if(path === "/api/mira" || path === "/api/contacto"){
       if(request.method === "OPTIONS"){ return preflight(request, url); }
@@ -835,7 +847,7 @@ async function authorizationsPage(env, url){
   return adminPage(env, "autorizaciones", "Autorizaciones", `
     ${sectionHead("Clientes · autorizaciones", "Uso de <em>imagen</em>", `<a class="pill new" href="/admin/autorizacion">+ Nueva autorización</a>`)}
     ${pendingPills("/admin/autorizaciones", pendientes, "Solo sin firmar")}
-    ${results.length ? results.map(r => authorizationCard(r, url.origin, fresh)).join("") : `<p class="empty">No hay autorizaciones ${pendientes ? "esperando firma " : ""}todavía.</p>`}
+    ${results.length ? results.map(r => authorizationCard(r, SITE, fresh)).join("") : `<p class="empty">No hay autorizaciones ${pendientes ? "esperando firma " : ""}todavía.</p>`}
   `, 200, COPY_SCRIPT);
 }
 
@@ -1227,7 +1239,7 @@ async function prospectPage(env, url){
     env.DB.prepare("SELECT * FROM submissions WHERE prospect_id = ?1 AND kind = 'mira' ORDER BY created_at DESC, id DESC").bind(id)
   ]);
   const token = await miraTokenFor(env, r);
-  const miraLink = token ? url.origin + "/mira/?" + new URLSearchParams({ t:token, marca:r.negocio, o:originOfChannel(r.canal) }) : "";
+  const miraLink = token ? SITE + "/mira/?" + new URLSearchParams({ t:token, marca:r.negocio, o:originOfChannel(r.canal) }) : "";
   const call = lastCall(events);
   let d = {};
   try{ d = JSON.parse(r.data); }catch(e){}
