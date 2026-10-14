@@ -33,7 +33,7 @@ Archivos de referencia (todas las rutas son absolutas en este equipo):
   Creations)**. 16 Ball Creations no es una marca registrada, así que todo
   compromiso, autorización o acuerdo va a nombre de Renne, con la marca entre
   paréntesis.
-- **Contacto:** 16ballcreations@gmail.com · Medellín, Colombia.
+- **Contacto:** hola@16ballcreations.com · Medellín, Colombia.
 - **Trayectoria, si hace falta:** desde 2013; proyectos en Venezuela, Colombia
   y Costa Rica.
 
@@ -141,7 +141,7 @@ En este orden (la plantilla ya lo trae):
    de líneas finas para cifras y cronogramas, texto corrido.
 6. **Frase destacada** (opcional): una sola idea, con borde de acento.
 7. **Zona de papel con firmas** (solo si aplica).
-8. **Pie:** "Contacto: 16ballcreations@gmail.com" a la izquierda y "Si no
+8. **Pie:** "Contacto: hola@16ballcreations.com" a la izquierda y "Si no
    existe, lo creamos." a la derecha, en mono pequeño.
 
 Cada `<article class="sheet">` es una hoja. Para más páginas, copia la hoja
