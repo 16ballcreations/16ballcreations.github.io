@@ -321,7 +321,7 @@
   /* It posts to the Worker. While the site is still served from GitHub
      Pages too, it posts across to the Worker's own address. If the post
      fails for any reason, the visitor's mail app takes over, as before. */
-  var API = /\.github\.io$/.test(location.hostname) ? "https://page.16ballcreations.workers.dev" : "";
+  var API = /\.github\.io$/.test(location.hostname) ? "https://16ballcreations.com" : "";
   window.send16 = function(kind, data, honeypot){
     return fetch(API + "/api/" + kind, {
       method:"POST",

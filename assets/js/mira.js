@@ -234,7 +234,7 @@
   }
 
   /* it posts to the Worker; if that fails, the visitor's mail app takes over */
-  var API = /\.github\.io$/.test(location.hostname) ? "https://page.16ballcreations.workers.dev" : "";
+  var API = /\.github\.io$/.test(location.hostname) ? "https://16ballcreations.com" : "";
   var sendBtn = $("#sendMira");
   sendBtn.addEventListener("click", function(){
     var a = answers();

@@ -2,7 +2,7 @@
 
 *Si no existe, lo creamos.*
 
-Sitio del estudio: https://page.16ballcreations.workers.dev
+Sitio del estudio: https://16ballcreations.com
 
 HTML, CSS y JavaScript sin frameworks, publicado en un Worker de Cloudflare
 (ver "Cloudflare" más abajo). Se publica con `npm run deploy`: subir a `main`
@@ -78,7 +78,7 @@ Inter y JetBrains Mono).
 ## Cloudflare: el sitio, los formularios y el panel
 
 Todo vive en un Worker de Cloudflare llamado `page`
-(https://page.16ballcreations.workers.dev):
+(https://16ballcreations.com):
 
 - `scripts/build.mjs` copia el sitio a `dist/`, que es lo único que se publica.
   Si agregas una carpeta nueva al sitio, súmala a la lista de ese archivo.
@@ -194,7 +194,7 @@ Para probar en local, la clave del panel va en `.dev.vars`
 - Cuando el sitio cambie, avisa a Bing y compañía con IndexNow (la clave es el
   `.txt` de 32 caracteres en la raíz):
   ```
-  curl -X POST https://api.indexnow.org/indexnow -H "Content-Type: application/json" -d "{\"host\":\"page.16ballcreations.workers.dev\",\"key\":\"<clave>\",\"urlList\":[\"https://page.16ballcreations.workers.dev/\"]}"
+  curl -X POST https://api.indexnow.org/indexnow -H "Content-Type: application/json" -d "{\"host\":\"16ballcreations.com\",\"key\":\"<clave>\",\"urlList\":[\"https://16ballcreations.com/\"]}"
   ```
 - Google no usa IndexNow: el sitio se registra en Google Search Console y ahí
   se envía `sitemap.xml`. Si una página nueva se vuelve pública, súmala al

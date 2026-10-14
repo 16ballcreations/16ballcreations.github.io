@@ -15,7 +15,7 @@ Archivos de referencia (todas las rutas son absolutas en este equipo):
 | Ejemplo real ya en uso (autorización) | `C:\Dev\16bc-site\autorizacion\index.html` |
 | Logo (la bola 16, PNG transparente) | `C:\Dev\16bc-site\assets\img\ball-16.png` |
 | Logotipo completo (sobre fondo claro) | `C:\Dev\16bc-site\assets\img\logo.png` |
-| El sitio, como referencia de tono | https://page.16ballcreations.workers.dev |
+| El sitio, como referencia de tono | https://16ballcreations.com |
 
 ---
 

@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://page.16ballcreations.workers.dev/</loc>
+    <loc>https://16ballcreations.com/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <image:image><image:loc>https://page.16ballcreations.workers.dev/assets/img/og-16ballcreations.jpg</image:loc></image:image>
+    <image:image><image:loc>https://16ballcreations.com/assets/img/og-16ballcreations.jpg</image:loc></image:image>
   </url>
   <url>
-    <loc>https://page.16ballcreations.workers.dev/servicios/</loc>
+    <loc>https://16ballcreations.com/servicios/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://page.16ballcreations.workers.dev/servicios/identidad-de-marca/</loc>
+    <loc>https://16ballcreations.com/servicios/identidad-de-marca/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://page.16ballcreations.workers.dev/servicios/paginas-web/</loc>
+    <loc>https://16ballcreations.com/servicios/paginas-web/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://page.16ballcreations.workers.dev/servicios/tiendas-en-linea/</loc>
+    <loc>https://16ballcreations.com/servicios/tiendas-en-linea/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://page.16ballcreations.workers.dev/servicios/sistemas-para-tu-negocio/</loc>
+    <loc>https://16ballcreations.com/servicios/sistemas-para-tu-negocio/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://page.16ballcreations.workers.dev/servicios/video-para-redes/</loc>
+    <loc>https://16ballcreations.com/servicios/video-para-redes/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://page.16ballcreations.workers.dev/servicios/asesoria-de-imagen-y-redes/</loc>
+    <loc>https://16ballcreations.com/servicios/asesoria-de-imagen-y-redes/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://page.16ballcreations.workers.dev/mira/</loc>
+    <loc>https://16ballcreations.com/mira/</loc>
     <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

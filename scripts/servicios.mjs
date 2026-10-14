@@ -16,7 +16,7 @@ import { SERVICES } from "./servicios-data.mjs";
 
 const BASE = "/";
 const PREVIEW = false;
-const ORIGIN = "https://page.16ballcreations.workers.dev";
+const ORIGIN = "https://16ballcreations.com";
 const PRICE = "$1.500.000";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");

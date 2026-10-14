@@ -20,5 +20,10 @@
       "migrations_dir": "migrations"
     }
   ],
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "16ballcreations.com", "custom_domain": true },
+    { "pattern": "www.16ballcreations.com", "custom_domain": true }
+  ],
   "observability": { "enabled": true }
 }
