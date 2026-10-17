@@ -1478,7 +1478,7 @@ async function prospectPage(env, url){
             </div>
             <datalist id="canales"><option value="WhatsApp"><option value="Instagram (DM)"><option value="Facebook (Messenger)"><option value="TikTok (DM)"><option value="Correo"><option value="Llamada"><option value="Visita"></datalist>
             <p class="mono hintline">Un número de WhatsApp sin enlace se convierte en wa.me; un @usuario, en el enlace de su red. Si cambias la dirección, el punto del mapa no se mueve: ajústalo en Ubicación.</p>
-            <button type="submit" class="go">Guardar el contacto</button>
+            <div class="linkrow"><button type="submit" class="go">Guardar el contacto</button><button type="button" data-cancel>Cancelar</button></div>
           </form>
         </details>
       </section>
@@ -1492,7 +1492,7 @@ async function prospectPage(env, url){
             <label>Gancho<textarea name="gancho" rows="3" placeholder="Lo que vimos y con lo que se abre la conversación">${esc(r.gancho || "")}</textarea></label>
             <label>Nota de la verificación<textarea name="nota" rows="5">${esc(r.nota || "")}</textarea></label>
             <p class="mono hintline">Recargar la campaña ya no cambia lo que edites aquí.</p>
-            <button type="submit" class="go">Guardar las notas</button>
+            <div class="linkrow"><button type="submit" class="go">Guardar las notas</button><button type="button" data-cancel>Cancelar</button></div>
           </form>
         </details>
       </section>
@@ -2196,6 +2196,14 @@ const COPY_SCRIPT = `<script>
 document.addEventListener("submit", function(e){
   var f = e.target.closest("form[data-confirm]");
   if(f && !confirm(f.getAttribute("data-confirm"))){ e.preventDefault(); }
+});
+/* Cancelar: the form goes back to what was saved, and its editor closes */
+document.addEventListener("click", function(e){
+  var c = e.target.closest("[data-cancel]");
+  if(!c){ return; }
+  var f = c.closest("form"), d = c.closest("details");
+  if(f){ f.reset(); }
+  if(d){ d.open = false; d.querySelector("summary").focus(); }
 });
 document.addEventListener("click", function(e){
   var b = e.target.closest("[data-copy],[data-copy-from]");
