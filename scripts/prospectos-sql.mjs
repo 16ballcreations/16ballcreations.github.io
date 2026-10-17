@@ -9,7 +9,8 @@
    The folder must have base-panel.json ({ campaign, prospectos[], recursos[] }).
    Loading it again refreshes the research of each prospect but never touches
    what was tracked in the panel: stage, next action, the timeline, the MIRA
-   link code and a first message edited by hand.
+   link code, and what was edited by hand (the first message, the contact
+   details and the verification notes).
 
    Usage: node scripts/prospectos-sql.mjs prospectos/belen-2026-10 */
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -28,6 +29,20 @@ const q = v => v == null || v === "" ? "NULL" : typeof v === "number" ? String(v
 const FIELDS = ["negocio", "categoria", "barrio", "direccion", "dir_fuente", "distancia_km", "prioridad", "score", "rank", "estado_redes",
   "canal", "enlace", "respaldo", "instagram", "facebook", "tiktok", "web", "gancho", "mensaje", "nota"];
 
+/* the fields each "edited in the panel" flag protects (migrations 0008, 0012) */
+const BY_HAND = {
+  mensaje: "mensaje_editado",
+  canal: "contacto_editado", enlace: "contacto_editado", respaldo: "contacto_editado", direccion: "contacto_editado",
+  dir_fuente: "contacto_editado", barrio: "contacto_editado", instagram: "contacto_editado", facebook: "contacto_editado",
+  tiktok: "contacto_editado", web: "contacto_editado",
+  gancho: "notas_editadas", nota: "notas_editadas"
+};
+function keep(f){
+  /* the phone lives in data: the new research, with the phone typed by hand */
+  if(f === "data"){ return "data = CASE WHEN contacto_editado = 1 THEN json_set(excluded.data, '$.telefono', json_extract(data, '$.telefono')) ELSE excluded.data END"; }
+  return BY_HAND[f] ? `${f} = CASE WHEN ${BY_HAND[f]} = 1 THEN ${f} ELSE excluded.${f} END` : `${f} = excluded.${f}`;
+}
+
 const sql = [];
 for(const p of base.prospectos){
   const id = campaign + ":" + p.code;
@@ -35,10 +50,9 @@ for(const p of base.prospectos){
   const vals = [id, campaign, p.code, ...FIELDS.map(f => p[f]), JSON.stringify(p.data || {})];
   sql.push(
     `INSERT INTO prospects (${cols.join(", ")}) VALUES (${vals.map(q).join(", ")})\n` +
-    /* a first message edited in the panel wins over the research's */
-    `  ON CONFLICT(id) DO UPDATE SET ${[...FIELDS, "data"].map(f => f === "mensaje"
-      ? "mensaje = CASE WHEN mensaje_editado = 1 THEN mensaje ELSE excluded.mensaje END"
-      : `${f} = excluded.${f}`).join(", ")}, updated_at = datetime('now');`
+    /* what was edited in the panel wins over the research: the first
+       message, the contact details and the verification notes */
+    `  ON CONFLICT(id) DO UPDATE SET ${[...FIELDS, "data"].map(keep).join(", ")}, updated_at = datetime('now');`
   );
   /* a prospect outside the zone starts discarded, with the reason on its timeline */
   if(p.prioridad === "Descartar"){

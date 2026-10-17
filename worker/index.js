@@ -1460,11 +1460,41 @@ async function prospectPage(env, url){
         <p><b>Escribir por</b>${r.enlace ? `<a class="pill go-chat" href="${esc(r.enlace)}" target="_blank" rel="noopener">Abrir ${esc(r.canal)}</a>` : esc(r.canal || "")}</p>
         ${r.respaldo ? `<p><b>Respaldo</b>${esc(r.respaldo)}</p>` : ""}
         <p><b>Redes y web</b>${[link(r.instagram), link(r.facebook), link(r.tiktok)].filter(Boolean).join("<br>") || "Ninguna verificada"}${r.web && /^(https?:\/\/|www\.)/.test(r.web) ? "<br>" + link(r.web.startsWith("http") ? r.web : "https://" + r.web) : ""}</p>
+        ${d.telefono ? `<p><b>Teléfono</b>${esc(d.telefono)}</p>` : ""}
+        <details id="contacto"><summary>Editar el contacto${r.contacto_editado ? " · editado a mano" : ""}</summary>
+          <form class="pform" method="post" action="/admin/prospecto">
+            <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="contacto">
+            <div class="fgrid">
+              <label>Escribir por<input name="canal" list="canales" value="${esc(r.canal || "")}" placeholder="Ej.: WhatsApp, Instagram (DM)"></label>
+              <label>Enlace del chat<input name="enlace" value="${esc(r.enlace || "")}" placeholder="https://wa.me/57… o el número"></label>
+              <label>Teléfono<input name="telefono" value="${esc(d.telefono || "")}" placeholder="+57 300 000 0000"></label>
+              <label>Respaldo<input name="respaldo" value="${esc(r.respaldo || "")}" placeholder="Otro canal, si el primero no responde"></label>
+              <label>Dirección<input name="direccion" value="${esc(r.direccion || "")}"></label>
+              <label>Barrio<input name="barrio" value="${esc(r.barrio || "")}"></label>
+              <label>Instagram<input name="instagram" value="${esc(r.instagram || "")}" placeholder="@usuario o enlace"></label>
+              <label>Facebook<input name="facebook" value="${esc(r.facebook || "")}" placeholder="Enlace"></label>
+              <label>TikTok<input name="tiktok" value="${esc(r.tiktok || "")}" placeholder="@usuario o enlace"></label>
+              <label>Página web<input name="web" value="${esc(r.web || "")}" placeholder="tumarca.com"></label>
+            </div>
+            <datalist id="canales"><option value="WhatsApp"><option value="Instagram (DM)"><option value="Facebook (Messenger)"><option value="TikTok (DM)"><option value="Correo"><option value="Llamada"><option value="Visita"></datalist>
+            <p class="mono hintline">Un número de WhatsApp sin enlace se convierte en wa.me; un @usuario, en el enlace de su red. Si cambias la dirección, el punto del mapa no se mueve: ajústalo en Ubicación.</p>
+            <button type="submit" class="go">Guardar el contacto</button>
+          </form>
+        </details>
       </section>
       <section class="sub">
         <h3>Lo que vimos</h3>
         <p><b>Gancho</b>${esc(r.gancho || "")}</p>
-        <p><b>Nota de la verificación</b>${esc(r.nota || "")}</p>
+        <p><b>Nota de la verificación</b>${esc(r.nota || "").replace(/\n/g, "<br>")}</p>
+        <details id="notas"><summary>Editar las notas${r.notas_editadas ? " · editadas a mano" : ""}</summary>
+          <form class="pform" method="post" action="/admin/prospecto">
+            <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="notas">
+            <label>Gancho<textarea name="gancho" rows="3" placeholder="Lo que vimos y con lo que se abre la conversación">${esc(r.gancho || "")}</textarea></label>
+            <label>Nota de la verificación<textarea name="nota" rows="5">${esc(r.nota || "")}</textarea></label>
+            <p class="mono hintline">Recargar la campaña ya no cambia lo que edites aquí.</p>
+            <button type="submit" class="go">Guardar las notas</button>
+          </form>
+        </details>
       </section>
     </div>
     ${r.etapa === "por_contactar" ? `
@@ -1758,6 +1788,51 @@ async function updateProspect(request, env, url){
     if(etapa !== r.etapa){ batch.push(log("etapa", STAGES[r.etapa] + " → " + STAGES[etapa] + (etapa === "descartado" ? " · no encaja" : ""))); }
     batch.push(env.DB.prepare("UPDATE prospects SET etapa = ?1, proxima_accion = ?2, proxima_fecha = ?3, updated_at = datetime('now') WHERE id = ?4")
       .bind(etapa, next, nextDate, id));
+  } else if(accion === "contacto"){
+    anchor = "#contacto";
+    const full = await env.DB.prepare("SELECT * FROM prospects WHERE id = ?1").bind(id).first();
+    let data = {};
+    try{ data = JSON.parse(full.data); }catch(e){}
+    const t = k => String(form.get(k) || "").trim().slice(0, 300);
+    /* a handle becomes its profile's link; a bare phone number, a WhatsApp chat */
+    const profile = (v, base) => /^@?[\w.]+$/.test(v) && !/^\d+$/.test(v) && v ? base + v.replace(/^@/, "") : v;
+    const chat = v => {
+      const digits = v.replace(/\D/g, "");
+      if(/^https?:\/\//i.test(v) || digits.length < 10 || /[a-z]/i.test(v)){ return v; }
+      return "https://wa.me/" + (digits.length === 10 && digits[0] === "3" ? "57" + digits : digits);
+    };
+    const next = {
+      canal:t("canal"), enlace:chat(t("enlace")), respaldo:t("respaldo"), direccion:t("direccion"), barrio:t("barrio"),
+      instagram:profile(t("instagram"), "https://www.instagram.com/"), facebook:t("facebook"),
+      tiktok:profile(t("tiktok"), "https://www.tiktok.com/@"), web:t("web")
+    };
+    const LABELS = { canal:"Escribir por", enlace:"Enlace", respaldo:"Respaldo", direccion:"Dirección", barrio:"Barrio",
+      instagram:"Instagram", facebook:"Facebook", tiktok:"TikTok", web:"Web", telefono:"Teléfono" };
+    const changed = Object.keys(next).filter(k => (full[k] || "") !== next[k]);
+    const phone = t("telefono");
+    if(phone !== (data.telefono || "")){ changed.push("telefono"); data.telefono = phone || undefined; }
+    if(changed.length){
+      const was = k => k === "telefono" ? "" : (full[k] || "—");
+      const now = k => k === "telefono" ? (phone || "—") : (next[k] || "—");
+      batch.push(env.DB.prepare(
+        "UPDATE prospects SET canal = ?1, enlace = ?2, respaldo = ?3, direccion = ?4, barrio = ?5, instagram = ?6, facebook = ?7, tiktok = ?8, web = ?9, " +
+        "dir_fuente = CASE WHEN ?10 = 1 THEN 'editada en el panel' ELSE dir_fuente END, data = ?11, contacto_editado = 1, updated_at = datetime('now') WHERE id = ?12"
+      ).bind(next.canal || null, next.enlace || null, next.respaldo || null, next.direccion || null, next.barrio || null,
+        next.instagram || null, next.facebook || null, next.tiktok || null, next.web || null,
+        changed.includes("direccion") ? 1 : 0, JSON.stringify(data), id));
+      batch.push(log("nota", "Contacto editado:\n" + changed.map(k => LABELS[k] + ": " + (k === "telefono" ? now(k) : was(k) + " → " + now(k))).join("\n")));
+    }
+  } else if(accion === "notas"){
+    anchor = "#notas";
+    const full = await env.DB.prepare("SELECT gancho, nota FROM prospects WHERE id = ?1").bind(id).first();
+    const t = k => String(form.get(k) || "").replace(/\r\n/g, "\n").trim().slice(0, 3000);
+    const gancho = t("gancho"), nota = t("nota");
+    const changed = [gancho !== (full.gancho || "") ? "el gancho" : "", nota !== (full.nota || "") ? "la nota de la verificación" : ""].filter(Boolean);
+    if(changed.length){
+      batch.push(env.DB.prepare("UPDATE prospects SET gancho = ?1, nota = ?2, notas_editadas = 1, updated_at = datetime('now') WHERE id = ?3")
+        .bind(gancho || null, nota || null, id));
+      batch.push(log("nota", "Notas editadas: " + changed.join(" y ") + "."));
+    }
   } else if(accion === "evento"){
     const tipo = ["respuesta", "mensaje", "visita", "reunion", "nota"].includes(form.get("tipo")) ? form.get("tipo") : "nota";
     const texto = String(form.get("texto") || "").trim().slice(0, 2000);
@@ -2445,6 +2520,8 @@ function page(title, content, status = 200, script = "", shell = false){
   .pill.go-chat{display:inline-block;margin-top:4px;border-color:var(--accent);color:var(--accent)}
   textarea.msg{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#0b0c0d;color:var(--bone);font:15px/1.5 Inter,sans-serif;resize:vertical}
   .pform{display:flex;flex-direction:column;gap:12px}
+  .pform .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:640px){ .pform .fgrid{grid-template-columns:1fr} }
   .pform label{display:flex;flex-direction:column;gap:6px;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
   .pform .go{align-self:flex-start;background:var(--white);color:#000;border-color:var(--white)}
   .timeline,.plist{list-style:none;margin:0;padding:0}
