@@ -778,6 +778,8 @@ async function adminRoutes(request, env, url, path){
   if(path === "/admin/mira" || path === "/admin/contacto"){ return submissionsPage(env, url, path.slice(7)); }
   if(path === "/admin/autorizaciones"){ return authorizationsPage(env, url); }
   if(path === "/admin/testimonios"){ return testimonialsPage(env, url); }
+  if(path === "/admin/propuestas"){ return proposalsPage(env, url); }
+  if(path === "/admin/propuesta"){ return proposalPage(env, url); }
 
   /* the panel used to be one page with ?tipo=; old links land in the right section */
   const legacy = url.searchParams.get("tipo");
@@ -830,6 +832,7 @@ const MENU = [
   ]},
   { group:"Clientes", items:[
     { key:"mira", href:"/admin/mira", label:"MIRA", hint:"sin revisar" },
+    { key:"propuestas", href:"/admin/propuestas", label:"Propuestas" },
     { key:"autorizaciones", href:"/admin/autorizaciones", label:"Autorizaciones", hint:"sin firmar" },
     { key:"testimonios", href:"/admin/testimonios", label:"Testimonios", hint:"sin revisar" }
   ]},
@@ -2125,6 +2128,128 @@ const MAP_SCRIPT = `
 })();
 `;
 
+/* ---------- proposals: the client sites published on GitHub ----------
+   Each proposal is a public repository of the 16ballcreations organisation
+   published with GitHub Pages, so it lives at 16ballcreations.github.io/<repo>/.
+   The list is read from GitHub (repositories with Pages, but not the main
+   site), each README gives the title, the state ("**Estado: …**") and a
+   summary, and the published page gives its cover (og:image). A new
+   repository published that way shows up on its own.
+   GitHub answers 60 requests an hour without a token, and Cloudflare shares
+   its addresses, so the last good list is kept in settings and shown for ten
+   minutes, or whenever GitHub fails. With a GITHUB_TOKEN secret (read-only,
+   public repositories) the limit stops being a concern. */
+const GH_ORG = "16ballcreations";
+const PROPOSALS_KEY = "propuestas:cache";
+const PROPOSALS_FRESH = 10 * 60 * 1000;
+
+function ghHeaders(env, raw){
+  const h = { "User-Agent":"16bc-panel", "Accept":raw ? "application/vnd.github.raw" : "application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" };
+  if(env.GITHUB_TOKEN){ h.Authorization = "Bearer " + env.GITHUB_TOKEN; }
+  return h;
+}
+
+/* what the README says: its title, its state and its first paragraph */
+function readmeInfo(md){
+  const plain = t => t.replace(/!\[[^\]]*\]\([^)]*\)/g, "").replace(/\[([^\]]+)\]\([^)]*\)/g, "$1").replace(/[*_`]/g, "").replace(/\s+/g, " ").trim();
+  const title = plain((md.match(/^#\s+(.+)$/m) || [])[1] || "");
+  const estado = plain((md.match(/\*\*Estado:\s*([^*]+?)\.?\*\*/i) || [])[1] || "");
+  const summary = md.split(/\n\s*\n/).map(b => b.trim())
+    .find(b => b && !/^(#|>|\||-{3}|```|!\[|<)/.test(b)) || "";
+  return { title, estado, summary:plain(summary).slice(0, 320) };
+}
+
+/* the cover the published page announces for when it is shared */
+function ogImage(html, base){
+  const m = html.match(/<meta[^>]+property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
+            html.match(/<meta[^>]+content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+  try{ return m ? new URL(m[1], base).href : ""; }catch(e){ return ""; }
+}
+
+async function fetchProposals(env){
+  const res = await fetch(`https://api.github.com/orgs/${GH_ORG}/repos?per_page=100&type=public&sort=pushed`, { headers:ghHeaders(env) });
+  if(!res.ok){ throw new Error("GitHub respondió " + res.status + (res.status === 403 ? " (límite de consultas)" : "")); }
+  const repos = (await res.json()).filter(r => r.has_pages && !r.private && !r.archived && r.name.toLowerCase() !== GH_ORG + ".github.io");
+  return Promise.all(repos.map(async r => {
+    const site = `https://${GH_ORG}.github.io/${r.name}/`;
+    const [readme, html] = await Promise.all([
+      fetch(`https://api.github.com/repos/${GH_ORG}/${r.name}/readme`, { headers:ghHeaders(env, true) }).then(x => x.ok ? x.text() : "").catch(() => ""),
+      fetch(site, { headers:{ "User-Agent":"16bc-panel" } }).then(x => x.ok ? x.text() : "").catch(() => "")
+    ]);
+    return {
+      repo:r.name, repoUrl:r.html_url, site, description:r.description || "", pushed:r.pushed_at,
+      image:ogImage(html, site), ...readmeInfo(readme), readme:readme.slice(0, 40000)
+    };
+  }));
+}
+
+/* the list: fresh from GitHub at most every ten minutes, or the last good one */
+async function getProposals(env, force){
+  const row = await env.DB.prepare("SELECT value FROM settings WHERE key = ?1").bind(PROPOSALS_KEY).first();
+  let cached = null;
+  try{ cached = row ? JSON.parse(row.value) : null; }catch(e){}
+  if(cached && !force && Date.now() - cached.at < PROPOSALS_FRESH){ return { ...cached, error:"" }; }
+  try{
+    const items = await fetchProposals(env);
+    const fresh = { at:Date.now(), items };
+    await env.DB.prepare("INSERT INTO settings (key, value, updated_at) VALUES (?1, ?2, datetime('now')) " +
+      "ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at").bind(PROPOSALS_KEY, JSON.stringify(fresh)).run();
+    return { ...fresh, error:"" };
+  }catch(e){
+    return cached ? { ...cached, error:e.message } : { at:0, items:[], error:e.message };
+  }
+}
+
+async function proposalsPage(env, url){
+  const force = url.searchParams.has("refrescar");
+  const { at, items, error } = await getProposals(env, force);
+  const list = items.slice().sort((a, b) => String(b.pushed).localeCompare(String(a.pushed)));
+  const card = p => `
+      <article class="sub prop">
+        <a class="prop-cover" href="/admin/propuesta?repo=${encodeURIComponent(p.repo)}">${p.image
+          ? `<img src="${esc(p.image)}" alt="" loading="lazy">`
+          : `<span class="prop-blank" aria-hidden="true"><img src="/assets/img/ball-16.png?v=2" alt=""></span>`}</a>
+        <header>
+          ${p.estado ? `<span class="tag t-wait">${esc(p.estado)}</span>` : ""}
+          <h2><a class="biz" href="/admin/propuesta?repo=${encodeURIComponent(p.repo)}">${esc(p.title || p.repo)}</a></h2>
+          <span class="when mono">Último cambio: ${esc(p.pushed ? whenInBogota(p.pushed.replace("T", " ").replace("Z", "")) : "—")}</span>
+        </header>
+        <p class="prop-sum">${esc(p.summary || p.description)}</p>
+        <div class="linkrow">
+          <a class="pill go-chat" href="${esc(p.site)}" target="_blank" rel="noopener">Abrir propuesta</a>
+          <button type="button" data-copy="${esc(p.site)}" data-label="Copiar enlace">Copiar enlace</button>
+          <a class="pill" href="${esc(p.repoUrl)}" target="_blank" rel="noopener">Ver repositorio</a>
+        </div>
+      </article>`;
+  return adminPage(env, "propuestas", "Propuestas", `
+    ${sectionHead("Clientes · propuestas", "Las <em>propuestas</em>", `<a class="pill" href="/admin/propuestas?refrescar">Actualizar desde GitHub</a>`)}
+    <p class="totals mono">${list.length === 1 ? "1 propuesta" : list.length + " propuestas"} publicadas en ${GH_ORG}.github.io${at ? " · leídas de GitHub el " + esc(whenInBogota(new Date(at).toISOString().slice(0, 19).replace("T", " "))) : ""}</p>
+    ${error ? `<p class="empty">No se pudo leer GitHub ahora (${esc(error)}).${at ? " Esta es la última lista que funcionó." : ""}</p>` : ""}
+    ${list.length ? `<div class="props">${list.map(card).join("")}</div>`
+      : `<p class="empty">Todavía no hay propuestas. Cada repositorio público de ${GH_ORG} publicado con GitHub Pages aparece aquí.</p>`}
+  `, 200, COPY_SCRIPT);
+}
+
+async function proposalPage(env, url){
+  const { items } = await getProposals(env, false);
+  const p = items.find(x => x.repo === url.searchParams.get("repo"));
+  if(!p){ return Response.redirect(url.origin + "/admin/propuestas", 303); }
+  /* relative images and links in the README point into the repository */
+  const raw = `https://raw.githubusercontent.com/${GH_ORG}/${p.repo}/HEAD/`;
+  const body = p.readme
+    .replace(/(!\[[^\]]*\]\()(?!https?:|#|\/)([^)\s]+)/g, "$1" + raw + "$2")
+    .replace(/((?:^|[^!])\[[^\]]*\]\()(?!https?:|#|mailto:)([^)\s]+)/g, "$1" + p.repoUrl + "/blob/HEAD/$2");
+  return adminPage(env, "propuestas", p.title || p.repo, `
+    <p class="kicker"><a href="/admin/propuestas">← Propuestas</a> · ${esc(p.repo)}${p.estado ? " · " + esc(p.estado) : ""}</p>
+    <div class="linkrow" style="margin-bottom:20px">
+      <a class="pill go-chat" href="${esc(p.site)}" target="_blank" rel="noopener">Abrir propuesta</a>
+      <button type="button" data-copy="${esc(p.site)}" data-label="Copiar enlace">Copiar enlace</button>
+      <a class="pill" href="${esc(p.repoUrl)}" target="_blank" rel="noopener">Ver repositorio</a>
+    </div>
+    ${p.readme ? `<article class="md">${markdown(body)}</article>` : `<p class="empty">Este repositorio no tiene README.</p>`}
+  `, 200, COPY_SCRIPT);
+}
+
 async function resourcesPage(env){
   const { results } = await env.DB.prepare("SELECT slug, campaign, title, updated_at FROM resources ORDER BY campaign DESC, title").all();
   return adminPage(env, "recursos", "Recursos", `
@@ -2158,6 +2283,7 @@ function markdown(src){
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
     .replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\*)/g, "$1<em>$2</em>")
+    .replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, '<img src="$2" alt="$1" loading="lazy">')
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
     .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
   const lines = String(src).replace(/\r/g, "").split("\n");
@@ -2165,6 +2291,13 @@ function markdown(src){
   for(let i = 0; i < lines.length;){
     const line = lines[i];
     if(!line.trim()){ i++; continue; }
+    /* a rule, and fenced code, as written */
+    if(/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)){ out.push("<hr>"); i++; continue; }
+    if(/^\s*```/.test(line)){
+      const code = []; i++;
+      while(i < lines.length && !/^\s*```/.test(lines[i])){ code.push(lines[i]); i++; }
+      i++; out.push("<pre><code>" + esc(code.join("\n")) + "</code></pre>"); continue;
+    }
     const h = line.match(/^(#{1,4})\s+(.*)/);
     if(h){ const n = h[1].length + 1; out.push(`<h${n}>${inline(h[2])}</h${n}>`); i++; continue; }
     if(/^\s*\|/.test(line)){
@@ -2194,7 +2327,7 @@ function markdown(src){
       continue;
     }
     const para = [];
-    while(i < lines.length && lines[i].trim() && !/^(#{1,4}\s|\s*\||>|\s*([-*]|\d+\.)\s)/.test(lines[i])){ para.push(lines[i]); i++; }
+    while(i < lines.length && lines[i].trim() && !/^(#{1,4}\s|\s*\||>|\s*([-*]|\d+\.)\s|\s*```|\s*(-{3,}|\*{3,}|_{3,})\s*$)/.test(lines[i])){ para.push(lines[i]); i++; }
     out.push(`<p>${inline(para.join(" "))}</p>`);
   }
   return out.join("\n");
@@ -2409,6 +2542,20 @@ function page(title, content, status = 200, script = "", shell = false){
   .tag.t-ok{background:var(--accent)} .tag.t-wait{background:var(--b1)}
   .sub.fresh{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .linkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+  .props{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+  .prop{display:flex;flex-direction:column;gap:10px;margin:0;padding:12px 12px 18px}
+  .prop > header,.prop > .prop-sum,.prop > .linkrow{padding:0 8px}
+  .prop > header{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+  .prop h2{margin:0;font:400 24px/1.1 "Instrument Serif",serif}
+  .prop-cover{display:block;aspect-ratio:1200/630;border-radius:12px;overflow:hidden;background:#0b0c0d;border:1px solid var(--line)}
+  .prop-cover img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+  .prop-blank{display:grid;place-items:center;width:100%;height:100%}
+  .prop-blank img{width:72px;height:auto;opacity:.85}
+  .md hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .md pre{overflow:auto;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#0b0c0d;font:12px/1.6 "JetBrains Mono",monospace}
+  .md img{max-width:100%;height:auto;border-radius:10px}
+  .prop-sum{margin:0;color:var(--ash);font-size:14px;line-height:1.5}
+  .prop .linkrow{margin-top:auto}
   .linkrow form{margin:0}
   .tquote{margin:0 0 12px;font:400 1.5rem/1.25 "Instrument Serif",serif;color:var(--white)}
   .tmeta{margin:0 0 6px !important}

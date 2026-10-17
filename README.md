@@ -107,8 +107,17 @@ Todo vive en un Worker de Cloudflare llamado `page`
     Tiene un menú lateral con una sección para cada cosa: Inicio (lo pendiente
     de hoy), Ventas (`/admin/prospectos`, `/admin/recursos`), Lo que llega
     (`/admin/contacto`), Clientes (`/admin/mira`, `/admin/autorizaciones`,
-    `/admin/testimonios`) y Ajustes (`/admin/firma`). Los enlaces viejos
-    `/admin?tipo=…` llevan a la sección nueva.
+    `/admin/propuestas`, `/admin/testimonios`) y Ajustes (`/admin/firma`). Los
+    enlaces viejos `/admin?tipo=…` llevan a la sección nueva.
+- **Propuestas** (`/admin/propuestas`): se leen de GitHub. Cada repositorio
+  público de la organización `16ballcreations` publicado con GitHub Pages
+  (`16ballcreations.github.io/<repo>/`), menos el del sitio, es una propuesta:
+  su README da el título, el estado (`**Estado: …**`) y el resumen, y la
+  página publicada da la portada (`og:image`). `/admin/propuesta?repo=` muestra
+  el README completo. La lista se guarda en `settings` (`propuestas:cache`) y
+  se renueva cada 10 minutos o con "Actualizar desde GitHub"; si GitHub falla
+  se muestra la última. Sin token GitHub permite 60 consultas por hora; con el
+  secreto opcional `GITHUB_TOKEN` (solo lectura) el límite deja de importar
 - Si el envío falla, los formularios abren el correo del visitante con todo
   armado, así que nada se pierde.
 - **Autorizaciones de uso de imagen** (casos de estudio):
