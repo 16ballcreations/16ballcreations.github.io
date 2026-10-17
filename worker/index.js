@@ -1461,6 +1461,7 @@ async function prospectPage(env, url){
         ${r.respaldo ? `<p><b>Respaldo</b>${esc(r.respaldo)}</p>` : ""}
         <p><b>Redes y web</b>${[link(r.instagram), link(r.facebook), link(r.tiktok)].filter(Boolean).join("<br>") || "Ninguna verificada"}${r.web && /^(https?:\/\/|www\.)/.test(r.web) ? "<br>" + link(r.web.startsWith("http") ? r.web : "https://" + r.web) : ""}</p>
         ${d.telefono ? `<p><b>Teléfono</b>${esc(d.telefono)}</p>` : ""}
+        ${d.correo ? `<p><b>Correo</b><a href="mailto:${esc(d.correo)}">${esc(d.correo)}</a>${d.correo_fuente ? `<br><span class="mono">${esc(d.correo_fuente)}</span>` : ""}</p>` : ""}
         <details id="contacto"><summary>Editar el contacto${r.contacto_editado ? " · editado a mano" : ""}</summary>
           <form class="pform" method="post" action="/admin/prospecto">
             <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="contacto">
@@ -1468,6 +1469,7 @@ async function prospectPage(env, url){
               <label>Escribir por<input name="canal" list="canales" value="${esc(r.canal || "")}" placeholder="Ej.: WhatsApp, Instagram (DM)"></label>
               <label>Enlace del chat<input name="enlace" value="${esc(r.enlace || "")}" placeholder="https://wa.me/57… o el número"></label>
               <label>Teléfono<input name="telefono" value="${esc(d.telefono || "")}" placeholder="+57 300 000 0000"></label>
+              <label>Correo<input type="email" name="correo" value="${esc(d.correo || "")}" placeholder="nombre@negocio.com"></label>
               <label>Respaldo<input name="respaldo" value="${esc(r.respaldo || "")}" placeholder="Otro canal, si el primero no responde"></label>
               <label>Dirección<input name="direccion" value="${esc(r.direccion || "")}"></label>
               <label>Barrio<input name="barrio" value="${esc(r.barrio || "")}"></label>
@@ -1807,20 +1809,26 @@ async function updateProspect(request, env, url){
       tiktok:profile(t("tiktok"), "https://www.tiktok.com/@"), web:t("web")
     };
     const LABELS = { canal:"Escribir por", enlace:"Enlace", respaldo:"Respaldo", direccion:"Dirección", barrio:"Barrio",
-      instagram:"Instagram", facebook:"Facebook", tiktok:"TikTok", web:"Web", telefono:"Teléfono" };
+      instagram:"Instagram", facebook:"Facebook", tiktok:"TikTok", web:"Web", telefono:"Teléfono", correo:"Correo" };
     const changed = Object.keys(next).filter(k => (full[k] || "") !== next[k]);
     const phone = t("telefono");
     if(phone !== (data.telefono || "")){ changed.push("telefono"); data.telefono = phone || undefined; }
+    /* an email that doesn't look like one is left as it was */
+    const mail = t("correo").toLowerCase();
+    if((mail === "" || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) && mail !== (data.correo || "")){
+      changed.push("correo"); data.correo = mail || null;
+    }
     if(changed.length){
-      const was = k => k === "telefono" ? "" : (full[k] || "—");
-      const now = k => k === "telefono" ? (phone || "—") : (next[k] || "—");
+      const extra = { telefono:phone, correo:mail };
+      const was = k => k in extra ? "" : (full[k] || "—");
+      const now = k => k in extra ? (extra[k] || "—") : (next[k] || "—");
       batch.push(env.DB.prepare(
         "UPDATE prospects SET canal = ?1, enlace = ?2, respaldo = ?3, direccion = ?4, barrio = ?5, instagram = ?6, facebook = ?7, tiktok = ?8, web = ?9, " +
         "dir_fuente = CASE WHEN ?10 = 1 THEN 'editada en el panel' ELSE dir_fuente END, data = ?11, contacto_editado = 1, updated_at = datetime('now') WHERE id = ?12"
       ).bind(next.canal || null, next.enlace || null, next.respaldo || null, next.direccion || null, next.barrio || null,
         next.instagram || null, next.facebook || null, next.tiktok || null, next.web || null,
         changed.includes("direccion") ? 1 : 0, JSON.stringify(data), id));
-      batch.push(log("nota", "Contacto editado:\n" + changed.map(k => LABELS[k] + ": " + (k === "telefono" ? now(k) : was(k) + " → " + now(k))).join("\n")));
+      batch.push(log("nota", "Contacto editado:\n" + changed.map(k => LABELS[k] + ": " + (k in extra ? now(k) : was(k) + " → " + now(k))).join("\n")));
     }
   } else if(accion === "notas"){
     anchor = "#notas";

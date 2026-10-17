@@ -38,8 +38,8 @@ const BY_HAND = {
   gancho: "notas_editadas", nota: "notas_editadas"
 };
 function keep(f){
-  /* the phone lives in data: the new research, with the phone typed by hand */
-  if(f === "data"){ return "data = CASE WHEN contacto_editado = 1 THEN json_set(excluded.data, '$.telefono', json_extract(data, '$.telefono')) ELSE excluded.data END"; }
+  /* the phone and the email live in data: the new research, with what was typed by hand */
+  if(f === "data"){ return "data = CASE WHEN contacto_editado = 1 THEN json_set(excluded.data, '$.telefono', json_extract(data, '$.telefono'), '$.correo', json_extract(data, '$.correo')) ELSE excluded.data END"; }
   return BY_HAND[f] ? `${f} = CASE WHEN ${BY_HAND[f]} = 1 THEN ${f} ELSE excluded.${f} END` : `${f} = excluded.${f}`;
 }
 

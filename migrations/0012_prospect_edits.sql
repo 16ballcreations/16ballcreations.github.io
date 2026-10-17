@@ -3,7 +3,7 @@
 -- keeps what was typed by hand instead of the research's values, the same way
 -- mensaje_editado protects the first message.
 --   contacto_editado: canal, enlace, respaldo, direccion, dir_fuente, barrio,
---                     instagram, facebook, tiktok, web and data.telefono
+--                     instagram, facebook, tiktok, web, data.telefono and data.correo
 --   notas_editadas:   gancho and nota
 ALTER TABLE prospects ADD COLUMN contacto_editado INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE prospects ADD COLUMN notas_editadas INTEGER NOT NULL DEFAULT 0;
