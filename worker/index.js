@@ -1461,7 +1461,7 @@ async function prospectPage(env, url){
         ${r.respaldo ? `<p><b>Respaldo</b>${esc(r.respaldo)}</p>` : ""}
         <p><b>Redes y web</b>${[link(r.instagram), link(r.facebook), link(r.tiktok)].filter(Boolean).join("<br>") || "Ninguna verificada"}${r.web && /^(https?:\/\/|www\.)/.test(r.web) ? "<br>" + link(r.web.startsWith("http") ? r.web : "https://" + r.web) : ""}</p>
         ${d.telefono ? `<p><b>Teléfono</b>${esc(d.telefono)}</p>` : ""}
-        ${d.correo ? `<p><b>Correo</b><a href="mailto:${esc(d.correo)}">${esc(d.correo)}</a>${d.correo_fuente ? `<br><span class="mono">${esc(d.correo_fuente)}</span>` : ""}</p>` : ""}
+        ${d.correo ? `<p><b>Correo</b>${esc(d.correo).replace(/[^\s,;<>"]+@[^\s,;<>"]+/g, m => `<a href="mailto:${m}">${m}</a>`)}${d.correo_fuente ? `<br><span class="mono">${esc(d.correo_fuente)}</span>` : ""}</p>` : d.correo_fuente ? `<p><b>Correo</b><span class="mono">${esc(d.correo_fuente)}</span></p>` : ""}
         <details id="contacto"><summary>Editar el contacto${r.contacto_editado ? " · editado a mano" : ""}</summary>
           <form class="pform" method="post" action="/admin/prospecto">
             <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="contacto">
@@ -1469,7 +1469,8 @@ async function prospectPage(env, url){
               <label>Escribir por<input name="canal" list="canales" value="${esc(r.canal || "")}" placeholder="Ej.: WhatsApp, Instagram (DM)"></label>
               <label>Enlace del chat<input name="enlace" value="${esc(r.enlace || "")}" placeholder="https://wa.me/57… o el número"></label>
               <label>Teléfono<input name="telefono" value="${esc(d.telefono || "")}" placeholder="+57 300 000 0000"></label>
-              <label>Correo<input type="email" name="correo" value="${esc(d.correo || "")}" placeholder="nombre@negocio.com"></label>
+              <label>Correo<input name="correo" value="${esc(d.correo || "")}" placeholder="nombre@negocio.com · varios, separados por coma"></label>
+              <label>Dónde encontramos el correo<input name="correo_fuente" value="${esc(d.correo_fuente || "")}" placeholder="Ej.: el de la web rebota; el bueno está en la bio de Instagram"></label>
               <label>Respaldo<input name="respaldo" value="${esc(r.respaldo || "")}" placeholder="Otro canal, si el primero no responde"></label>
               <label>Dirección<input name="direccion" value="${esc(r.direccion || "")}"></label>
               <label>Barrio<input name="barrio" value="${esc(r.barrio || "")}"></label>
@@ -1809,17 +1810,17 @@ async function updateProspect(request, env, url){
       tiktok:profile(t("tiktok"), "https://www.tiktok.com/@"), web:t("web")
     };
     const LABELS = { canal:"Escribir por", enlace:"Enlace", respaldo:"Respaldo", direccion:"Dirección", barrio:"Barrio",
-      instagram:"Instagram", facebook:"Facebook", tiktok:"TikTok", web:"Web", telefono:"Teléfono", correo:"Correo" };
+      instagram:"Instagram", facebook:"Facebook", tiktok:"TikTok", web:"Web", telefono:"Teléfono", correo:"Correo", correo_fuente:"Dónde encontramos el correo" };
     const changed = Object.keys(next).filter(k => (full[k] || "") !== next[k]);
     const phone = t("telefono");
     if(phone !== (data.telefono || "")){ changed.push("telefono"); data.telefono = phone || undefined; }
-    /* an email that doesn't look like one is left as it was */
-    const mail = t("correo").toLowerCase();
-    if((mail === "" || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) && mail !== (data.correo || "")){
-      changed.push("correo"); data.correo = mail || null;
-    }
+    /* the email is saved as typed: one or several, wherever they were found */
+    const mail = t("correo");
+    if(mail !== (data.correo || "")){ changed.push("correo"); data.correo = mail || null; }
+    const mailFrom = t("correo_fuente");
+    if(mailFrom !== (data.correo_fuente || "")){ changed.push("correo_fuente"); data.correo_fuente = mailFrom || undefined; }
     if(changed.length){
-      const extra = { telefono:phone, correo:mail };
+      const extra = { telefono:phone, correo:mail, correo_fuente:mailFrom };
       const was = k => k in extra ? "" : (full[k] || "—");
       const now = k => k in extra ? (extra[k] || "—") : (next[k] || "—");
       batch.push(env.DB.prepare(
