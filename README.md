@@ -47,7 +47,17 @@ Inter y JetBrains Mono).
   y los mensajes. El enlace saluda y rellena: `mira/?nombre=Ana&marca=Café%20La%20Esquina`.
   `?o=` dice de dónde llegó (`ig`, `bio`, `historia`, `web`, `referido`, `whatsapp`,
   `facebook`, `visita`), y `?t=` es el código del **enlace personal** de un prospecto
-  (ver "La MIRA y los prospectos" más abajo)
+  (ver "La MIRA y los prospectos" más abajo).
+  **Tiro 6 · Tu proyecto y el semáforo:** después de las cinco preguntas de
+  marca vienen cuatro de una opción (qué resolver primero, cuánto piensa
+  invertir, quién decide, cuándo empezar). Llegan como códigos (`r0`…`r3`,
+  `hablar`, `yo`, `ya`…) y el Worker los convierte en puntos de 100 con la
+  tabla `QUALIFY` de `worker/index.js`: verde desde 70 (llámalo hoy), amarillo
+  desde 40 (llamada y seguimiento), rojo debajo o con el rango más bajo y "más
+  adelante" (regálale algo útil). **Si cambian los planes:** se cambian las
+  etiquetas de los rangos en `QUALIFY` y en las dos páginas (`mira/` y
+  `en/mira/`, en USD); los códigos se quedan, así las MIRA viejas siguen
+  leyéndose bien
 - `testimonio/`: el formulario de testimonios, tres preguntas sobre la persona
   (qué cambió en ella, cómo se sintió, satisfacción de 1 a 5) y cómo quiere
   aparecer (con nombre, con iniciales o sin publicar). Se envía al cerrar un
