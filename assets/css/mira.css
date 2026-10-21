@@ -140,3 +140,11 @@
 .head-actions{display:flex;align-items:center;gap:10px}
 .lang-pill{padding:6px 10px;border:1px solid var(--hairline);border-radius:999px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;color:var(--ash);transition:color .15s ease-out,border-color .15s ease-out}
 .lang-pill:hover{color:var(--white);border-color:var(--accent)}
+
+/* shot 6: four quick questions on one screen, one choice each */
+.proj-q{margin:20px 0 8px}
+.q[data-q="6"] .q-help{margin-bottom:4px}
+.proj-pick{gap:8px}
+.proj-pick span{padding-top:8px;padding-bottom:8px;font-size:.875rem}
+/* the project, as the fifth card of the result */
+.res:nth-child(5){--c:var(--b6);grid-column:1 / -1}

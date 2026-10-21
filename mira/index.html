@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/site.css?v=6">
-<link rel="stylesheet" href="../assets/css/mira.css?v=2">
+<link rel="stylesheet" href="../assets/css/mira.css?v=3">
 </head>
 <body class="mira-page">
 
@@ -62,7 +62,7 @@
         <li><b>A</b><span><strong>Alineación</strong>Que todo cuente la misma historia, y qué conviene hacer primero.</span></li>
       </ul>
       <div class="intro-foot">
-        <p class="lead">Antes de hablar, queremos conocer tu marca. Son cinco preguntas cortas, unos tres minutos, y no cuesta nada. Con tus respuestas preparamos una llamada de 30 minutos que parte de ti y no de una fórmula.</p>
+        <p class="lead">Antes de hablar, queremos conocer tu marca. Son cinco preguntas sobre tu marca y una sobre tu proyecto, unos cuatro minutos, y no cuesta nada. Con tus respuestas preparamos una llamada de 30 minutos que parte de ti y no de una fórmula.</p>
         <button class="btn btn-primary btn-lg" type="button" data-go="next">Empezar mi MIRA <span aria-hidden="true">&rarr;</span></button>
       </div>
     </div>
@@ -72,13 +72,13 @@
   <section class="screen quiz" data-screen="quiz" aria-live="polite">
     <div class="wrap">
       <div class="rail-steps" aria-hidden="true">
-        <span class="ball" data-n="1"></span><span class="ball" data-n="2"></span><span class="ball" data-n="3"></span><span class="ball" data-n="4"></span><span class="ball" data-n="5"></span><span class="ball" data-n="8"></span>
+        <span class="ball" data-n="1"></span><span class="ball" data-n="2"></span><span class="ball" data-n="3"></span><span class="ball" data-n="4"></span><span class="ball" data-n="5"></span><span class="ball" data-n="6"></span><span class="ball" data-n="8"></span>
       </div>
 
       <form class="card glass" id="quiz" novalidate>
 
         <fieldset class="q" data-q="1" data-ball="1">
-          <legend><span class="q-n mono">Tiro 1 de 5 · Marca</span><span class="q-title">¿Cómo se llama tu marca y a qué se dedica?</span></legend>
+          <legend><span class="q-n mono">Tiro 1 de 6 · Marca</span><span class="q-title">¿Cómo se llama tu marca y a qué se dedica?</span></legend>
           <label class="field-label" for="qName">El nombre</label>
           <input class="mfield" id="qName" name="marca" autocomplete="organization" placeholder="Ej.: Café La Esquina" required>
           <label class="field-label" for="qWhat">En una frase, ¿qué hace?</label>
@@ -86,7 +86,7 @@
         </fieldset>
 
         <fieldset class="q" data-q="2" data-ball="2">
-          <legend><span class="q-n mono">Tiro 2 de 5 · Marca</span><span class="q-title">¿De dónde viene? ¿Por qué nació?</span></legend>
+          <legend><span class="q-n mono">Tiro 2 de 6 · Marca</span><span class="q-title">¿De dónde viene? ¿Por qué nació?</span></legend>
           <p class="q-help">Cuéntalo como se lo contarías a un amigo. Si no sabes por dónde empezar, toca una de estas:</p>
           <div class="starters">
             <button type="button" class="starter">Todo empezó cuando…</button>
@@ -98,7 +98,7 @@
         </fieldset>
 
         <fieldset class="q" data-q="3" data-ball="3">
-          <legend><span class="q-n mono">Tiro 3 de 5 · Alineación</span><span class="q-title">¿A quién le quieres hablar?</span></legend>
+          <legend><span class="q-n mono">Tiro 3 de 6 · Alineación</span><span class="q-title">¿A quién le quieres hablar?</span></legend>
           <p class="q-help">Elige todas las que apliquen.</p>
           <div class="chips-pick" data-name="publico">
             <label><input type="checkbox" value="Jóvenes"><span>Jóvenes</span></label>
@@ -114,7 +114,7 @@
         </fieldset>
 
         <fieldset class="q" data-q="4" data-ball="4">
-          <legend><span class="q-n mono">Tiro 4 de 5 · Alineación</span><span class="q-title">¿Qué quieres que sientan cuando se encuentran con tu marca?</span></legend>
+          <legend><span class="q-n mono">Tiro 4 de 6 · Alineación</span><span class="q-title">¿Qué quieres que sientan cuando se encuentran con tu marca?</span></legend>
           <p class="q-help">Elige hasta tres. No hay respuestas correctas. <span class="count mono" id="goalCount">0 de 3</span></p>
           <div class="chips-pick" data-name="objetivos" data-max="3">
             <label><input type="checkbox" value="Que la reconozcan a la primera"><span>Que la reconozcan a la primera</span></label>
@@ -129,7 +129,7 @@
         </fieldset>
 
         <fieldset class="q" data-q="5" data-ball="5">
-          <legend><span class="q-n mono">Tiro 5 de 5 · Imagen y Redes</span><span class="q-title">¿Con qué cuentas hoy?</span></legend>
+          <legend><span class="q-n mono">Tiro 5 de 6 · Imagen y Redes</span><span class="q-title">¿Con qué cuentas hoy?</span></legend>
           <p class="q-help">Marca lo que ya tienes, aunque no te guste cómo está.</p>
           <div class="chips-pick" data-name="tiene">
             <label><input type="checkbox" value="Logo"><span>Logo</span></label>
@@ -143,7 +143,42 @@
           <input class="mfield" id="qLinks" name="enlaces" placeholder="@tumarca, tumarca.co">
         </fieldset>
 
-        <fieldset class="q" data-q="6" data-ball="8">
+        <fieldset class="q" data-q="6" data-ball="6">
+          <legend><span class="q-n mono">Tiro 6 de 6 · Tu proyecto</span><span class="q-title">Cuatro rápidas sobre tu proyecto</span></legend>
+          <p class="q-help">Para proponerte algo que tenga sentido. Toca una opción en cada una.</p>
+          <p class="field-label proj-q">¿Qué te gustaría resolver primero?</p>
+          <div class="chips-pick proj-pick" data-name="resolver" role="radiogroup" aria-label="¿Qué te gustaría resolver primero?">
+            <label><input type="radio" name="resolver" value="coherencia"><span>Que mi marca se sienta como una sola</span></label>
+            <label><input type="radio" name="resolver" value="identidad"><span>Renovar mi logo e identidad</span></label>
+            <label><input type="radio" name="resolver" value="web"><span>Tener una página web</span></label>
+            <label><input type="radio" name="resolver" value="tienda"><span>Tener una tienda en línea</span></label>
+            <label><input type="radio" name="resolver" value="redes"><span>Ordenar mis redes</span></label>
+            <label><input type="radio" name="resolver" value="sistema"><span>Organizar mi negocio</span></label>
+            <label><input type="radio" name="resolver" value="nose"><span>Todavía no lo sé</span></label>
+          </div>
+          <p class="field-label proj-q">¿Cuánto tienes pensado invertir?</p>
+          <div class="chips-pick proj-pick" data-name="inversion" role="radiogroup" aria-label="¿Cuánto tienes pensado invertir?">
+            <label><input type="radio" name="inversion" value="r0"><span>Menos de $1.500.000</span></label>
+            <label><input type="radio" name="inversion" value="r1"><span>$1.500.000 a $3.000.000</span></label>
+            <label><input type="radio" name="inversion" value="r2"><span>$3.000.000 a $6.000.000</span></label>
+            <label><input type="radio" name="inversion" value="r3"><span>Más de $6.000.000</span></label>
+            <label><input type="radio" name="inversion" value="hablar"><span>Prefiero hablarlo en la llamada</span></label>
+          </div>
+          <p class="field-label proj-q">¿Quién toma la decisión?</p>
+          <div class="chips-pick proj-pick" data-name="decide" role="radiogroup" aria-label="¿Quién toma la decisión?">
+            <label><input type="radio" name="decide" value="yo"><span>Yo</span></label>
+            <label><input type="radio" name="decide" value="socio"><span>Yo, con mi socio o pareja</span></label>
+            <label><input type="radio" name="decide" value="equipo"><span>Un equipo o junta</span></label>
+          </div>
+          <p class="field-label proj-q">¿Cuándo te gustaría empezar?</p>
+          <div class="chips-pick proj-pick" data-name="cuando" role="radiogroup" aria-label="¿Cuándo te gustaría empezar?">
+            <label><input type="radio" name="cuando" value="ya"><span>Este mes</span></label>
+            <label><input type="radio" name="cuando" value="pronto"><span>En 1 a 3 meses</span></label>
+            <label><input type="radio" name="cuando" value="despues"><span>Más adelante, estoy explorando</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q" data-q="7" data-ball="8">
           <legend><span class="q-n mono">La bola 8 cierra la partida</span><span class="q-title">¿Quién responde esta MIRA?</span></legend>
           <label class="field-label" for="qPerson">Tu nombre</label>
           <input class="mfield" id="qPerson" name="nombre" autocomplete="name" placeholder="Tu nombre" required>
@@ -184,7 +219,7 @@
 
 </main>
 
-<script src="../assets/js/mira.js?v=8" defer></script>
+<script src="../assets/js/mira.js?v=9" defer></script>
 <script src="../assets/js/orb.js?v=2" defer></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 /* MIRA: Marca, Imagen, Redes y Alineación.
-   Five shots and the 8 that closes. One question per screen; each one hands
+   Five shots about the brand, the 6 about the project (four quick choices
+   the panel turns into a traffic light) and the 8 that closes. One question per screen; each one hands
    the page the colour of its ball. Answers are kept in this browser while
    the visitor fills them in, and at the end they are sorted into M·I·R·A and
    sent to the Worker (or, if that fails, through the visitor's mail app).
@@ -74,12 +75,20 @@
     var box = form.querySelector('.chips-pick[data-name="' + name + '"]');
     return box ? $$("input:checked", box).map(function(i){ return i.value; }) : [];
   }
+  var PROJECT = ["resolver", "inversion", "decide", "cuando"];
+  function one(name){ return picked(name)[0] || ""; }
+  /* the label the visitor saw for a choice, for the result and the e-mail */
+  function chosen(name){
+    var i = form.querySelector('.chips-pick[data-name="' + name + '"] input:checked');
+    return i && i.nextElementSibling ? i.nextElementSibling.textContent : "";
+  }
   function answers(){
     var a = {
       marca: val("qName"), queHace: val("qWhat"), historia: val("qStory"),
       publico: picked("publico"), publicoDetalle: val("qWho"),
       objetivos: picked("objetivos"),
       tiene: picked("tiene"), enlaces: val("qLinks"),
+      proyecto: { resolver: one("resolver"), inversion: one("inversion"), decide: one("decide"), cuando: one("cuando") },
       nombre: val("qPerson"), contacto: val("qReach"),
       token: ref.token, origen: ref.origen
     };
@@ -104,6 +113,13 @@
       case 3: if(a.objetivos.length){ return true; } say(T("Elige al menos uno.", "Pick at least one."), true); return false;
       case 4: if(a.tiene.length){ return true; } say(T("Marca lo que tienes, o “Nada todavía”.", "Check what you have, or “Nothing yet”."), true); return false;
       case 5:
+        var missing = PROJECT.filter(function(k){ return !a.proyecto[k]; });
+        if(!missing.length){ return true; }
+        var first = form.querySelector('.chips-pick[data-name="' + missing[0] + '"] input');
+        if(first){ first.focus({ preventScroll:true }); }
+        say(T("Elige una opción en cada pregunta; todas tienen una que no te compromete.", "Pick one option in each question; each has one that doesn't commit you."), true);
+        return false;
+      case 6:
         if(!a.nombre){ return bad("qPerson", T("¿Cómo te llamas?", "What's your name?")); }
         if(a.contacto.length < 6){ return bad("qReach", T("Déjanos un correo o un WhatsApp para escribirte.", "Leave us an email or a WhatsApp number so we can write to you.")); }
         return true;
@@ -139,7 +155,8 @@
     });
   });
 
-  /* chips: up to three goals; "Nada todavía" stands alone */
+  /* chips: up to three goals; "Nada todavía" stands alone. The project's
+     groups are radios: one choice each, nothing to sync */
   $$(".chips-pick").forEach(function(box){
     var max = +box.getAttribute("data-max") || 0;
     var inputs = $$("input", box);
@@ -178,6 +195,10 @@
       $$("input", box).forEach(function(i){ i.checked = (a[name] || []).indexOf(i.value) !== -1; });
       if(box._sync){ box._sync(); }
     });
+    PROJECT.forEach(function(name){
+      var v = (a.proyecto || {})[name];
+      $('.chips-pick[data-name="' + name + '"] input', form).forEach(function(i){ i.checked = !!v && i.value === v; });
+    });
     at = Math.min(+data.at || 0, qs.length - 1);
     /* someone coming back finds where they left it */
     if(a.marca || a.historia){
@@ -200,7 +221,8 @@
       { letter:"M", title:T("Marca", "Brand"), rows:[[T("Nombre", "Name"), a.marca], [T("Qué hace", "What it does"), a.queHace], [T("Su historia", "Its story"), a.historia]] },
       { letter:"I", title:T("Imagen", "Image"), rows:[[T("Ya cuenta con", "Already has"), split(a.tiene, IMAGEN) || T("Todavía sin logo ni colores definidos", "No logo or defined colors yet")]] },
       { letter:"R", title:T("Redes", "Social media"), rows:[[T("Ya cuenta con", "Already has"), split(a.tiene, REDES) || T("Todavía sin redes ni página", "No social media or website yet")], [T("Dónde encontrarla", "Where to find it"), a.enlaces]] },
-      { letter:"A", title:T("Alineación", "Alignment"), rows:[[T("Le habla a", "Speaks to"), a.publico.concat(a.publicoDetalle ? [a.publicoDetalle] : []).join(", ")], [T("Quiere que sientan", "Wants people to feel"), a.objetivos.join(", ")]] }
+      { letter:"A", title:T("Alineación", "Alignment"), rows:[[T("Le habla a", "Speaks to"), a.publico.concat(a.publicoDetalle ? [a.publicoDetalle] : []).join(", ")], [T("Quiere que sientan", "Wants people to feel"), a.objetivos.join(", ")]] },
+      { letter:"6", title:T("Tu proyecto", "Your project"), rows:[[T("Resolver primero", "Solve first"), chosen("resolver")], [T("Inversión", "Investment"), chosen("inversion")], [T("Decide", "Decides"), chosen("decide")], [T("Empezar", "Start"), chosen("cuando")]] }
     ];
   }
   function el(tag, cls, text){ var n = document.createElement(tag); if(cls){ n.className = cls; } if(text != null){ n.textContent = text; } return n; }

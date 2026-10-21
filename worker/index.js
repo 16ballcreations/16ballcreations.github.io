@@ -332,6 +332,7 @@ async function receive(request, env, url, kind){
   const token = kind === "mira" && /^[a-z2-9]{6}$/.test(data.token || "") ? data.token : null;
   const origen = kind === "mira" && ORIGINS[data.origen] ? data.origen : null;
   delete data.token; delete data.origen;
+  if(kind === "mira"){ data.semaforo = qualify(data.proyecto); }
 
   const saved = await env.DB.prepare(
     "INSERT INTO submissions (kind, name, brand, contact, data, origen) VALUES (?1, ?2, ?3, ?4, ?5, ?6) RETURNING id"
@@ -875,7 +876,8 @@ async function dashboardPage(env){
     ).bind(today),
     /* MIRAs of the last 30 days still waiting for their call to be scheduled */
     env.DB.prepare(
-      "SELECT COUNT(*) AS n, SUM(CASE WHEN s.prospect_id IS NULL THEN 1 ELSE 0 END) AS sueltas FROM submissions s LEFT JOIN prospects p ON p.id = s.prospect_id " +
+      "SELECT COUNT(*) AS n, SUM(CASE WHEN s.prospect_id IS NULL THEN 1 ELSE 0 END) AS sueltas, " +
+      "SUM(CASE WHEN json_extract(s.data, '$.semaforo.color') = 'verde' THEN 1 ELSE 0 END) AS verdes FROM submissions s LEFT JOIN prospects p ON p.id = s.prospect_id " +
       "WHERE s.kind = 'mira' AND s.created_at >= datetime('now', '-30 days') AND (s.prospect_id IS NULL OR p.etapa = 'respondio')"
     ),
     /* calls whose time passed more than two hours ago and nobody recorded: the goal is zero */
@@ -887,7 +889,7 @@ async function dashboardPage(env){
       "AND json_extract(e.data, '$.estado') = 'agendada' AND json_extract(e.data, '$.fecha') <= ?1 ORDER BY fecha"
     ).bind(bogotaStamp(120))
   ]);
-  const miraWaiting = unscheduled[0].n || 0, miraLoose = unscheduled[0].sueltas || 0;
+  const miraWaiting = unscheduled[0].n || 0, miraLoose = unscheduled[0].sueltas || 0, miraGreen = unscheduled[0].verdes || 0;
   const tile = (href, label, big, line, hot) => `
     <a class="tile${hot ? " hot" : ""}" href="${href}"><span class="tile-label">${label}</span><b>${big}</b><span class="tile-line">${line}</span></a>`;
   const plural = (n, one, many) => n + " " + (n === 1 ? one : many);
@@ -896,7 +898,7 @@ async function dashboardPage(env){
     <section class="tiles">
       ${tile("/admin/prospectos?ver=hoy", "Prospectos para hoy", a.prospectos.p, `${plural(a.prospectos.vivos, "conversación abierta", "conversaciones abiertas")} · ${plural(a.prospectos.nuevos, "por contactar", "por contactar")}`, a.prospectos.p)}
       ${tile("/admin/contacto?ver=pendientes", "Contacto sin revisar", a.contacto.p, plural(a.contacto.n, "mensaje en total", "mensajes en total"), a.contacto.p)}
-      ${tile("/admin/mira?ver=sinagendar", "MIRA sin agendar", miraWaiting, miraLoose ? plural(miraLoose, "sin prospecto", "sin prospecto") + " · últimos 30 días" : "Últimos 30 días", miraWaiting)}
+      ${tile(miraGreen ? "/admin/mira?ver=verdes" : "/admin/mira?ver=sinagendar", "MIRA sin agendar", miraWaiting, [miraGreen ? plural(miraGreen, "verde: llámalo hoy", "verdes: llámalos hoy") : "", miraLoose ? plural(miraLoose, "sin prospecto", "sin prospecto") : "", "últimos 30 días"].filter(Boolean).join(" · ").replace(/^ú/, "Ú"), miraWaiting)}
       ${tile(unrecorded.length ? "/admin/prospecto?id=" + encodeURIComponent(unrecorded[0].id) + "#llamada" : "/admin/prospectos", "Llamadas sin registrar", unrecorded.length, unrecorded.length ? "La meta es 0" : "Al día", unrecorded.length)}
       ${tile("/admin/mira?ver=pendientes", "MIRA sin revisar", a.mira.p, plural(a.mira.n, "recibida", "recibidas"), 0)}
       ${tile("/admin/autorizaciones?ver=pendientes", "Autorizaciones sin firmar", a.autorizaciones.p, plural(a.autorizaciones.n, "creada", "creadas"), 0)}
@@ -933,21 +935,23 @@ async function submissionsPage(env, url, kind){
   /* "sin agendar": the MIRAs of the last 30 days whose call is still to be
      scheduled, because nobody linked them or their prospect is in "respondió" */
   const unscheduled = isMira && ver === "sinagendar";
+  const greens = isMira && ver === "verdes";
   const { results } = await env.DB.prepare(
     "SELECT s.*, p.negocio AS p_negocio, p.etapa AS p_etapa FROM submissions s LEFT JOIN prospects p ON p.id = s.prospect_id WHERE s.kind = ?1" +
     (pendientes ? " AND s.reviewed = 0" : "") +
     (unscheduled ? " AND s.created_at >= datetime('now', '-30 days') AND (s.prospect_id IS NULL OR p.etapa = 'respondio')" : "") +
+    (greens ? " AND json_extract(s.data, '$.semaforo.color') = 'verde'" : "") +
     " ORDER BY s.created_at DESC, s.id DESC LIMIT 200"
   ).bind(kind).all();
   const here = url.pathname + url.search;
   const pills = isMira
-    ? `<nav class="filters"><a class="pill${!pendientes && !unscheduled ? " on" : ""}" href="/admin/mira">Todo</a><a class="pill${pendientes ? " on" : ""}" href="/admin/mira?ver=pendientes">Solo sin revisar</a><a class="pill${unscheduled ? " on" : ""}" href="/admin/mira?ver=sinagendar">Sin agendar</a></nav>`
+    ? `<nav class="filters"><a class="pill${!pendientes && !unscheduled && !greens ? " on" : ""}" href="/admin/mira">Todo</a><a class="pill${pendientes ? " on" : ""}" href="/admin/mira?ver=pendientes">Solo sin revisar</a><a class="pill${unscheduled ? " on" : ""}" href="/admin/mira?ver=sinagendar">Sin agendar</a><a class="pill${greens ? " on" : ""}" href="/admin/mira?ver=verdes">Verdes</a></nav>`
     : pendingPills("/admin/" + kind, pendientes, "Solo sin revisar");
   return adminPage(env, kind, isMira ? "MIRA" : "Contacto", `
     ${sectionHead(isMira ? "Clientes · MIRA" : "Lo que llega · contacto", isMira ? "Las <em>MIRA</em>" : "Lo que <em>escriben</em>",
       `<p class="totals mono">${isMira ? "Marca, Imagen, Redes y Alineación: el primer filtro, antes de la llamada" : "El formulario de contacto del sitio"}</p>`)}
     ${pills}
-    ${results.length ? results.map(r => card(r, here)).join("") : `<p class="empty">No hay ${isMira ? "MIRA" : "mensajes"} ${pendientes ? "sin revisar " : unscheduled ? "sin agendar " : ""}todavía.</p>`}
+    ${results.length ? results.map(r => card(r, here)).join("") : `<p class="empty">No hay ${isMira ? "MIRA" : "mensajes"} ${pendientes ? "sin revisar " : unscheduled ? "sin agendar " : greens ? "verdes " : ""}todavía.</p>`}
   `, 200, COPY_SCRIPT);
 }
 
@@ -1861,7 +1865,7 @@ async function updateProspect(request, env, url){
 async function funnelCsv(env){
   const [{ results:pros }, { results:miras }, { results:calls }] = await env.DB.batch([
     env.DB.prepare("SELECT id, campaign, code, negocio, etapa, prioridad, score, bola FROM prospects ORDER BY campaign, rank"),
-    env.DB.prepare("SELECT prospect_id, origen, created_at FROM submissions WHERE kind = 'mira' AND prospect_id IS NOT NULL ORDER BY created_at"),
+    env.DB.prepare("SELECT prospect_id, origen, created_at, json_extract(data, '$.semaforo.color') AS semaforo, json_extract(data, '$.semaforo.puntos') AS puntos, json_extract(data, '$.proyecto.inversion') AS inversion, json_extract(data, '$.idioma') AS idioma FROM submissions WHERE kind = 'mira' AND prospect_id IS NOT NULL ORDER BY created_at"),
     env.DB.prepare("SELECT prospect_id, data FROM prospect_events WHERE tipo = 'reunion' AND data IS NOT NULL ORDER BY id")
   ]);
   const mira = new Map(), scheduled = new Map(), recorded = new Map();
@@ -1872,10 +1876,11 @@ async function funnelCsv(env){
     if(d.estado === "agendada"){ scheduled.set(c.prospect_id, d); } else { recorded.set(c.prospect_id, d); }
   }
   const cell = v => { const t = v == null ? "" : String(v); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
-  const head = ["campana", "codigo", "negocio", "etapa", "bola", "mira_origen", "mira_fecha", "llamada_agendada", "asistio", "temperatura", "resultado", "bola_candidata"];
+  const head = ["campana", "codigo", "negocio", "etapa", "bola", "mira_origen", "mira_fecha", "mira_semaforo", "mira_puntos", "mira_inversion", "llamada_agendada", "asistio", "temperatura", "resultado", "bola_candidata"];
   const rows = pros.map(p => {
     const m = mira.get(p.id), s = scheduled.get(p.id), c = recorded.get(p.id);
     return [p.campaign, p.code, p.negocio, p.etapa, ballOf(p.prioridad, p.score, p.bola), m ? m.origen || "" : "", m ? m.created_at.slice(0, 10) : "",
+      m ? m.semaforo || "" : "", m && m.puntos != null ? m.puntos : "", m && m.inversion ? qualifyLabel("inversion", m.inversion, m.idioma) : "",
       s ? s.fecha : "", c ? c.asistio : "", c ? c.temperatura || "" : "", c ? c.resultado || "" : "", c && c.paquete ? c.paquete : ""].map(cell).join(",");
   });
   return new Response("\ufeff" + [head.join(","), ...rows].join("\r\n"), { headers:{
@@ -2436,14 +2441,70 @@ function row(label, value){
   return `<p><b>${esc(label)}</b>${value ? esc(value).replace(/\n/g, "<br>") : '<span class="none">Sin respuesta</span>'}</p>`;
 }
 
-/* the four parts of a MIRA, as the panel shows them */
+/* ---------- the MIRA's traffic light ----------
+   Shot 6 of the MIRA ("Tu proyecto") asks four quick questions: what to solve
+   first, how much they plan to invest, who decides and when to start. The
+   answers arrive as codes; this table gives each code its label and its
+   points, so the ranges can change with the plan tiers without touching the
+   pages' logic (change the labels here and in the two MIRA pages, mira/ and
+   en/mira/). Out of 100: green from 70 (call today), yellow from 40 (call
+   and follow up), red below (give them something useful). Under the entry
+   range and "later" is red whatever the rest says. */
+const QUALIFY = {
+  resolver: { label:"Quiere resolver primero", opts:{
+    coherencia:["Que su marca se sienta como una sola", 25], identidad:["Renovar su logo e identidad", 25], web:["Tener una página web", 25],
+    tienda:["Tener una tienda en línea", 25], redes:["Ordenar sus redes", 25], sistema:["Organizar su negocio", 25], nose:["Todavía no lo sabe", 10] } },
+  inversion: { label:"Piensa invertir", opts:{
+    r0:[{ es:"Menos de $1.500.000", en:"Menos de US$400" }, 0],
+    r1:[{ es:"$1.500.000 a $3.000.000", en:"US$400 a US$800" }, 30],
+    r2:[{ es:"$3.000.000 a $6.000.000", en:"US$800 a US$1.600" }, 30],
+    r3:[{ es:"Más de $6.000.000", en:"Más de US$1.600" }, 30],
+    hablar:["Prefiere hablarlo en la llamada", 15] } },
+  decide: { label:"Decide", opts:{ yo:["Solo", 20], socio:["Con su socio o pareja", 12], equipo:["Un equipo o junta", 8] } },
+  cuando: { label:"Quiere empezar", opts:{ ya:["Este mes", 25], pronto:["En 1 a 3 meses", 15], despues:["Más adelante: está explorando", 0] } }
+};
+const LIGHTS = {
+  verde:{ label:"Verde", what:"Llámalo hoy" },
+  amarillo:{ label:"Amarillo", what:"Llamada y seguimiento" },
+  rojo:{ label:"Rojo", what:"Regálale algo útil" }
+};
+function qualify(p){
+  if(!p || typeof p !== "object"){ return null; }
+  let puntos = 0, answered = 0;
+  for(const [k, q] of Object.entries(QUALIFY)){
+    const o = q.opts[p[k]];
+    if(o){ puntos += o[1]; answered++; }
+  }
+  if(!answered){ return null; }
+  const color = (p.inversion === "r0" && p.cuando === "despues") || puntos < 40 ? "rojo" : puntos >= 70 ? "verde" : "amarillo";
+  return { puntos, color };
+}
+function qualifyLabel(key, code, lang){
+  const o = QUALIFY[key] && QUALIFY[key].opts[code];
+  if(!o){ return code || ""; }
+  return typeof o[0] === "object" ? o[0][lang === "en" ? "en" : "es"] : o[0];
+}
+function lightTag(d){
+  const l = d.semaforo && LIGHTS[d.semaforo.color];
+  return l ? `<span class="tag t-${d.semaforo.color}" title="${l.what}">${l.label} · ${d.semaforo.puntos}</span>` : "";
+}
+
+/* the four parts of a MIRA, as the panel shows them, and the project */
 function miraAnswers(d){
+  const p = d.proyecto || null;
+  const light = d.semaforo && LIGHTS[d.semaforo.color];
+  const project = p ? `
+        <section class="mira-proj"><h3><i>6</i> Su proyecto</h3>
+          ${light ? `<p class="light l-${d.semaforo.color}"><b>Semáforo</b>${light.label} · ${d.semaforo.puntos} de 100 · ${light.what}${d.semaforo.color === "rojo" ? ": tres cambios rápidos para su marca, en un PDF con la plantilla de documentos" : ""}</p>` : ""}
+          ${Object.entries(QUALIFY).map(([k, q]) => row(q.label, qualifyLabel(k, p[k], d.idioma))).join("")}
+          ${p.decide === "socio" ? `<p class="mono hintline">Decide con alguien más: invita a los dos a la llamada.</p>` : ""}
+        </section>` : "";
   return `
       <div class="mira">
         <section><h3><i>M</i> Marca</h3>${row("Nombre", d.marca)}${row("Qué hace", d.queHace)}${row("Su historia", d.historia)}</section>
         <section><h3><i>I</i> Imagen</h3>${row("Ya cuenta con", list(d.tiene))}</section>
         <section><h3><i>R</i> Redes</h3>${row("Dónde encontrarla", d.enlaces)}</section>
-        <section><h3><i>A</i> Alineación</h3>${row("Le habla a", [list(d.publico), d.publicoDetalle].filter(Boolean).join(", "))}${row("Quiere que sientan", list(d.objetivos))}</section>
+        <section><h3><i>A</i> Alineación</h3>${row("Le habla a", [list(d.publico), d.publicoDetalle].filter(Boolean).join(", "))}${row("Quiere que sientan", list(d.objetivos))}</section>${project}
       </div>`;
 }
 
@@ -2483,7 +2544,7 @@ function card(r, here){
   return `
     <article class="sub${r.reviewed ? " done" : ""}" id="${r.kind === "mira" ? "m" : "c"}${r.id}">
       <header>
-        <span class="tag t-${r.kind}">${r.kind === "mira" ? "MIRA" : "Contacto"}</span>${d.idioma === "en" ? `<span class="tag t-net" title="Llegó desde la versión en inglés del sitio: respóndele en inglés">En inglés</span>` : ""}
+        <span class="tag t-${r.kind}">${r.kind === "mira" ? "MIRA" : "Contacto"}</span>${d.idioma === "en" ? `<span class="tag t-net" title="Llegó desde la versión en inglés del sitio: respóndele en inglés">En inglés</span>` : ""}${r.kind === "mira" ? lightTag(d) : ""}
         <h2>${esc(r.kind === "mira" ? (r.brand || r.name) : r.name)}</h2>
         <span class="when mono">${esc(when)}</span>
         <form method="post" action="/admin/revisado">
@@ -2530,6 +2591,7 @@ function page(title, content, status = 200, script = "", shell = false){
   .mira section{padding:14px 16px;border:1px solid var(--line);border-radius:12px}
   .mira section:nth-child(1){--c:var(--b1)} .mira section:nth-child(2){--c:var(--b2)}
   .mira section:nth-child(3){--c:var(--b3)} .mira section:nth-child(4){--c:var(--b4)}
+  .mira section.mira-proj{grid-column:1 / -1;--c:var(--b6)}
   h3{margin:0 0 10px;font:500 12px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--c,var(--ash))}
   h3 i{font:italic 1.4rem "Instrument Serif",serif;margin-right:4px}
   .sub p{margin:0 0 10px}
@@ -2540,6 +2602,9 @@ function page(title, content, status = 200, script = "", shell = false){
   code{font-family:"JetBrains Mono",monospace;color:var(--accent)}
   .pill.new{margin-left:auto;border-color:var(--accent);color:var(--accent)}
   .tag.t-ok{background:var(--accent)} .tag.t-wait{background:var(--b1)}
+  .tag.t-verde{background:#3ad389} .tag.t-amarillo{background:#f4c20d} .tag.t-rojo{background:#ff5c6e}
+  .mira .light{padding:8px 12px;border-radius:10px;border:1px solid var(--line)}
+  .mira .light.l-verde{border-color:#3ad389} .mira .light.l-amarillo{border-color:#f4c20d} .mira .light.l-rojo{border-color:#ff5c6e}
   .sub.fresh{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .linkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
   .props{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
