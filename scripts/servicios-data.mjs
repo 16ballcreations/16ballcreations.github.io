@@ -33,6 +33,28 @@ const FAQ_WHERE = {
   q: "¿Trabajan solo en Medellín?",
   a: "Estamos en Medellín y podemos visitarte si estás cerca, pero trabajamos por videollamada con marcas de cualquier lugar. Hemos hecho proyectos en Colombia, Venezuela y Costa Rica."
 };
+/* Google, la IA y el precio de una página: preguntas que llegan tal cual
+   (plan SEO/AEO del 22 oct, 2.6 y 2.7). Nunca prometemos que Google o la IA
+   nos nombren: prometemos que todo diga lo mismo, para que te entiendan. */
+export const FAQ_AI = {
+  q: "¿Mi negocio puede aparecer cuando alguien le pregunta a ChatGPT?",
+  a: "Nadie puede prometer que una IA te nombre. Lo que sí podemos es darle algo claro que entender: tu nombre, lo que haces y dónde estás, dichos igual en tu página, tu ficha de Google y tus redes. Google y la IA recomiendan a los negocios que reconocen como uno solo, y eso es justamente alinear tu marca."
+};
+export const FAQ_BRAND_GOOGLE = {
+  q: "¿Qué tiene que ver mi marca con salir en Google?",
+  a: "Mucho. Google no solo lee tu página: compara tu nombre, tu dirección, tus horarios y lo que dices en tu ficha de Google, tus redes y tu web. Cuando todo cuenta la misma historia, te reconoce como un solo negocio; cuando se contradice, duda. Alinear tu marca es lo que le da esa certeza."
+};
+export const FAQ_MONTHLY = {
+  q: "¿Ustedes cobran SEO cada mes?",
+  a: "No. Cada proyecto tiene un precio cerrado. Si después quieres que sigamos cuidándolo, hay un plan de cuidado opcional."
+};
+export const FAQ_WEB_PRICE = {
+  q: "¿Cuánto cuesta una página web en Medellín?",
+  a: "Depende de lo que necesites. En el mercado hay páginas de plantilla por unos cientos de miles de pesos y páginas diseñadas a la medida que cuestan varias veces más. Las nuestras son a la medida, hechas desde tu marca. Después de tu MIRA y la llamada te enviamos el precio exacto por escrito, sin compromiso."
+};
+/* the questions on the home page, with their FAQPage data */
+export const HOME_FAQ = [FAQ_AI, FAQ_BRAND_GOOGLE, FAQ_MONTHLY, FAQ_WEB_PRICE];
+
 const FAQ_START = {
   q: "¿Por dónde empiezo?",
   a: "Por tu MIRA: cinco preguntas sobre tu marca. Con tus respuestas preparamos la llamada, y en menos de 24 horas te escribimos para agendarla."
@@ -83,8 +105,8 @@ export const SERVICES = [
       "Diseño a la medida, sin plantillas",
       "Se ve bien en celular, tableta y computador",
       "Formulario de contacto y botón de WhatsApp",
-      "Preparada para Google: títulos, descripciones y mapa del sitio",
-      "Tu dominio y tu correo configurados",
+      "Preparada para que Google y la IA la entiendan: tu nombre, tu ubicación y tus servicios dichos igual que en tu ficha de Google y tus redes",
+      "Tu dominio configurado (el correo con tu dominio va aparte)",
       "Te enseñamos a actualizar lo que cambia seguido"
     ],
     steps: [
@@ -96,8 +118,10 @@ export const SERVICES = [
     faq: [
       { q: "¿Necesito tener la marca lista antes?", a: "Ayuda, pero no es obligatorio. Si tu marca todavía no está clara, la MIRA lo muestra y podemos empezar por ahí, o hacer las dos cosas juntas." },
       { q: "¿Podré cambiar los textos yo mismo?", a: "Sí. Te enseñamos a actualizar lo que cambia seguido, y si algo se sale de eso, nos escribes." },
-      { q: "¿Mi página va a salir primera en Google?", a: "No te lo vamos a prometer, porque nadie puede garantizarlo. Lo que sí hacemos es dejarla bien hecha para que Google la entienda: títulos, descripciones, velocidad y un mapa del sitio." },
-      FAQ_PRICE
+      { q: "¿Mi página va a salir primera en Google?", a: "No te lo vamos a prometer, ni en Google ni en ChatGPT, porque nadie puede garantizarlo. Lo que sí hacemos es que todo diga lo mismo (tu página, tu ficha de Google y tus redes) y dejarla bien hecha: títulos, descripciones, velocidad y un mapa del sitio. Así Google y la IA te entienden." },
+      FAQ_AI,
+      FAQ_MONTHLY,
+      FAQ_WEB_PRICE
     ]
   },
   {
@@ -115,7 +139,7 @@ export const SERVICES = [
       "Fichas de producto con las palabras de tu marca",
       "Se ve bien en el celular, donde compra la mayoría",
       "Un lugar sencillo para actualizar productos y precios",
-      "Preparada para Google: títulos, descripciones y mapa del sitio"
+      "Preparada para que Google y la IA la entiendan: tu nombre, tu ubicación y tus productos dichos igual que en tu ficha de Google y tus redes"
     ],
     steps: [
       MIRA_STEP,

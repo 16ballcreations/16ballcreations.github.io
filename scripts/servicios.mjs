@@ -15,8 +15,8 @@ import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import vm from "node:vm";
-import { SERVICES } from "./servicios-data.mjs";
-import { SERVICES_EN } from "./services-en-data.mjs";
+import { SERVICES, HOME_FAQ } from "./servicios-data.mjs";
+import { SERVICES_EN, HOME_FAQ as HOME_FAQ_EN } from "./services-en-data.mjs";
 
 const PREVIEW = false;
 const ORIGIN = "https://16ballcreations.com";
@@ -36,7 +36,7 @@ const HEX = { 1:"#f4c20d", 2:"#4d7dff", 3:"#ff5c6e", 4:"#a375d8", 5:"#ff9d3d", 6
 /* everything that changes with the language */
 const LOCALES = {
   es: {
-    lang: "es", ogLocale: "es_CO", base: "/", dir: "servicios", home: "index.html", data: SERVICES,
+    lang: "es", ogLocale: "es_CO", base: "/", dir: "servicios", home: "index.html", data: SERVICES, homeFaq: HOME_FAQ,
     mira: "/mira/?o=web", price: "$700.000 COP", minPrice: 700000, currency: "COP",
     status: {},
     t: {
@@ -62,7 +62,7 @@ const LOCALES = {
     }
   },
   en: {
-    lang: "en", ogLocale: "en_US", base: "/en/", dir: "services", home: "en/index.html", data: SERVICES_EN,
+    lang: "en", ogLocale: "en_US", base: "/en/", dir: "services", home: "en/index.html", data: SERVICES_EN, homeFaq: HOME_FAQ_EN,
     mira: "/en/mira/?o=web", price: "US$200", minPrice: 200, currency: "USD",
     status: { "En línea":"Live", "Por estrenar":"Coming soon", "Continuo":"Ongoing", "En desarrollo":"In development" },
     t: {
@@ -221,7 +221,8 @@ const PROVIDER = {
   name: "16 Ball Creations",
   url: ORIGIN + "/"
 };
-const AREAS = [{ "@type": "Country", name: "Colombia" }, { "@type": "Country", name: "Venezuela" }, { "@type": "Country", name: "Costa Rica" }];
+/* where the studio is first, then where it has worked: listing Medellín does not limit the service */
+const AREAS = [{ "@type": "City", name: "Medellín" }, { "@type": "AdministrativeArea", name: "Antioquia" }, { "@type": "Country", name: "Colombia" }, { "@type": "Country", name: "Venezuela" }, { "@type": "Country", name: "Costa Rica" }];
 
 function servicePage(L, s){
   const t = L.t;
@@ -470,6 +471,13 @@ for(const L of Object.values(LOCALES)){
   let home = await readFile(homePath, "utf8");
   home = fill(home, "servicios", L.data.map(s => serviceItem(L, s, "")).join("\n        "), "        ");
   home = fill(home, "servicios-pie", footerServices(L, ""), "    ");
+  /* the home questions, visible and as FAQPage data, from the same text */
+  if(home.includes("<!-- faq:inicio")){
+    home = fill(home, "faq", L.homeFaq.map((f, i) => `<details${i === 0 ? " open" : ""}><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n        "), "        ");
+    home = fill(home, "faq-ld", `<script type="application/ld+json">
+${JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", inLanguage: L.lang, mainEntity: L.homeFaq.map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }, null, 2)}
+</script>`, "");
+  }
   await writeFile(homePath, home);
   console.log(`${L.lang}: ${L.data.length} páginas en ${L.base}${L.dir}/ ${PREVIEW ? "(vista previa, noindex)" : ""}`);
 }

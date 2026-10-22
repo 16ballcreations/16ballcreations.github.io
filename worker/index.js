@@ -258,6 +258,14 @@ export default {
     if(path === "/admin" || path.startsWith("/admin/")){
       return admin(request, env, url, path);
     }
+    /* plain-text files (llms.txt, the IndexNow key) say they are UTF-8, so the accents survive */
+    if(path.endsWith(".txt")){
+      const res = await env.ASSETS.fetch(request);
+      if(!res.ok){ return res; }
+      const out = new Response(res.body, res);
+      out.headers.set("Content-Type", "text/plain; charset=utf-8");
+      return out;
+    }
     return env.ASSETS.fetch(request);
   }
 };

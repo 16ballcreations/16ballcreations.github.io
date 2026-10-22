@@ -20,6 +20,28 @@ const FAQ_WHERE = {
   q: "Do you work with clients outside Colombia?",
   a: "Yes. We're based in Medellín, Colombia, and we work by video call with brands anywhere. We've done projects in Colombia, Venezuela and Costa Rica, and we work in English or Spanish."
 };
+/* Google, AI and the price of a website (SEO/AEO plan of 22 Oct, 2.6 and
+   2.7). We never promise that Google or an AI will name anyone: we promise
+   that everything says the same thing, so they can understand you. */
+export const FAQ_AI = {
+  q: "Can my business show up when someone asks ChatGPT?",
+  a: "Nobody can promise that an AI will name you. What we can do is give it something clear to understand: your name, what you do and where you are, said the same way on your website, your Google profile and your social media. Google and AI tools recommend businesses they recognize as one, and that's exactly what aligning your brand does."
+};
+export const FAQ_BRAND_GOOGLE = {
+  q: "What does my brand have to do with showing up on Google?",
+  a: "A lot. Google doesn't just read your website: it compares your name, address, hours and what you say on your Google profile, your social media and your site. When everything tells the same story, it recognizes you as one business; when things contradict each other, it hesitates. Aligning your brand is what gives it that certainty."
+};
+export const FAQ_MONTHLY = {
+  q: "Do you charge for SEO every month?",
+  a: "No. Every project has a fixed price. If you'd like us to keep looking after it afterwards, there's an optional care plan."
+};
+export const FAQ_WEB_PRICE = {
+  q: "How much does a website cost?",
+  a: "It depends on what you need. There are template sites that cost very little and custom-designed sites that cost several times more. Ours are custom, built from your brand. After your MIRA and the call, we send you the exact price in writing, with no commitment."
+};
+/* the questions on the home page, with their FAQPage data */
+export const HOME_FAQ = [FAQ_AI, FAQ_BRAND_GOOGLE, FAQ_MONTHLY, FAQ_WEB_PRICE];
+
 const FAQ_START = {
   q: "Where do I start?",
   a: "With your MIRA: five questions about your brand. We use your answers to prepare the call, and we write back within 24 hours to schedule it."
@@ -70,8 +92,8 @@ export const SERVICES_EN = [
       "Custom design, no templates",
       "Looks right on phone, tablet and desktop",
       "Contact form and WhatsApp button",
-      "Ready for Google: titles, descriptions and a sitemap",
-      "Your domain and email set up",
+      "Ready for Google and AI to understand it: your name, location and services stated the same way as on your Google profile and social media",
+      "Your domain set up (email on your domain is separate)",
       "We show you how to update what changes often"
     ],
     steps: [
@@ -83,8 +105,10 @@ export const SERVICES_EN = [
     faq: [
       { q: "Does my brand need to be ready first?", a: "It helps, but it isn't required. If your brand isn't clear yet, your MIRA will show it, and we can start there or do both together." },
       { q: "Can I edit the text myself?", a: "Yes. We show you how to update what changes often, and for anything beyond that, you just write to us." },
-      { q: "Will my site rank first on Google?", a: "We won't promise that, because nobody can guarantee it. What we do is build it properly so Google can understand it: titles, descriptions, speed and a sitemap." },
-      FAQ_PRICE
+      { q: "Will my site rank first on Google?", a: "We won't promise that, on Google or on ChatGPT, because nobody can guarantee it. What we do is make everything say the same thing (your website, your Google profile and your social media) and build it properly: titles, descriptions, speed and a sitemap. That way Google and AI can understand you." },
+      FAQ_AI,
+      FAQ_MONTHLY,
+      FAQ_WEB_PRICE
     ]
   },
   {
@@ -102,7 +126,7 @@ export const SERVICES_EN = [
       "Product pages written in your brand's words",
       "Looks right on phones, where most people shop",
       "A simple place to update products and prices",
-      "Ready for Google: titles, descriptions and a sitemap"
+      "Ready for Google and AI to understand it: your name, location and products stated the same way as on your Google profile and social media"
     ],
     steps: [
       MIRA_STEP,

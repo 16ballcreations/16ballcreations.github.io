@@ -15,6 +15,8 @@ const SITE = [
      IndexNow key that lets us tell Bing and others when the site changes */
   "robots.txt",
   "sitemap.xml",
+  /* a plain-text summary of the studio for AI tools (llmstxt.org) */
+  "llms.txt",
   "favicon.ico",
   "site.webmanifest",
   "44b6eb8c5cbb6e059ea61f162a867345.txt",
