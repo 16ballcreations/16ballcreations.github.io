@@ -14,7 +14,7 @@
   margin:0 0 48px;font-family:var(--font-display);font-weight:400;color:var(--white);
   font-size:clamp(3rem,8.4vw,7.4rem);line-height:.92;letter-spacing:-.025em;
 }
-.mira-title em{font-style:italic;color:var(--accent)}
+.mira-title em{font-family:var(--font-script);font-style:normal;font-weight:400;font-size:1.16em;letter-spacing:0;color:var(--accent)}
 .btn-lg{padding:15px 28px;font-size:1rem}
 
 /* ---------- the four letters ---------- */
@@ -50,7 +50,7 @@
 .q-title{display:block;font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);line-height:1.05;letter-spacing:-.01em;color:var(--white)}
 .q-help{margin:0 0 18px;color:var(--ash);font-size:.9375rem}
 .q-help .count{margin-left:8px;color:var(--accent)}
-.field-label{display:block;margin:22px 0 6px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
+.field-label{display:block;margin:22px 0 6px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
 .field-label .opt{margin-left:6px;color:var(--charcoal)}
 .mfield{
   display:block;width:100%;padding:6px 2px 10px;border:0;border-bottom:1px solid var(--ash);border-radius:0;
@@ -104,9 +104,9 @@
   pointer-events:none;
 }
 .res:nth-child(1){--c:var(--b1)} .res:nth-child(2){--c:var(--b2)} .res:nth-child(3){--c:var(--b3)} .res:nth-child(4){--c:var(--b4)}
-.res h3{margin:0 0 14px;font-family:var(--font-mono);font-size:.6875rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.res h3{margin:0 0 14px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
 .res p{position:relative;margin:0 0 10px;color:var(--bone);font-size:.9375rem;line-height:1.55}
-.res p b{display:block;margin-bottom:2px;font-family:var(--font-mono);font-size:.625rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
+.res p b{display:block;margin-bottom:2px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.625rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
 .res .empty{color:var(--charcoal);font-style:italic}
 .done-foot .lead{max-width:56ch}
 .done-foot .q-msg{text-align:left;margin-top:16px}
@@ -138,7 +138,7 @@
 
 /* the other language, a small pill beside "back to home" */
 .head-actions{display:flex;align-items:center;gap:10px}
-.lang-pill{padding:6px 10px;border:1px solid var(--hairline);border-radius:999px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;color:var(--ash);transition:color .15s ease-out,border-color .15s ease-out}
+.lang-pill{padding:6px 10px;border:1px solid var(--hairline);border-radius:999px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.08em;color:var(--ash);transition:color .15s ease-out,border-color .15s ease-out}
 .lang-pill:hover{color:var(--white);border-color:var(--accent)}
 
 /* shot 6: four quick questions on one screen, one choice each */

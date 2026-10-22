@@ -32,9 +32,14 @@ const SITE = [
      the repository as reference only: they are not published */
 ];
 
+/* fonts whose license does not allow publishing them on the web stay out:
+   Trebuchet MS ships with Windows and the site uses the visitor's own copy */
+const NOT_PUBLISHED = /[\\/]assets[\\/]fonts[\\/]trebuc[^\\/]*\.ttf$/i;
+const publishable = src => !NOT_PUBLISHED.test(src);
+
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 for(const entry of SITE){
-  await cp(join(root, entry), join(dist, entry), { recursive: true });
+  await cp(join(root, entry), join(dist, entry), { recursive: true, filter: publishable });
 }
 console.log("dist/ listo: " + SITE.join(", "));

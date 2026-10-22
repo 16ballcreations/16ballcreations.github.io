@@ -13,7 +13,7 @@
 .rating label:hover .ball,.rating label.is-lit .ball{opacity:1;filter:none;transform:scale(1)}
 .rating input:checked + .ball{transform:scale(1.14) translateY(-3px)}
 .rating input:focus-visible + .ball{outline:2px solid var(--accent);outline-offset:4px}
-.rating-say{min-height:1.4em;margin:0;font-family:var(--font-display);font-style:italic;font-size:1.5rem;color:var(--accent)}
+.rating-say{min-height:1.4em;margin:0;font-family:var(--font-script);font-size:1.9rem;color:var(--accent)}
 
 /* ---------- how to appear ---------- */
 .publish{display:grid;gap:10px;margin-top:4px}
@@ -46,7 +46,7 @@
 .quote blockquote::after{content:"”";color:var(--accent)}
 .quote-feel{margin:0 0 18px;color:var(--ash)}
 .quote figcaption{font-size:.9375rem;color:var(--bone)}
-.quote figcaption span{display:block;margin-top:2px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+.quote figcaption span{display:block;margin-top:2px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
 .quote.is-private{opacity:.55}
 .quote-private{margin:0 0 24px;color:var(--iron)}
 

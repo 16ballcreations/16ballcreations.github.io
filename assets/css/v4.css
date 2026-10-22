@@ -5,14 +5,14 @@
    - el contacto con dos caminos: la MIRA o escribirnos. */
 
 /* ---------- the nav: a count over Proyectos, a fixed call to action ---------- */
-.nav sup{margin-left:3px;font-family:var(--font-mono);font-size:.625rem;color:var(--iron);vertical-align:.5em}
+.nav sup{margin-left:3px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.625rem;color:var(--iron);vertical-align:.5em}
 .nav a.is-active sup{color:var(--accent)}
 /* the other language, as a small pill beside the call to action */
-.nav a.lang{padding:5px 9px;border:1px solid var(--hairline);border-radius:999px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;color:var(--ash)}
+.nav a.lang{padding:5px 9px;border:1px solid var(--hairline);border-radius:999px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.08em;color:var(--ash)}
 .nav a.lang::after{display:none}
 .nav a.lang:hover{color:var(--white);border-color:var(--accent)}
 @media (max-width:720px){
-  .nav a.lang{align-self:flex-start;margin-top:18px;padding:8px 14px;font-family:var(--font-mono);font-size:.8125rem;border:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+  .nav a.lang{align-self:flex-start;margin-top:18px;padding:8px 14px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.8125rem;border:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
 }
 
 /* ---------- stats: four across ---------- */
@@ -21,7 +21,7 @@
 /* ---------- the work: glass cards, like the rest of the site ---------- */
 .work-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
 .work-bar .filters{margin:0}
-.work-count{font-family:var(--font-mono);font-size:.75rem;color:var(--iron)}
+.work-count{font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.75rem;color:var(--iron)}
 .work-wrap{position:relative;isolation:isolate}
 .work{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
 /* the card is a .tile (site.css): glass, a lit edge, the light under the cursor */
@@ -31,16 +31,16 @@
 .card:hover .card-media img{transform:scale(1.035);filter:none}
 .card-n{
   position:absolute;top:12px;left:12px;z-index:1;padding:4px 9px;border-radius:999px;
-  font-family:var(--font-mono);font-size:.6875rem;color:var(--white);background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.14);
+  font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;color:var(--white);background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.14);
 }
 .card-body{display:flex;flex-direction:column;gap:14px;padding:20px 18px 16px;flex:1}
 .card h3{font-family:var(--font-display);font-weight:400;font-size:clamp(2rem,3vw,2.6rem);line-height:1;margin:0}
 .card p{margin:0;color:var(--ash);font-size:.9375rem;max-width:52ch}
 .card-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
 .svc-tags{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
-.svc-tags a{display:inline-block;font-family:var(--font-mono);font-size:.6875rem;color:var(--ash);border:1px solid var(--hairline);border-radius:999px;padding:4px 10px;transition:color .15s ease-out,border-color .15s ease-out}
+.svc-tags a{display:inline-block;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;color:var(--ash);border:1px solid var(--hairline);border-radius:999px;padding:4px 10px;transition:color .15s ease-out,border-color .15s ease-out}
 .svc-tags a:hover{color:var(--white);border-color:var(--accent)}
-.status{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--iron);white-space:nowrap}
+.status{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--iron);white-space:nowrap}
 .status::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--iron)}
 .status[data-s="En línea"]::before{background:var(--b6)}
 .status[data-s="Por estrenar"]::before{background:var(--b1)}
@@ -72,7 +72,7 @@
 .sketch16 .s-hatch{stroke:var(--ash);stroke-width:1.1;opacity:.6}
 .sketch16 .s-guide{stroke:var(--iron);stroke-width:.8;opacity:.5}
 .sketch16 .s-note{stroke:var(--accent);stroke-width:1.6}
-.sketch16 .s-text{fill:var(--accent);font-family:var(--font-display);font-style:italic;font-size:22px;opacity:0;transition:opacity .6s 1.6s ease-out}
+.sketch16 .s-text{fill:var(--accent);font-family:var(--font-script);font-size:27px;opacity:0;transition:opacity .6s 1.6s ease-out}
 /* drawn in order: guides, outline, hatching, number, the note last */
 .is-drawn .sketch16 .s-guide{transition:stroke-dashoffset .9s ease-out;stroke-dashoffset:0}
 .is-drawn .sketch16 .s-line{transition:stroke-dashoffset 1.1s .2s cubic-bezier(.6,.1,.3,1);stroke-dashoffset:0}
@@ -96,7 +96,7 @@
 .svc .ball{--s:40px}
 .svc h3{font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;margin:6px 0 0}
 .svc p{margin:0;color:var(--ash);font-size:.9375rem}
-.inc-label{margin:6px 0 0;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--iron)}
+.inc-label{margin:6px 0 0;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--iron)}
 .inc{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .inc li{position:relative;padding-left:16px;font-size:.875rem;color:var(--bone)}
 .inc li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--c,var(--accent))}
@@ -107,7 +107,7 @@
 .svc > li.tile:not(.svc-mira):hover h3 a{color:var(--accent)}
 .svc > li.tile:not(.svc-mira):focus-within{outline:2px solid var(--accent);outline-offset:3px}
 .svc > li.tile:not(.svc-mira) h3 a:focus-visible{outline:0}
-.svc .more{margin-top:auto;padding-top:8px;font-family:var(--font-mono);font-size:.75rem;color:var(--white)}
+.svc .more{margin-top:auto;padding-top:8px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.75rem;color:var(--white)}
 .svc .more span{display:inline-block;transition:transform .25s var(--ease)}
 .svc > li:hover .more span{transform:translateX(5px)}
 .svc .more:hover{color:var(--accent)}
@@ -133,7 +133,7 @@
 /* ---------- Modularity: below, with the detail, marked in development ---------- */
 .dev-badge{
   display:inline-flex;align-items:center;gap:8px;margin:0 0 20px;padding:6px 12px;border-radius:999px;
-  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--b5);
+  font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--b5);
   border:1px solid color-mix(in srgb,var(--b5) 45%,transparent);
 }
 .dev-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--b5);animation:ping 2.2s ease-out infinite}
@@ -155,14 +155,14 @@
 .path h3{font-family:var(--font-display);font-weight:400;font-size:clamp(2.2rem,3.4vw,3rem);line-height:1}
 .path p{margin:0;color:var(--ash);max-width:44ch}
 .path .facts{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0;padding:0;list-style:none}
-.path .facts li{font-family:var(--font-mono);font-size:.6875rem;color:var(--ash);border:1px solid var(--hairline);border-radius:999px;padding:4px 10px}
+.path .facts li{font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;color:var(--ash);border:1px solid var(--hairline);border-radius:999px;padding:4px 10px}
 .path .actions{margin-top:auto;padding-top:10px}
 .path-mira.tile{border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
 .path-mira .n{color:var(--accent)}
 
 /* ---------- footer: the services, for people and for search engines ---------- */
 .footer-svc{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 24px;padding:0 0 24px;list-style:none;border-bottom:1px solid var(--hairline)}
-.footer-svc a{font-family:var(--font-mono);font-size:.75rem;color:var(--ash)}
+.footer-svc a{font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.75rem;color:var(--ash)}
 .footer-svc a:hover{color:var(--accent)}
 
 /* ================== service pages ================== */
@@ -175,7 +175,7 @@
   -webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent);
 }
 .page-svc main{position:relative;isolation:isolate}
-.crumbs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px;padding:0;list-style:none;font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+.crumbs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px;padding:0;list-style:none;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
 .crumbs li + li::before{content:"/";margin-right:8px;color:var(--charcoal)}
 .crumbs a{color:var(--ash)}
 .crumbs a:hover{color:var(--accent)}
@@ -204,7 +204,7 @@
   font-family:var(--font-display);font-size:clamp(1.5rem,2.4vw,2rem);line-height:1.15;color:var(--white);
 }
 .faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"+";flex:none;font-family:var(--font-mono);font-size:1.25rem;color:var(--accent);transition:transform .3s var(--ease)}
+.faq summary::after{content:"+";flex:none;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:1.25rem;color:var(--accent);transition:transform .3s var(--ease)}
 .faq details[open] summary::after{transform:rotate(45deg)}
 .faq details p{margin:0 0 26px;color:var(--ash);max-width:68ch}
 .cta-band{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;padding:40px;border-radius:24px}

@@ -7,3 +7,8 @@ dist/
 # into the panel database with scripts/prospectos-sql.mjs.
 prospectos/
 tmp/
+
+# Trebuchet MS ships with Windows: its license does not allow publishing the
+# files on the web. The site uses the copy installed on the visitor's device
+# (local()); these files are here only for documents made on this machine.
+assets/fonts/trebuc*.ttf
