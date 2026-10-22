@@ -6,9 +6,8 @@
 <meta name="robots" content="noindex, nofollow">
 <!-- TÍTULO DEL ARCHIVO: "<Tipo de documento> — <Cliente o proyecto>" -->
 <title>Propuesta — Café La Esquina</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- las tipografías de la marca (Boska y Recursive), las mismas del sitio -->
+<link rel="stylesheet" href="../assets/css/fuentes.css">
 <style>
   /* =====================================================================
      16 Ball Creations · plantilla de documento PDF (A4)
@@ -28,13 +27,13 @@
     --b5:#ff9d3d; --b6:#3ad389; --b7:#e0765f; --b8:#e8e8e8;
     /* UN acento por documento: elige una bola (por defecto, la 6) */
     --accent:var(--b6);
-    --display:"Instrument Serif","Times New Roman",serif;
-    --ui:"Inter",system-ui,sans-serif;
-    --mono:"JetBrains Mono",ui-monospace,monospace;
+    --display:"Boska","Times New Roman",serif;
+    --ui:"Recursive",system-ui,sans-serif;
+    --mono:"Recursive",ui-monospace,monospace;
   }
   *{box-sizing:border-box}
   html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{margin:0;background:#1a1c1e;color:var(--bone);font-family:var(--ui);-webkit-font-smoothing:antialiased}
+  body{margin:0;background:#1a1c1e;color:var(--bone);font-family:var(--ui);font-variation-settings:"MONO" 0;-webkit-font-smoothing:antialiased}
   @page{size:A4;margin:0}
 
   .sheet{
@@ -51,16 +50,17 @@
 
   /* --- encabezado --- */
   .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10mm;margin-bottom:7mm}
-  .brand{display:flex;align-items:center;gap:3mm;font-family:var(--mono);font-size:8.5pt;letter-spacing:.02em;color:var(--bone)}
+  .brand{display:flex;align-items:center;gap:3mm;font-family:var(--mono);font-variation-settings:"MONO" 1;font-size:8.5pt;letter-spacing:.02em;color:var(--bone)}
   .brand img{width:8mm;height:auto}
-  .kicker{margin:0;font-family:var(--mono);font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);text-align:right;line-height:1.6}
+  .kicker{margin:0;font-family:var(--mono);font-variation-settings:"MONO" 1;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);text-align:right;line-height:1.6}
   .kicker b{color:var(--accent);font-weight:500}
 
   /* --- título e intro --- */
   h1{margin:0 0 3mm;font-family:var(--display);font-weight:400;font-size:34pt;line-height:.95;letter-spacing:-.01em;color:var(--white)}
-  h1 em{font-style:italic;color:var(--accent)}
+  /* the emotional part: Recursive casual and slanted, as on the site */
+  h1 em{font-family:var(--ui);font-style:normal;font-weight:500;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;letter-spacing:-.02em;font-size:.9em;color:var(--accent)}
   h2{margin:0 0 3mm;font-family:var(--display);font-weight:400;font-size:20pt;line-height:1.05;color:var(--white)}
-  h2 em{font-style:italic;color:var(--accent)}
+  h2 em{font-family:var(--ui);font-style:normal;font-weight:500;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;letter-spacing:-.02em;font-size:.9em;color:var(--accent)}
   .intro{margin:0 0 7mm;max-width:150mm;font-size:9.5pt;line-height:1.55;color:var(--ash)}
   p{font-size:9.5pt;line-height:1.55;color:var(--bone)}
 
@@ -70,7 +70,7 @@
   .data div:nth-child(odd){border-right:1px solid var(--hairline)}
   .data div:nth-child(even){padding-left:4mm}
   .data .wide{grid-column:1 / -1;border-right:0 !important;padding-left:0 !important}
-  .label{display:block;margin-bottom:1mm;font-family:var(--mono);font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+  .label{display:block;margin-bottom:1mm;font-family:var(--mono);font-variation-settings:"MONO" 1;font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
   .val{display:block;font-size:10.5pt;color:var(--white)}
 
   /* --- bloques numerados con bolas --- */
@@ -82,7 +82,7 @@
     flex:none;width:6mm;height:6mm;border-radius:50%;display:inline-grid;place-items:center;
     background:var(--c);box-shadow:inset -1mm -1mm 1.6mm rgba(0,0,0,.4);
   }
-  .ball::after{content:attr(data-n);width:3mm;height:3mm;border-radius:50%;background:#fffdf5;color:#111;display:grid;place-items:center;font:600 5.5pt var(--ui)}
+  .ball::after{content:attr(data-n);width:3mm;height:3mm;border-radius:50%;background:#fffdf5;color:#111;display:grid;place-items:center;font:600 5.5pt var(--ui);font-variation-settings:"MONO" 0}
   .block ul{margin:0;padding:0;list-style:none}
   .block li{position:relative;padding-left:3.5mm;margin-bottom:1.6mm;font-size:8.6pt;line-height:1.45;color:var(--bone)}
   .block li::before{content:"";position:absolute;left:0;top:1.9mm;width:1.4mm;height:1.4mm;border-radius:50%;background:var(--c)}
@@ -93,13 +93,13 @@
   /* --- frase destacada --- */
   .highlight{margin:0 0 7mm;padding:4mm 6mm;border-left:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,transparent);border-radius:0 3mm 3mm 0}
   .highlight p{margin:0;font-family:var(--display);font-size:13pt;line-height:1.35;color:var(--white)}
-  .highlight em{font-style:italic;color:var(--accent)}
+  .highlight em{font-family:var(--ui);font-style:normal;font-weight:500;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;letter-spacing:-.02em;font-size:.9em;color:var(--accent)}
 
   /* --- tabla (inversión, cronograma…) --- */
   table{width:100%;border-collapse:collapse;margin-bottom:7mm;font-size:9pt}
-  th{text-align:left;padding:2mm 0;font-family:var(--mono);font-weight:400;font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--iron);border-bottom:1px solid var(--hairline)}
+  th{text-align:left;padding:2mm 0;font-family:var(--mono);font-variation-settings:"MONO" 1;font-weight:400;font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--iron);border-bottom:1px solid var(--hairline)}
   td{padding:2.4mm 0;border-bottom:1px solid var(--hairline);color:var(--bone);vertical-align:top}
-  td.num{text-align:right;font-family:var(--mono);color:var(--white)}
+  td.num{text-align:right;font-family:var(--mono);font-variation-settings:"MONO" 1;color:var(--white)}
   tr.total td{border-bottom:0;font-weight:500;color:var(--white)}
 
   /* --- zona de papel: firmas o lo que el cliente escribe a mano.
@@ -111,10 +111,10 @@
   .signs{display:grid;grid-template-columns:1fr 1fr;gap:12mm;margin-bottom:6mm}
   .sign .line{height:15mm;border-bottom:1px solid #8c9094}
   .sign .name{margin-top:2mm;font-size:9.5pt;color:var(--ink)}
-  .sign .meta{margin-top:1mm;font-family:var(--mono);font-size:7pt;color:var(--ink-soft);letter-spacing:.04em}
+  .sign .meta{margin-top:1mm;font-family:var(--mono);font-variation-settings:"MONO" 1;font-size:7pt;color:var(--ink-soft);letter-spacing:.04em}
 
   /* --- pie --- */
-  .foot{display:flex;justify-content:space-between;align-items:center;padding-top:4mm;border-top:1px solid var(--hairline);font-family:var(--mono);font-size:7pt;color:var(--iron);margin-top:auto}
+  .foot{display:flex;justify-content:space-between;align-items:center;padding-top:4mm;border-top:1px solid var(--hairline);font-family:var(--mono);font-variation-settings:"MONO" 1;font-size:7pt;color:var(--iron);margin-top:auto}
   .paper .foot{border-top-color:var(--rule);margin-top:0}
   .foot b{color:var(--bone);font-weight:400}
   .paper .foot b{color:var(--ink)}

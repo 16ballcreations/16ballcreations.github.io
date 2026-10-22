@@ -107,13 +107,19 @@ Las bolas (el único color):
 
 ### Tipografías
 
-Se cargan de Google Fonts (ya están en la plantilla):
+Son las mismas del sitio y viven en el repositorio
+(`assets/css/fuentes.css` + `assets/fonts/`); la plantilla ya las enlaza:
 
 | Fuente | Para qué | Notas |
 |---|---|---|
-| **Instrument Serif** | Títulos, frases destacadas, nombres de bloques | Peso 400. La parte emocional va en *cursiva* y en el acento |
-| **Inter** | Texto corrido, datos | 300–500. Cuerpo 9,5 pt; listas 8,6 pt |
-| **JetBrains Mono** | Etiquetas, encabezado, pie, cifras | Mayúsculas con espaciado amplio (0,1–0,12 em), 6,5–8,5 pt |
+| **Boska** | Títulos, frases destacadas, nombres de bloques | Peso 400 |
+| **Recursive** (`"MONO" 0`) | Texto corrido, datos | 300–500. Cuerpo 9,5 pt; listas 8,6 pt |
+| **Recursive** (`"MONO" 1`) | Etiquetas, encabezado, pie, cifras | Monoespaciada. Mayúsculas con espaciado amplio (0,1–0,12 em), 6,5–8,5 pt |
+| **Recursive casual** (`"CASL" 1, "slnt" -15`) | La parte emocional de un título o frase (`<em>`) | Peso 500, al 90 % del tamaño y en el color de acento, como «*lo creamos.*» en el sitio |
+
+Recursive es una sola familia variable: lo que cambia entre texto, etiqueta y
+acento es `font-variation-settings`. Por eso cada regla que pone
+`font-family:var(--ui)` o `var(--mono)` lleva su `"MONO"` al lado.
 
 Escala en A4: título 34 pt · subtítulo 20 pt · bloque 15 pt · frase destacada
 13 pt · cuerpo 9,5 pt · etiquetas 6,5–7 pt.
@@ -175,7 +181,9 @@ entera; el encabezado y el pie se repiten en cada una.
    (fuera del repositorio). Si la mueves, corrige la ruta del logo
    (`src` de `.brand img`) para que apunte a
    `C:/Dev/16bc-site/assets/img/ball-16.png` (en HTML:
-   `file:///C:/Dev/16bc-site/assets/img/ball-16.png`).
+   `file:///C:/Dev/16bc-site/assets/img/ball-16.png`) y la de las fuentes
+   (`<link rel="stylesheet">`) para que apunte a
+   `file:///C:/Dev/16bc-site/assets/css/fuentes.css`.
 2. Cambia el `<title>` a "Tipo de documento — Cliente". El nombre del PDF sigue
    el mismo patrón, sin tildes ni espacios: `propuesta-cafe-la-esquina.pdf`.
 3. Llena el contenido siguiendo las secciones 2 a 5. Elige el acento
@@ -187,8 +195,8 @@ entera; el encabezado y el pie se repiten en cada una.
    En PowerShell, si `node` funciona pero `npx` no, usa `npx.cmd`. El script
    usa el Microsoft Edge instalado, espera las fuentes, imprime los fondos y
    **mide cada hoja**: si alguna pasa de 297 mm lo dice y termina con error.
-   Necesita internet para las fuentes; si avisa que una fuente no cargó, el PDF
-   saldrá con fuentes de reemplazo y hay que repetirlo con conexión.
+   Las fuentes salen del repositorio, no de internet; si avisa que una fuente
+   no cargó, revisa la ruta a `fuentes.css` (paso 1) y repítelo.
 5. **Revisa el PDF antes de entregarlo** (ábrelo o léelo) con la lista de abajo.
 
 Si una hoja no cabe: acorta el texto primero; después reduce márgenes entre

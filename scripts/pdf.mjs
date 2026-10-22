@@ -34,7 +34,7 @@ const report = await page.evaluate(() => {
     return { hoja: i + 1, altoMm: Math.round(h), cabe: h <= 297.5 };
   });
 });
-const fonts = await page.evaluate(() => ["Instrument Serif", "Inter", "JetBrains Mono"].map(f => [f, document.fonts.check("12px \"" + f + "\"")]));
+const fonts = await page.evaluate(() => ["Boska", "Recursive"].map(f => [f, document.fonts.check("12px \"" + f + "\"")]));
 
 await page.pdf({ path:out, format:"A4", printBackground:true, preferCSSPageSize:true });
 await browser.close();

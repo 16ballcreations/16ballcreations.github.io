@@ -21,8 +21,8 @@ partículas, que flota detrás de toda la página. El visitante tira arrastrando
 (o tocando, en el teléfono), y la primera bola que golpea tiñe el sitio: el
 paño, las superficies y los acentos toman su color.
 
-El resto es negro, vidrio esmerilado y tipografía editorial (Instrument Serif,
-Inter y JetBrains Mono).
+El resto es negro, vidrio esmerilado y dos tipografías servidas desde el propio
+sitio: Boska para los títulos y Recursive para el texto, las etiquetas y los acentos.
 
 ## Estructura
 

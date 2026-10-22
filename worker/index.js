@@ -2588,44 +2588,46 @@ function page(title, content, status = 200, script = "", shell = false){
   return new Response(`<!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow"><title>${esc(title)} · 16 Ball Creations</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <style>
   :root{--bg:#050606;--line:#25292c;--white:#fff;--bone:#ecebe6;--ash:#a1a4a5;--iron:#6e727a;--accent:#3ad389;
     --b1:#f4c20d;--b2:#4d7dff;--b3:#ff5c6e;--b4:#a375d8}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--bone);font:15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{margin:0;background:var(--bg);color:var(--bone);font:15px/1.5 "Recursive",system-ui,sans-serif;font-variation-settings:"MONO" 0;-webkit-font-smoothing:antialiased}
   main{max-width:1100px;margin:0 auto;padding:40px 24px 80px}
-  .mono{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--iron)}
-  .kicker{margin:0 0 8px;font:12px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--ash)}
-  h1{margin:0;font:400 clamp(2.4rem,6vw,4rem)/1 "Instrument Serif",serif;color:var(--white)}
-  h1 em{color:var(--accent)}
+  .mono{font-family:"Recursive",monospace;font-variation-settings:"MONO" 1;font-size:12px;color:var(--iron)}
+  .kicker{margin:0 0 8px;font:12px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.08em;text-transform:uppercase;color:var(--ash)}
+  h1{margin:0;font:400 clamp(2.4rem,6vw,4rem)/1 "Boska",serif;color:var(--white)}
+  /* the accent, as on the site: Recursive casual and slanted */
+  h1 em{color:var(--accent);font-family:"Recursive",sans-serif;font-style:normal;font-weight:500;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;letter-spacing:-.02em;font-size:.9em}
   .top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
   .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
-  .pill{padding:7px 14px;border:1px solid var(--line);border-radius:999px;color:var(--ash);text-decoration:none;font:12px "JetBrains Mono",monospace}
+  .pill{padding:7px 14px;border:1px solid var(--line);border-radius:999px;color:var(--ash);text-decoration:none;font:12px "Recursive",monospace;font-variation-settings:"MONO" 1}
   .pill.on{background:var(--accent);border-color:var(--accent);color:#000}
   .sub{border:1px solid var(--line);border-radius:18px;padding:22px 24px;margin-bottom:16px;background:rgba(255,255,255,.02)}
   .sub.done{opacity:.55}
   .sub header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
-  .sub h2{margin:0;font:400 1.8rem/1.1 "Instrument Serif",serif;color:var(--white)}
+  .sub h2{margin:0;font:400 1.8rem/1.1 "Boska",serif;color:var(--white)}
   .when{margin-left:auto}
-  .tag{padding:3px 9px;border-radius:999px;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:#000}
+  .tag{padding:3px 9px;border-radius:999px;font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:#000}
   .tag.t-mira{background:var(--accent)} .tag.t-contacto{background:var(--b2);color:#fff}
   form{margin:0}
-  button{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--white);cursor:pointer;font:500 13px Inter,sans-serif}
+  button{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--white);cursor:pointer;font:500 13px "Recursive",sans-serif;font-variation-settings:"MONO" 0}
   .sub.done button{border-color:var(--accent);color:var(--accent)}
   .mira{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .mira section{padding:14px 16px;border:1px solid var(--line);border-radius:12px}
   .mira section:nth-child(1){--c:var(--b1)} .mira section:nth-child(2){--c:var(--b2)}
   .mira section:nth-child(3){--c:var(--b3)} .mira section:nth-child(4){--c:var(--b4)}
   .mira section.mira-proj{grid-column:1 / -1;--c:var(--b6)}
-  h3{margin:0 0 10px;font:500 12px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--c,var(--ash))}
-  h3 i{font:italic 1.4rem "Instrument Serif",serif;margin-right:4px}
+  h3{margin:0 0 10px;font:500 12px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.08em;text-transform:uppercase;color:var(--c,var(--ash))}
+  h3 i{font:500 1.15rem "Recursive",sans-serif;font-style:normal;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;letter-spacing:-.02em;text-transform:none;margin-right:4px}
   .sub p{margin:0 0 10px}
-  .sub p b{display:block;font:400 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+  .sub p b{display:block;font:400 11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
   .none{color:#4a4e52;font-style:italic}
   .who{margin:14px 0 0 !important}
   .empty{color:var(--iron)}
-  code{font-family:"JetBrains Mono",monospace;color:var(--accent)}
+  code{font-family:"Recursive",monospace;font-variation-settings:"MONO" 1;color:var(--accent)}
   .pill.new{margin-left:auto;border-color:var(--accent);color:var(--accent)}
   .tag.t-ok{background:var(--accent)} .tag.t-wait{background:var(--b1)}
   .tag.t-verde{background:#3ad389} .tag.t-amarillo{background:#f4c20d} .tag.t-rojo{background:#ff5c6e}
@@ -2637,18 +2639,18 @@ function page(title, content, status = 200, script = "", shell = false){
   .prop{display:flex;flex-direction:column;gap:10px;margin:0;padding:12px 12px 18px}
   .prop > header,.prop > .prop-sum,.prop > .linkrow{padding:0 8px}
   .prop > header{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
-  .prop h2{margin:0;font:400 24px/1.1 "Instrument Serif",serif}
+  .prop h2{margin:0;font:400 24px/1.1 "Boska",serif}
   .prop-cover{display:block;aspect-ratio:1200/630;border-radius:12px;overflow:hidden;background:#0b0c0d;border:1px solid var(--line)}
   .prop-cover img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
   .prop-blank{display:grid;place-items:center;width:100%;height:100%}
   .prop-blank img{width:72px;height:auto;opacity:.85}
   .md hr{border:0;border-top:1px solid var(--line);margin:28px 0}
-  .md pre{overflow:auto;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#0b0c0d;font:12px/1.6 "JetBrains Mono",monospace}
+  .md pre{overflow:auto;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#0b0c0d;font:12px/1.6 "Recursive",monospace;font-variation-settings:"MONO" 1}
   .md img{max-width:100%;height:auto;border-radius:10px}
   .prop-sum{margin:0;color:var(--ash);font-size:14px;line-height:1.5}
   .prop .linkrow{margin-top:auto}
   .linkrow form{margin:0}
-  .tquote{margin:0 0 12px;font:400 1.5rem/1.25 "Instrument Serif",serif;color:var(--white)}
+  .tquote{margin:0 0 12px;font:400 1.5rem/1.25 "Boska",serif;color:var(--white)}
   .tmeta{margin:0 0 6px !important}
   .dots{display:inline-flex;gap:4px;vertical-align:-2px;margin-right:6px}
   .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
@@ -2659,8 +2661,8 @@ function page(title, content, status = 200, script = "", shell = false){
   .linkrow input{flex:1;min-width:260px;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#000;color:var(--bone)}
   .kicker a{color:var(--ash)}
   .newauth{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px}
-  .newauth label{display:flex;flex-direction:column;gap:6px;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
-  .newauth input{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:15px Inter,sans-serif;text-transform:none;letter-spacing:0}
+  .newauth label{display:flex;flex-direction:column;gap:6px;font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+  .newauth input{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:15px "Recursive",sans-serif;font-variation-settings:"MONO" 0;text-transform:none;letter-spacing:0}
   .padwrap{grid-column:1 / -1;padding:14px;border-radius:14px;background:#f7f6f2}
   .padlabel{display:block;margin-bottom:8px;color:#6b6f75}
   #pad{display:block;width:100%;height:180px;border-bottom:1px solid #8c9094;touch-action:none;cursor:crosshair;background:#fff;border-radius:8px}
@@ -2677,9 +2679,9 @@ function page(title, content, status = 200, script = "", shell = false){
   .padtools .pill{color:#111;border-color:#c9c8c2}
   .totals a{color:var(--ash)} .totals a.on{color:var(--accent)}
   .campaign label{display:flex;align-items:center;gap:10px;justify-content:flex-end}
-  .campaign span{font:11px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
+  .campaign span{font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
   .campaign select{min-width:230px;padding:9px 36px 9px 14px;border-radius:999px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);
-    font:14px Inter,sans-serif;cursor:pointer;appearance:none;
+    font:14px "Recursive",sans-serif;font-variation-settings:"MONO" 0;cursor:pointer;appearance:none;
     background-image:linear-gradient(45deg,transparent 50%,var(--ash) 50%),linear-gradient(135deg,var(--ash) 50%,transparent 50%);
     background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
   .campaign select:focus{outline:2px solid var(--accent);outline-offset:2px}
@@ -2689,17 +2691,17 @@ function page(title, content, status = 200, script = "", shell = false){
   .totals .campaign ~ a,.totals .pickline{display:inline-block;margin-top:10px}
   @media (max-width:720px){.totals{text-align:left}.campaign label{justify-content:flex-start}}
   .pipeline{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:18px}
-  .pipeline a{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;color:var(--ash);text-decoration:none;font:11px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.05em}
-  .pipeline b{font:400 1.9rem/1 "Instrument Serif",serif;color:var(--white);letter-spacing:0}
+  .pipeline a{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;color:var(--ash);text-decoration:none;font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;text-transform:uppercase;letter-spacing:.05em}
+  .pipeline b{font:400 1.9rem/1 "Boska",serif;color:var(--white);letter-spacing:0}
   .pipeline a.on{border-color:var(--accent)} .pipeline a.on b{color:var(--accent)}
   .pipeline a.today{border-style:dashed}
   /* the search gets its own row, as wide as the filters above it */
   .search{flex:1 1 100%;display:flex;margin-top:4px}
-  .search input,.pform input,.pform select,.pform textarea{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:14px Inter,sans-serif}
+  .search input,.pform input,.pform select,.pform textarea{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:14px "Recursive",sans-serif;font-variation-settings:"MONO" 0}
   .search input{flex:1;width:100%;min-width:0;border-radius:999px}
   .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-bottom:18px}
   .ptable{width:100%;border-collapse:collapse;font-size:14px}
-  .ptable th{text-align:left;padding:10px 12px;font:400 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron);border-bottom:1px solid var(--line)}
+  .ptable th{text-align:left;padding:10px 12px;font:400 11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:var(--iron);border-bottom:1px solid var(--line)}
   .ptable td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
   .ptable tr:last-child td{border-bottom:0}
   .ptable .tag{white-space:nowrap}
@@ -2708,17 +2710,17 @@ function page(title, content, status = 200, script = "", shell = false){
   a.biz:hover{color:var(--accent)}
   .sub2{display:block;font-size:11px}
   .due{color:var(--b1)}
-  .pball{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ash)}
+  .pball{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:var(--ash)}
   .pb{--c:#888;position:relative;display:inline-grid;place-items:center;flex:none;width:26px;height:26px;border-radius:50%;font-style:normal;
     background:var(--c);box-shadow:inset -3px -4px 6px rgba(0,0,0,.4),inset 2px 2px 4px rgba(255,255,255,.3)}
   .pb::before{content:"";position:absolute;width:13px;height:13px;border-radius:50%;background:#fffdf5}
-  .pb b{position:relative;font:600 9px/1 Inter,sans-serif;color:#111}
+  .pb b{position:relative;font:600 9px/1 "Recursive",sans-serif;font-variation-settings:"MONO" 0;color:#111}
   .pb1{--c:#f4c20d} .pb2{--c:#4d7dff} .pb3{--c:#ff5c6e} .pb4{--c:#a375d8} .pb5{--c:#ff9d3d}
   .pb8{--c:#0b0b0b;box-shadow:inset -3px -4px 6px rgba(0,0,0,.6),inset 2px 2px 4px rgba(255,255,255,.18),0 0 0 1px #2a2e31}
   /* the ball picker */
   .ballpick{display:flex;flex-wrap:wrap;gap:8px}
   form .ballpick label{position:relative;display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border:1px solid var(--line);border-radius:999px;cursor:pointer;
-    font:11px "JetBrains Mono",monospace;letter-spacing:.04em;text-transform:none;color:var(--ash);flex-direction:row;gap:8px}
+    font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.04em;text-transform:none;color:var(--ash);flex-direction:row;gap:8px}
   .ballpick input{position:absolute;opacity:0;pointer-events:none}
   .ballpick label:has(input:checked){border-color:var(--white);color:var(--white);background:rgba(255,255,255,.05)}
   .ballpick label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
@@ -2727,10 +2729,10 @@ function page(title, content, status = 200, script = "", shell = false){
   .searchrow input{flex:1}
   .minimap{height:300px !important;border:1px solid var(--line);border-radius:12px;overflow:hidden}
   .pform button[disabled]{opacity:.4;cursor:not-allowed}
-  .newauth select,.newauth textarea{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:15px Inter,sans-serif;text-transform:none;letter-spacing:0}
+  .newauth select,.newauth textarea{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0c0d;color:var(--white);font:15px "Recursive",sans-serif;font-variation-settings:"MONO" 0;text-transform:none;letter-spacing:0}
   .newauth .wide{grid-column:1 / -1}
   .newauth label[hidden]{display:none}
-  .flabel{display:block;margin-bottom:8px;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+  .flabel{display:block;margin-bottom:8px;font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
   .errline{color:var(--b3);margin:0 0 18px}
   .top .addp{align-self:flex-end;margin-bottom:10px}
   /* the map */
@@ -2752,8 +2754,8 @@ function page(title, content, status = 200, script = "", shell = false){
   #map .leaflet-popup-content-wrapper,#map .leaflet-popup-tip{background:#0b0c0d;color:var(--bone);border:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.6)}
   #map .leaflet-popup-content{margin:14px 16px}
   #map a.leaflet-popup-close-button{color:var(--ash)}
-  .mpop{min-width:220px;font:14px/1.4 Inter,sans-serif}
-  #map .mpop h4{margin:2px 0 4px;font:400 1.4rem/1.1 "Instrument Serif",serif;color:var(--white)}
+  .mpop{min-width:220px;font:14px/1.4 "Recursive",sans-serif;font-variation-settings:"MONO" 0}
+  #map .mpop h4{margin:2px 0 4px;font:400 1.4rem/1.1 "Boska",serif;color:var(--white)}
   #map .mpop p{margin:0 0 6px;color:var(--bone)}
   .mpop .mono{font-size:11px}
   .mlinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px !important}
@@ -2773,11 +2775,11 @@ function page(title, content, status = 200, script = "", shell = false){
   .sub h3{margin-bottom:14px}
   .sub a{color:var(--accent)}
   .pill.go-chat{display:inline-block;margin-top:4px;border-color:var(--accent);color:var(--accent)}
-  textarea.msg{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#0b0c0d;color:var(--bone);font:15px/1.5 Inter,sans-serif;resize:vertical}
+  textarea.msg{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#0b0c0d;color:var(--bone);font:15px/1.5 "Recursive",sans-serif;font-variation-settings:"MONO" 0;resize:vertical}
   .pform{display:flex;flex-direction:column;gap:12px}
   .pform .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media (max-width:640px){ .pform .fgrid{grid-template-columns:1fr} }
-  .pform label{display:flex;flex-direction:column;gap:6px;font:11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+  .pform label{display:flex;flex-direction:column;gap:6px;font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
   .pform .go{align-self:flex-start;background:var(--white);color:#000;border-color:var(--white)}
   .timeline,.plist{list-style:none;margin:0;padding:0}
   .timeline li,.plist li{padding:10px 0;border-bottom:1px solid var(--line)}
@@ -2785,10 +2787,10 @@ function page(title, content, status = 200, script = "", shell = false){
   .timeline .mono{display:block;margin-bottom:4px}
   .plist .bio{color:var(--ash);font-size:13px}
   .md{max-width:900px}
-  .md h2{font:400 2.6rem/1.05 "Instrument Serif",serif;color:var(--white);margin:0 0 18px}
-  .md h3{font:400 1.8rem/1.1 "Instrument Serif",serif;color:var(--white);text-transform:none;letter-spacing:0;margin:34px 0 12px}
-  .md h4{font:400 1.35rem/1.2 "Instrument Serif",serif;color:var(--white);margin:24px 0 8px}
-  .md h5{font:500 12px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ash);margin:18px 0 8px}
+  .md h2{font:400 2.6rem/1.05 "Boska",serif;color:var(--white);margin:0 0 18px}
+  .md h3{font:400 1.8rem/1.1 "Boska",serif;color:var(--white);text-transform:none;letter-spacing:0;margin:34px 0 12px}
+  .md h4{font:400 1.35rem/1.2 "Boska",serif;color:var(--white);margin:24px 0 8px}
+  .md h5{font:500 12px "Recursive",monospace;font-variation-settings:"MONO" 1;text-transform:uppercase;letter-spacing:.06em;color:var(--ash);margin:18px 0 8px}
   .md blockquote{margin:12px 0;padding:12px 16px;border-left:2px solid var(--accent);background:rgba(255,255,255,.03);color:var(--bone)}
   .md a{color:var(--accent)} .md li.deep{margin-left:22px;color:var(--ash)}
   @media (max-width:900px){.pipeline{grid-template-columns:repeat(4,1fr)}.pgrid{grid-template-columns:1fr}}
@@ -2797,16 +2799,16 @@ function page(title, content, status = 200, script = "", shell = false){
   main.wide{max-width:none;padding:0}
   .shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
   .side{position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:18px;padding:26px 16px;border-right:1px solid var(--line);background:#030404}
-  .side-brand{display:flex;align-items:center;gap:10px;padding:0 8px;color:var(--white);text-decoration:none;font:500 13px "JetBrains Mono",monospace}
+  .side-brand{display:flex;align-items:center;gap:10px;padding:0 8px;color:var(--white);text-decoration:none;font:500 13px "Recursive",monospace;font-variation-settings:"MONO" 1}
   .side-brand img{width:26px;height:auto}
   .side-brand span{margin-left:auto;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
   .side-nav{display:flex;flex-direction:column;gap:2px}
-  .nav-group{margin:16px 8px 6px;font:11px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+  .nav-group{margin:16px 8px 6px;font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
   .nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:10px;color:var(--ash);text-decoration:none;font-size:14px}
   .nav-item:hover{background:rgba(255,255,255,.04);color:var(--white)}
   .nav-item.on{background:rgba(58,211,137,.1);color:var(--white);box-shadow:inset 2px 0 0 var(--accent)}
-  .badge{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--b1);color:#000;font:600 11px "JetBrains Mono",monospace;text-align:center}
-  .side-site{margin-top:auto;padding:8px;color:var(--iron);font:12px "JetBrains Mono",monospace;text-decoration:none}
+  .badge{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--b1);color:#000;font:600 11px "Recursive",monospace;font-variation-settings:"MONO" 1;text-align:center}
+  .side-site{margin-top:auto;padding:8px;color:var(--iron);font:12px "Recursive",monospace;font-variation-settings:"MONO" 1;text-decoration:none}
   .side-site:hover{color:var(--accent)}
   .side-out{padding:0 8px}
   .side-out button{width:100%;font-size:12px;color:var(--ash)}
@@ -2830,14 +2832,14 @@ function page(title, content, status = 200, script = "", shell = false){
   /* the call forms */
   .frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
   details{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
-  details > summary{cursor:pointer;color:var(--accent);font:500 13px Inter,sans-serif}
+  details > summary{cursor:pointer;color:var(--accent);font:500 13px "Recursive",sans-serif;font-variation-settings:"MONO" 0}
   details[open] > summary{margin-bottom:12px}
   @media (max-width:720px){.pick{grid-template-columns:1fr}}
   .tile{display:flex;flex-direction:column;gap:4px;padding:18px 20px;border:1px solid var(--line);border-radius:16px;text-decoration:none;background:rgba(255,255,255,.02)}
   .tile:hover{border-color:var(--ash)}
   .tile.hot{border-color:var(--b1)}
-  .tile-label{font:11px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
-  .tile b{font:400 3rem/1 "Instrument Serif",serif;color:var(--white)}
+  .tile-label{font:11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.08em;text-transform:uppercase;color:var(--iron)}
+  .tile b{font:400 3rem/1 "Boska",serif;color:var(--white)}
   .tile.hot b{color:var(--b1)}
   .tile-line{font-size:13px;color:var(--ash)}
   @media (max-width:900px){

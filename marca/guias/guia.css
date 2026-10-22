@@ -9,7 +9,7 @@
 .block ul{margin-top:1mm}
 .block li b{color:var(--white);font-weight:500}
 /* a right / wrong example, in mono */
-.ex{margin:2.2mm 0 0;padding:2mm 2.6mm;border:1px solid var(--hairline);border-radius:2mm;font-family:var(--mono);font-size:6.8pt;line-height:1.6;color:var(--ash)}
+.ex{margin:2.2mm 0 0;padding:2mm 2.6mm;border:1px solid var(--hairline);border-radius:2mm;font-family:var(--mono);font-variation-settings:"MONO" 1;font-size:6.8pt;line-height:1.6;color:var(--ash)}
 .ex .ok{color:var(--b6)} .ex .no{color:var(--b3)}
 .ex span{display:block}
 
@@ -19,7 +19,7 @@
 .data div:last-child{border-right:0}
 .val{font-size:9pt;line-height:1.35}
 
-.lede{margin:0 0 4mm;font-family:var(--mono);font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:var(--iron)}
+.lede{margin:0 0 4mm;font-family:var(--mono);font-variation-settings:"MONO" 1;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:var(--iron)}
 
 /* the coherence test: a box to tick on paper or on screen */
 table.check td:first-child{width:7mm}
@@ -30,9 +30,21 @@ table.check td{font-size:8.8pt}
 .closing{display:grid;grid-template-columns:1.3fr 1fr;gap:6mm;align-items:center;margin-bottom:6mm;padding:5mm 6mm;border:1px solid var(--hairline);border-radius:4mm;background:rgba(255,255,255,.025)}
 .closing h2{margin:0 0 2mm;font-size:17pt}
 .closing p{margin:0;font-size:8.8pt;color:var(--ash)}
-.closing .go{font-family:var(--mono);font-size:8pt;line-height:1.7;color:var(--bone)}
+.closing .go{font-family:var(--mono);font-variation-settings:"MONO" 1;font-size:8pt;line-height:1.7;color:var(--bone)}
 .closing .go b{color:var(--accent);font-weight:500}
 
 /* the 8 is black on black: a thin ring for the ball, light dots for its list */
 .c8 .ball{box-shadow:inset -1mm -1mm 1.6mm rgba(0,0,0,.4),0 0 0 .3mm #5a5e63}
 .c8 li::before{background:var(--bone)}
+
+/* Recursive runs a little wider than the old text font: the gaps between
+   sections tighten (7 mm to 5 mm, as the document guide allows) so each
+   step still fits on its sheet, with the body at 8.6 pt */
+.head{margin-bottom:5mm}
+.intro{margin-bottom:5mm}
+.data{margin-bottom:5mm}
+.highlight{margin-bottom:5mm}
+.lede{margin-bottom:3mm}
+.block{padding:4mm 4mm 3.5mm}
+.block .why{margin-bottom:1.5mm}
+.block li{margin-bottom:1.2mm;line-height:1.42}
