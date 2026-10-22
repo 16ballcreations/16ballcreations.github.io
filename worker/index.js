@@ -164,7 +164,7 @@ async function saveDmarc(env, xml){
 function dmarcSource(r){
   const d = (r.spf_domain || "").toLowerCase();
   if(d === "gmail.com" || d === "google.com" || /^209\.85\.|^2607:f8b0:/.test(r.source_ip || "")){
-    return { label:"Gmail · hola@ con «Enviar como»", ours:true };
+    return { label:"Gmail · «Enviar como» (crea@ u hola@)", ours:true };
   }
   if(d.endsWith("16ballcreations.com") || d.endsWith("cloudflare-email.net")){
     return { label:"Reenvío de Cloudflare (correo recibido)", ours:true };
@@ -239,6 +239,11 @@ export default {
     }
     /* pages that no longer exist go, for good, to the closest one */
     if(RETIRED[path]){ return Response.redirect(url.origin + RETIRED[path], 301); }
+    /* .../index.html is the same page as .../: the asset handling would send
+       it there with a 307, and Google wants a permanent one */
+    if(/\/index\.html$/.test(url.pathname) && (request.method === "GET" || request.method === "HEAD")){
+      return Response.redirect(url.origin + url.pathname.slice(0, -"index.html".length) + url.search, 301);
+    }
 
     if(path === "/api/mira" || path === "/api/contacto"){
       if(request.method === "OPTIONS"){ return preflight(request, url); }

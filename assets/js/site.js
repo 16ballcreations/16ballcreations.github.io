@@ -379,7 +379,7 @@
                     : "Hi, my name is " + name + " and I need " + kind + ".\n\nThe idea:\n") + idea + "\n\nReach me at: " + reach + "\n"
           : (unsure ? "Hola, me llamo " + name + ". Todavía no sé bien qué necesito, pero esta es la idea:\n\n"
                     : "Hola, me llamo " + name + " y necesito " + kind + ".\n\nLa idea:\n") + idea + "\n\nEscríbeme a: " + reach + "\n";
-        window.location.href = "mailto:hola@16ballcreations.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        window.location.href = "mailto:crea@16ballcreations.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
       }).then(function(){ sendBtn.disabled = false; });
     });
   }

@@ -6,6 +6,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["C:/Dev/lyl-consultores/scripts/servir.mjs", "4321"],
       "port": 4321
+    },
+    {
+      "name": "16bc-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 8787
     }
   ]
 }

@@ -35,7 +35,7 @@ Archivos de referencia (todas las rutas son absolutas en este equipo):
   paréntesis.
 - **Cómo se presenta Renne**, igual en todas partes: «Renne Castellanos · Fundador
   de 16 Ball Creations. Le doy vida a las ideas.»
-- **Contacto:** hola@16ballcreations.com · Medellín, Colombia.
+- **Contacto:** crea@16ballcreations.com · Medellín, Colombia.
 - **Trayectoria, si hace falta:** desde 2013; proyectos en Venezuela, Colombia
   y Costa Rica.
 
@@ -147,7 +147,7 @@ En este orden (la plantilla ya lo trae):
    de líneas finas para cifras y cronogramas, texto corrido.
 6. **Frase destacada** (opcional): una sola idea, con borde de acento.
 7. **Zona de papel con firmas** (solo si aplica).
-8. **Pie:** "Contacto: hola@16ballcreations.com" a la izquierda y "Si no
+8. **Pie:** "Contacto: crea@16ballcreations.com" a la izquierda y "Si no
    existe, lo creamos." a la derecha, en mono pequeño.
 
 Cada `<article class="sheet">` es una hoja. Para más páginas, copia la hoja

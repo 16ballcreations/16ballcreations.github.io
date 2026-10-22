@@ -11,7 +11,7 @@
   var root = document.documentElement;
   var HEX = { 1:"#f4c20d",2:"#4d7dff",3:"#ff5c6e",4:"#a375d8",5:"#ff9d3d",6:"#3ad389",7:"#e0765f",8:"#e8e8e8" };
   var STORE = "testimonio-v1";
-  var MAIL = "hola@16ballcreations.com";
+  var MAIL = "crea@16ballcreations.com";
   var API = /\.github\.io$/.test(location.hostname) ? "https://16ballcreations.com" : "";
   var SAY = { 1:"No cumplió lo que esperaba", 2:"Le faltó algo", 3:"Cumplió", 4:"Me encantó", 5:"Superó lo que esperaba" };
 

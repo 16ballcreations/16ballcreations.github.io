@@ -19,7 +19,7 @@
   /* the personal link and the channel, kept apart from the answers */
   var ref = {};
   try{ ref = JSON.parse(localStorage.getItem(STORE + ":ref") || "{}") || {}; }catch(e){}
-  var MAIL = "hola@16ballcreations.com";
+  var MAIL = "crea@16ballcreations.com";
 
   function setAccent(n){ if(HEX[n]){ root.style.setProperty("--accent", HEX[n]); } }
   function $(s, r){ return (r || document).querySelector(s); }

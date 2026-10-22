@@ -20,7 +20,7 @@ import { SERVICES_EN, HOME_FAQ as HOME_FAQ_EN } from "./services-en-data.mjs";
 
 const PREVIEW = false;
 const ORIGIN = "https://16ballcreations.com";
-const MAIL = "hola@16ballcreations.com";
+const MAIL = "crea@16ballcreations.com";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 

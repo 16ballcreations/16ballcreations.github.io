@@ -34,7 +34,7 @@ try{
 }catch(e){}
 if(!origin){ console.error("No encontré punto_de_partida (lat, lon) en prospectos_16bc_handoff.json"); process.exit(1); }
 
-const UA = "16BallCreations-prospect-map/1.0 (hola@16ballcreations.com)";
+const UA = "16BallCreations-prospect-map/1.0 (crea@16ballcreations.com)";
 const MAX_KM = 6;                       /* farther than this from the start: not shown */
 await mkdir(join(root, "tmp"), { recursive: true });
 
