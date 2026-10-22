@@ -48,6 +48,11 @@ const SITE = "https://16ballcreations.com";
    and the query (a MIRA ?t= or an authorisation token survives the move).
    The API is left alone so a form posted from an old page still arrives. */
 const MOVED_HOSTS = ["page.16ballcreations.workers.dev", "www.16ballcreations.com"];
+/* retired pages and where they now lead (Video para redes left the offer on 22 Oct) */
+const RETIRED = {
+  "/servicios/video-para-redes": "/servicios/",
+  "/en/services/social-video": "/en/services/"
+};
 /* Where Email Routing delivers the studio's mail (a verified destination) */
 const INBOX = "16ballcreations@gmail.com";
 
@@ -232,6 +237,8 @@ export default {
     if(MOVED_HOSTS.includes(url.hostname) && (request.method === "GET" || request.method === "HEAD") && !path.startsWith("/api/")){
       return Response.redirect(SITE + url.pathname + url.search, 301);
     }
+    /* pages that no longer exist go, for good, to the closest one */
+    if(RETIRED[path]){ return Response.redirect(url.origin + RETIRED[path], 301); }
 
     if(path === "/api/mira" || path === "/api/contacto"){
       if(request.method === "OPTIONS"){ return preflight(request, url); }

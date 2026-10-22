@@ -51,13 +51,13 @@ const LOCALES = {
       faqK: "Preguntas frecuentes", faqH: "Lo que nos <em>preguntan</em>",
       faqLead: "Si tu pregunta no está aquí, escríbenos: respondemos en menos de 24 horas.",
       ctaH: "Empieza por tu <em>MIRA</em>",
-      ctaP: price => `Cinco preguntas sobre tu marca, unos tres minutos y gratis. Con tus respuestas preparamos una llamada de 30 minutos. Proyectos desde ${price}.`,
+      ctaP: price => `Cinco preguntas sobre tu marca, unos tres minutos y gratis. Con tus respuestas preparamos una llamada de 30 minutos. Si quieres el diagnóstico completo por escrito, la auditoría de marca cuesta ${price}.`,
       others: "Otros servicios", seeService: "Ver el servicio",
-      desc: (s, price) => `${s.line} ${s.intro.split(". ")[0]}. Desde ${price}; empieza con tu MIRA gratis.`,
+      desc: (s, price) => `${s.line} ${s.intro.split(". ")[0]}.${s.price ? " " + price + "." : ""} Empieza con tu MIRA gratis.`,
       idxTitle: "Servicios: marca, páginas web, tiendas y redes · 16 Ball Creations",
-      idxDesc: price => `Identidad de marca, páginas web, tiendas en línea, sistemas para tu negocio, video para redes y asesoría de imagen, para marcas de cualquier lugar. Todo empieza con tu MIRA, gratis. Proyectos desde ${price}.`,
+      idxDesc: price => `Auditoría de marca, identidad de marca, páginas web, tiendas en línea, sistemas para tu negocio y asesoría de imagen, para marcas de cualquier lugar. Todo empieza con tu MIRA, gratis; la auditoría de marca cuesta ${price}.`,
       idxH1: "Lo que hacemos, <em>en orden</em>",
-      idxLine: price => `Primero entendemos tu marca: de dónde viene, por qué nació y a dónde va. Después le damos forma y la llevamos a donde vive. Proyectos desde ${price}.`,
+      idxLine: price => `Primero entendemos tu marca: de dónde viene, por qué nació y a dónde va. Después le damos forma y la llevamos a donde vive. La puerta de entrada es la auditoría de marca, ${price}.`,
       listName: "Servicios de 16 Ball Creations", catalog: "Lo que incluye"
     }
   },
@@ -77,13 +77,13 @@ const LOCALES = {
       faqK: "Questions", faqH: "What people <em>ask us</em>",
       faqLead: "If your question isn't here, write to us: we reply within 24 hours.",
       ctaH: "Start with your <em>MIRA</em>",
-      ctaP: price => `Five questions about your brand, about three minutes, and free. We use your answers to prepare a 30-minute call. Projects from ${price}.`,
+      ctaP: price => `Five questions about your brand, about three minutes, and free. We use your answers to prepare a 30-minute call. If you want the full diagnosis in writing, the brand audit costs ${price}.`,
       others: "Other services", seeService: "See the service",
-      desc: (s, price) => `${s.line} ${s.intro.split(". ")[0]}. From ${price}; start with your free MIRA.`,
+      desc: (s, price) => `${s.line} ${s.intro.split(". ")[0]}.${s.price ? " " + price + "." : ""} Start with your free MIRA.`,
       idxTitle: "Services: brand, websites, online stores and social media · 16 Ball Creations",
-      idxDesc: price => `Brand identity, websites, online stores, business systems, social media video and image advisory, for brands anywhere. Everything starts with your free MIRA. Projects from ${price}.`,
+      idxDesc: price => `Brand audit, brand identity, websites, online stores, business systems and image advisory, for brands anywhere. Everything starts with your free MIRA; the brand audit costs ${price}.`,
       idxH1: "What we do, <em>in order</em>",
-      idxLine: price => `First we understand your brand: where it comes from, why it was born and where it's going. Then we give it shape and take it where it lives. Projects from ${price}.`,
+      idxLine: price => `First we understand your brand: where it comes from, why it was born and where it's going. Then we give it shape and take it where it lives. The way in is the brand audit, ${price}.`,
       listName: "16 Ball Creations services", catalog: "What's included"
     }
   }
@@ -243,11 +243,7 @@ function servicePage(L, s){
         areaServed: AREAS,
         availableLanguage: ["es", "en"],
         url: abs(L, path),
-        offers: {
-          "@type": "Offer",
-          priceCurrency: L.currency,
-          priceSpecification: { "@type": "PriceSpecification", minPrice: L.minPrice, priceCurrency: L.currency }
-        },
+        ...(s.price ? { offers: { "@type": "Offer", price: String(s.price), priceCurrency: L.currency } } : {}),
         hasOfferCatalog: {
           "@type": "OfferCatalog",
           name: t.catalog,

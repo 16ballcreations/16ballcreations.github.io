@@ -85,6 +85,7 @@ Inter y JetBrains Mono).
   Precio en inglés: desde US$200. Los textos de cada proyecto en inglés van en
   el campo `en` de `projects.js`
 - `marca/guias/`: las **guías de regalo** para los rojos de la MIRA. Hoy, "Tu perfil de empresa en Google" (`perfil-de-empresa-google.html`) y su versión en inglés (`google-business-profile.html`), con los estilos de la plantilla de documentos. Los PDF se publican en `assets/guias/` y el panel los enlaza en cada MIRA roja. Para regenerarlos: `node scripts/pdf.mjs marca/guias/<guia>.html assets/guias/<guia>.pdf`
+- **Oferta (22 oct):** la puerta de entrada pagada es la **Auditoría de marca** ($700.000 COP · US$200), la única con precio público (`price` en su servicio). "Video para redes" salió de la oferta: sus direcciones viejas redirigen con 301 a los servicios (`RETIRED` en `worker/index.js`). El teléfono comercial (+57 310 494 9979) va en los datos de la empresa y en el contacto; debe ser el mismo de la ficha de Google y de Instagram
 - `llms.txt`: resumen en texto plano del estudio para las herramientas de IA (llmstxt.org): quiénes somos, dónde estamos, qué hacemos, proyectos y enlaces. Si cambian los servicios, los precios o los proyectos, se actualiza a mano
 - Preguntas frecuentes de la portada (las de Google, la IA y el precio): salen de `HOME_FAQ` en `scripts/servicios-data.mjs` y `scripts/services-en-data.mjs`; `scripts/servicios.mjs` las escribe en la portada, visibles y como `FAQPage`, entre los marcadores `faq` y `faq-ld`
 - `scripts/sitemap.mjs`: reescribe `sitemap.xml` con las páginas de los dos

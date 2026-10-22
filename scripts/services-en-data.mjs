@@ -14,7 +14,7 @@ const LIVE_STEP = {
 
 const FAQ_PRICE = {
   q: "How much does it cost?",
-  a: "Projects start at US$200. The final price depends on what you need; after the call we send you a written proposal, with no commitment. Your MIRA and the first call are free."
+  a: "It depends on what you need; after the call we send you a written proposal, with no commitment. Your MIRA and the first call are free, and if you want the full diagnosis in writing, the brand audit costs US$200."
 };
 const FAQ_WHERE = {
   q: "Do you work with clients outside Colombia?",
@@ -48,6 +48,37 @@ const FAQ_START = {
 };
 
 export const SERVICES_EN = [
+  {
+    key: "auditoria",
+    slug: "brand-audit",
+    ball: 5,
+    price: 200,
+    name: "Brand audit",
+    title: "Brand audit",
+    em: "channel by channel",
+    line: "We review your brand everywhere it shows up and give you, in writing, what's failing and how to fix it.",
+    intro: "It's the full MIRA, in depth. We review how your brand looks and what it says on your website, your Google profile, your social media, your contact details and in what AI answers when someone asks about your business. You get a document with every finding, its priority and how to fix it, and we go through it with you. You can make the corrections yourself, or make them with us.",
+    includes: [
+      "A channel-by-channel review: your website, your Google profile, your social media and your contact details",
+      "The AI test: what ChatGPT and Gemini answer when someone asks about your business",
+      "Every finding with its priority and how to fix it",
+      "A written document, yours to keep",
+      "A 45-minute walkthrough by video call",
+      "If you make the corrections with us within 30 days, what you paid is credited"
+    ],
+    steps: [
+      MIRA_STEP,
+      { t: "The research", d: "We look your brand up the way a customer would: on Google, on Maps, on your social media, on other sites and in AI tools." },
+      { t: "The document", d: "We write every finding channel by channel, with its priority and the exact way to fix it." },
+      { t: "The walkthrough", d: "We go through it with you in 45 minutes by video call and answer your questions." }
+    ],
+    faq: [
+      { q: "How much does the audit cost?", a: "US$200, paid upfront. If within the next 30 days you decide to have us make the corrections and your website, what you paid is credited to the project." },
+      { q: "Does the audit include the corrections?", a: "No. We tell you what to fix and how, so you or your team can do it. If you'd rather we do it, we quote it separately and the audit is credited." },
+      { q: "How is it different from the MIRA?", a: "The MIRA is free: five questions about your brand, a call and a first look. The audit is the full detail, in writing: what's failing, on which channel and how to fix it." },
+      FAQ_AI
+    ]
+  },
   {
     key: "marca",
     slug: "brand-identity",
@@ -169,35 +200,6 @@ export const SERVICES_EN = [
       { q: "Do I need to know about technology?", a: "No. The system uses your business's own words, and we teach you and your team how to use it." },
       FAQ_PRICE,
       FAQ_START
-    ]
-  },
-  {
-    key: "video",
-    slug: "social-video",
-    ball: 5,
-    name: "Video for social media",
-    title: "Video and content for social media",
-    em: "in your brand's voice",
-    line: "Filming, editing and content for Instagram, TikTok and YouTube that looks and sounds like your brand.",
-    intro: "Every video is your brand speaking out loud. We plan it from your story, film it and edit it with a style that repeats, so anyone who sees one of your videos recognizes it before reading your name. We learned it producing our own channel since 2020.",
-    includes: [
-      "Ideas and scripts drawn from your story",
-      "Filming and editing",
-      "A visual style that repeats: covers, captions, colors",
-      "A publishing calendar",
-      "Versions for Instagram, TikTok and YouTube"
-    ],
-    steps: [
-      MIRA_STEP,
-      { t: "Your content line", d: "We define what your brand talks about, how it says it and how its videos look." },
-      { t: "Filming and editing", d: "We produce the videos and pieces, and review them with you before they go out." },
-      { t: "Consistency", d: "We follow a calendar, look at what works and adjust, always in the same voice." }
-    ],
-    faq: [
-      { q: "Do you promise more followers?", a: "No. Our job is to make your content tell the same story as your brand, with quality and consistency. Followers depend on many things nobody fully controls." },
-      { q: "Do I have to be on camera?", a: "Not always. We decide together based on your brand: there are formats with a person, with the product, or with just a voice." },
-      FAQ_PRICE,
-      FAQ_WHERE
     ]
   },
   {

@@ -27,7 +27,7 @@ const LIVE_STEP = {
 
 const FAQ_PRICE = {
   q: "¿Cuánto cuesta?",
-  a: "Los proyectos van desde $700.000 COP. El valor depende de lo que necesites; después de la llamada te enviamos una propuesta por escrito, sin compromiso. La MIRA y la primera llamada no cuestan nada."
+  a: "Depende de lo que necesites; después de la llamada te enviamos una propuesta por escrito, sin compromiso. La MIRA y la primera llamada no cuestan nada, y si quieres el diagnóstico completo por escrito, la auditoría de marca cuesta $700.000 COP."
 };
 const FAQ_WHERE = {
   q: "¿Trabajan solo en Medellín?",
@@ -61,6 +61,39 @@ const FAQ_START = {
 };
 
 export const SERVICES = [
+  /* the entrance tier (rate card v5, 21 Oct): the full MIRA sold on its own,
+     with no corrections; it has a public price */
+  {
+    key: "auditoria",
+    slug: "auditoria-de-marca",
+    ball: 5,
+    price: 700000,
+    name: "Auditoría de marca",
+    title: "Auditoría de marca",
+    em: "canal por canal",
+    line: "Revisamos tu marca en cada lugar donde aparece y te entregamos, por escrito, qué está fallando y cómo corregirlo.",
+    intro: "Es la MIRA completa, a fondo. Revisamos cómo se ve y qué dice tu marca en tu página, tu ficha de Google, tus redes, tus datos de contacto y en lo que responde la IA cuando alguien pregunta por tu negocio. Te entregamos un documento con cada hallazgo, su prioridad y cómo corregirlo, y lo repasamos contigo. Las correcciones las puedes hacer tú, o hacerlas con nosotros.",
+    includes: [
+      "Revisión canal por canal: tu página, tu ficha de Google, tus redes y tus datos de contacto",
+      "La prueba de la IA: qué responden ChatGPT y Gemini cuando preguntan por tu negocio",
+      "Cada hallazgo con su prioridad y la forma de corregirlo",
+      "Un documento por escrito, tuyo para siempre",
+      "Una reunión de entrega de 45 minutos por videollamada",
+      "Si en 30 días haces las correcciones con nosotros, lo que pagaste se abona"
+    ],
+    steps: [
+      MIRA_STEP,
+      { t: "La investigación", d: "Buscamos tu marca como lo haría un cliente: en Google, en Maps, en tus redes, en otros sitios y en la IA." },
+      { t: "El documento", d: "Escribimos cada hallazgo canal por canal, con su prioridad y la forma exacta de corregirlo." },
+      { t: "La entrega", d: "Lo repasamos contigo en 45 minutos por videollamada y respondemos tus dudas." }
+    ],
+    faq: [
+      { q: "¿Cuánto cuesta la auditoría?", a: "$700.000 COP, de contado. Si en los 30 días siguientes decides que hagamos las correcciones y tu página, lo que pagaste se abona al proyecto." },
+      { q: "¿La auditoría incluye las correcciones?", a: "No. Te entregamos qué corregir y cómo, para que lo hagas tú o tu equipo. Si prefieres que lo hagamos nosotros, lo cotizamos aparte y la auditoría se abona." },
+      { q: "¿En qué se diferencia de la MIRA?", a: "La MIRA es gratis: cinco preguntas sobre tu marca, una llamada y un primer vistazo. La auditoría es el detalle completo, por escrito: qué falla, en qué canal y cómo corregirlo." },
+      FAQ_AI
+    ]
+  },
   {
     key: "marca",
     slug: "identidad-de-marca",
@@ -182,35 +215,6 @@ export const SERVICES = [
       { q: "¿Necesito saber de tecnología?", a: "No. El sistema usa las palabras de tu negocio y te enseñamos a usarlo a ti y a tu equipo." },
       FAQ_PRICE,
       FAQ_START
-    ]
-  },
-  {
-    key: "video",
-    slug: "video-para-redes",
-    ball: 5,
-    name: "Video para redes",
-    title: "Video y contenido para redes",
-    em: "con la voz de tu marca",
-    line: "Grabación, edición y contenido para Instagram, TikTok y YouTube, que se vea y suene como tu marca.",
-    intro: "Cada video es tu marca hablando en voz alta. Lo planeamos desde tu historia, lo grabamos y lo editamos con un estilo que se repite, para que quien vea un video tuyo lo reconozca antes de leer tu nombre. Lo aprendimos produciendo un canal propio desde 2020.",
-    includes: [
-      "Ideas y guiones a partir de tu historia",
-      "Grabación y edición",
-      "Un estilo visual que se repite: portadas, textos, colores",
-      "Calendario de publicaciones",
-      "Versiones para Instagram, TikTok y YouTube"
-    ],
-    steps: [
-      MIRA_STEP,
-      { t: "Tu línea de contenido", d: "Definimos de qué habla tu marca, cómo lo dice y con qué estilo se ven sus videos." },
-      { t: "Grabación y edición", d: "Producimos los videos y las piezas, y los revisamos contigo antes de publicar." },
-      { t: "Constancia", d: "Seguimos un calendario, revisamos qué funciona y ajustamos, siempre con la misma voz." }
-    ],
-    faq: [
-      { q: "¿Me prometen más seguidores?", a: "No. Nuestro trabajo es que tu contenido cuente la misma historia que tu marca, con calidad y constancia. Los seguidores dependen de muchas cosas que nadie controla del todo." },
-      { q: "¿Tengo que salir en cámara?", a: "No siempre. Lo definimos juntos según tu marca: hay formatos con persona, con producto o solo con voz." },
-      FAQ_PRICE,
-      FAQ_WHERE
     ]
   },
   {

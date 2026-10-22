@@ -2,6 +2,12 @@
    scripts/services-en-data.mjs: no lo edites a mano. */
 window.SERVICES = [
   {
+    "key": "auditoria",
+    "slug": "auditoria-de-marca",
+    "ball": 5,
+    "name": "Auditoría de marca"
+  },
+  {
     "key": "marca",
     "slug": "identidad-de-marca",
     "ball": 1,
@@ -26,12 +32,6 @@ window.SERVICES = [
     "name": "Sistemas para tu negocio"
   },
   {
-    "key": "video",
-    "slug": "video-para-redes",
-    "ball": 5,
-    "name": "Video para redes"
-  },
-  {
     "key": "asesoria",
     "slug": "asesoria-de-imagen-y-redes",
     "ball": 6,
@@ -39,6 +39,12 @@ window.SERVICES = [
   }
 ];
 window.SERVICES_EN = [
+  {
+    "key": "auditoria",
+    "slug": "brand-audit",
+    "ball": 5,
+    "name": "Brand audit"
+  },
   {
     "key": "marca",
     "slug": "brand-identity",
@@ -62,12 +68,6 @@ window.SERVICES_EN = [
     "slug": "business-systems",
     "ball": 4,
     "name": "Business systems"
-  },
-  {
-    "key": "video",
-    "slug": "social-video",
-    "ball": 5,
-    "name": "Video for social media"
   },
   {
     "key": "asesoria",

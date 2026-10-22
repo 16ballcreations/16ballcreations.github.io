@@ -39,6 +39,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/"/>
   </url>
   <url>
+    <loc>https://16ballcreations.com/servicios/auditoria-de-marca/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/auditoria-de-marca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/brand-audit/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/auditoria-de-marca/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/services/brand-audit/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/auditoria-de-marca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/brand-audit/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/auditoria-de-marca/"/>
+  </url>
+  <url>
     <loc>https://16ballcreations.com/servicios/identidad-de-marca/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
@@ -109,24 +127,6 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/sistemas-para-tu-negocio/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/business-systems/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/sistemas-para-tu-negocio/"/>
-  </url>
-  <url>
-    <loc>https://16ballcreations.com/servicios/video-para-redes/</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/video-para-redes/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/social-video/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/video-para-redes/"/>
-  </url>
-  <url>
-    <loc>https://16ballcreations.com/en/services/social-video/</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/video-para-redes/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/social-video/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/video-para-redes/"/>
   </url>
   <url>
     <loc>https://16ballcreations.com/servicios/asesoria-de-imagen-y-redes/</loc>
