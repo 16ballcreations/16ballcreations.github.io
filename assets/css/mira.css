@@ -14,7 +14,7 @@
   margin:0 0 48px;font-family:var(--font-display);font-weight:400;color:var(--white);
   font-size:clamp(3rem,8.4vw,7.4rem);line-height:.92;letter-spacing:-.025em;
 }
-.mira-title em{font-family:var(--font-script);font-style:normal;font-weight:400;font-size:1.16em;letter-spacing:0;color:var(--accent)}
+.mira-title em{font-family:var(--font-ui);font-style:normal;font-weight:500;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;letter-spacing:-.02em;font-size:.9em;color:var(--accent)}
 .btn-lg{padding:15px 28px;font-size:1rem}
 
 /* ---------- the four letters ---------- */

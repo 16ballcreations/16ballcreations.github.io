@@ -37,8 +37,10 @@ Archivos de referencia (rutas absolutas en este equipo):
 | **Subtítulos personales** (blog, diario, opinión) | **Caveat Brush** | `CaveatBrush-Regular.ttf` (SIL OFL) | En minúscula normal, como se escribe; nada de MAYÚSCULAS forzadas. |
 | **Textos informativos largos** (paneles, listas, datos, pasos) | **Recursive**, la del sitio | `recursive-*.woff2` (SIL OFL) | Sans (MONO 0) para el texto; en modo mono (`"MONO" 1`) para etiquetas, cifras y rótulos cortos en mayúscula. |
 | **Llamar la atención** (una palabra o cifra que tiene que saltar) | **Sekaiwo** | `Sekaiwo-Regular.ttf` (libre, también comercial) | Una o dos palabras, grande, junto a los trazos de lápiz (§4). Nunca para frases ni para subtítulos. |
-| **Subtítulos técnicos** (explicar cómo se hace algo) | **Trebuchet MS** · *por confirmar* | `trebuc.ttf`, `trebucbd.ttf` | La fuente de los correos y de la identidad. Solo se usa renderizada dentro del video: su licencia no permite publicarla en la web. |
-| **Títulos y cierres** | Boska + Mr Dafoe, como el sitio · *por confirmar* | `boska-*.woff2`, `mrdafoe-*.woff2` | La parte emocional en Mr Dafoe, como «*lo creamos.*» en el sitio. Reemplaza a Instrument Serif. |
+| **Subtítulos técnicos** (explicar cómo se hace algo) | **Recursive** | `recursive-*.woff2` | Sans, peso 600-700. La misma letra del sitio, para que la imagen quede unificada. |
+| **Títulos, cierres y portadas** | **Boska** + **Mr Dafoe**, como el sitio | `boska-*.woff2`, `mrdafoe-*.woff2` (ITF Free Font License · SIL OFL) | El título en Boska; la parte emocional en Mr Dafoe, como «*lo creamos.*» en el sitio. Reemplaza a Instrument Serif. |
+
+**Trebuchet MS no se usa en video** (su licencia no permite publicarla); queda solo para los documentos PDF.
 
 **Sekaiwo no tiene ¿ ¡ » – — · …** (los glifos existen pero están vacíos y salen en blanco, sin caer en otra fuente).
 En código, esos signos se dibujan con Caveat Brush (el texto se parte y esos caracteres van en un `span` aparte). Revisa la ñ y las tildes en cada palabra
@@ -54,7 +56,7 @@ Todas cubren el español completo (ñ, tildes, ¿¡) salvo lo dicho de Sekaiwo.
   bajan lo justo. Los apoyos van debajo de los subtítulos, no encima de la cara.
 - **Personales (Caveat Brush):** blanco hueso `#ecebe6` con sombra suave para leerse sobre la toma; la palabra que se
   está diciendo pasa a blanco pleno y las que vienen esperan en gris. Sin caja de color.
-- **Técnicos:** la palabra activa puede marcarse con el color del acento del video (una bola, §5).
+- **Técnicos (Recursive):** la palabra activa puede marcarse con el color del acento del video (una bola, §5).
 - Nombres que se escriben siempre igual: **16 Ball Creations**, **KaffeePlatz**, **PsicoFormando**, **Rivas Seven**,
   **Modularity**, **ERP**, **Cloudflare**, **Shopify**.
 
@@ -67,7 +69,7 @@ cortas, tachones y equis**. Nunca recuadros perfectos ni flechas de presentació
 - Línea de 4 a 7 px a 1080 de ancho, puntas redondeadas, un poco irregular: el trazo «hierve» cambiando la semilla del
   ruido unas 6 veces por segundo (`feTurbulence` + `feDisplacementMap`, como `sketch16.tsx`).
 - Un círculo no cierra perfecto: se pasa un poco del inicio. Un subrayado va con una ligera curva.
-- Color: el acento del video o blanco hueso. Uno o dos trazos por idea; si todo está marcado, nada salta.
+- Color: **el acento del video** (la bola del video o el color del cliente). Uno o dos trazos por idea; si todo está marcado, nada salta.
 - Van con Sekaiwo cuando hace falta una palabra: el circulito rodea la cifra, la flecha apunta a la palabra en Sekaiwo.
 - La **16 en boceto** («la que falta», «lo que aún no existe») es el acento para hablar de lo que todavía no existe.
 

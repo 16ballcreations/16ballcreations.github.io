@@ -28,12 +28,11 @@
   --b5:#ff9d3d; --b6:#3ad389; --b7:#e0765f; --b8:#e8e8e8;
   --accent:#3ad389;
 
-  /* the fonts live in assets/css/fuentes.css: Boska for titles, Mr Dafoe for
-     their accents, Recursive for text and (monospaced) for labels */
+  /* the fonts live in assets/css/fuentes.css: Boska for titles, Recursive for
+     text, monospaced for labels and casual for the titles' accents */
   --font-ui:"Recursive",system-ui,-apple-system,"Segoe UI",sans-serif;
   --font-display:"Boska","Times New Roman",serif;
   --font-mono:"Recursive",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --font-script:"Mr Dafoe","Brush Script MT",cursive;
 
   --max:1280px;
   --gap-section:128px;
@@ -672,23 +671,34 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
   .aura i{animation:none}
 }
 
-/* ---------- the accents in the titles: Mr Dafoe, as if written by hand ----------
-   Every part of a title that used to be in italics. The script runs small for
-   its size, so it grows a little to sit level with Boska. */
+/* ---------- the accents in the titles: Recursive casual ----------
+   The text font itself, slanted and casual, like a marker over the title:
+   it stands out without leaving the page's voice */
 .display em,.big em,.monument em,.price-big em,.mira-word,.manifesto-text .w.hot,
 .svc-hero h1 em,.cta-band h2 em,.card-invite h3 em{
-  font-family:var(--font-script);font-style:normal;font-weight:400;letter-spacing:0;
+  font-family:var(--font-ui);font-style:normal;font-weight:500;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;letter-spacing:-.02em;
 }
 .display em,.big em,.monument em,.price-big em,.mira-word,
-.svc-hero h1 em,.cta-band h2 em,.card-invite h3 em{font-size:1.16em;line-height:.9}
-.manifesto-text .w.hot{font-size:1.12em}
+.svc-hero h1 em,.cta-band h2 em,.card-invite h3 em{font-size:.9em;line-height:.95}
+.manifesto-text .w.hot{font-size:.94em}
+/* the closing line, never broken in two */
+.monument em{white-space:nowrap}
+/* and sized by its column, like the hero: "sin compromiso." measures about
+   7.3 times the font size and "Let's talk about" 5.5, so each language has
+   its own ceiling */
+.contact .wrap{container-type:inline-size}
+.monument{font-size:min(13.5rem,13.5vw,13.3cqi)}
+html[lang="en"] .monument{font-size:min(13.5rem,13.5vw,17.5cqi)}
+/* buttons and fields take the page font (browsers give them the system one) */
+button,input,select,textarea{font-family:inherit;font-variation-settings:inherit}
+
 /* the hero title is sized by its own column, not by the window: the column
    stops growing at 776 px while the window does not. The longest line
-   measures about 4.5 times the font size in Spanish and 6.2 in English
+   measures about 4.9 times the font size in Spanish ("lo creamos.") and 6.2 in English
    ("If it doesn't exist,"), so each language gets its own ceiling and no
    line ever breaks in two */
 .hero-head{container-type:inline-size}
-.hero-title{font-size:min(11rem,21cqi,16vw)}
+.hero-title{font-size:min(11rem,19.5cqi,16vw)}
 .hero-title .line > *{white-space:nowrap}
 html[lang="en"] .hero-title{font-size:min(11rem,15.5cqi,16vw)}
 /* buttons and fields take the page font (browsers give them the system one) */

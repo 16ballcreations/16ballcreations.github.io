@@ -13,7 +13,7 @@
 .rating label:hover .ball,.rating label.is-lit .ball{opacity:1;filter:none;transform:scale(1)}
 .rating input:checked + .ball{transform:scale(1.14) translateY(-3px)}
 .rating input:focus-visible + .ball{outline:2px solid var(--accent);outline-offset:4px}
-.rating-say{min-height:1.4em;margin:0;font-family:var(--font-script);font-size:1.9rem;color:var(--accent)}
+.rating-say{min-height:1.4em;margin:0;font-family:var(--font-ui);font-style:normal;font-weight:500;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;letter-spacing:-.02em;font-size:1.4rem;color:var(--accent)}
 
 /* ---------- how to appear ---------- */
 .publish{display:grid;gap:10px;margin-top:4px}
