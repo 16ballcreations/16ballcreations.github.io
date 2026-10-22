@@ -1,0 +1,115 @@
+/* Copia de los estilos de marca/plantilla-documento.html (la fuente es la plantilla).
+   Las guías la comparten; lo propio de cada guía va en guia.css. */
+  /* =====================================================================
+     16 Ball Creations · plantilla de documento PDF (A4)
+     Guía completa: marca/GUIA-DOCUMENTOS-PDF.md
+     Cada <article class="sheet"> es UNA hoja A4. Para más páginas, copia
+     otra .sheet completa. Nada debe salirse de los 297 mm de alto.
+     ===================================================================== */
+  :root{
+    /* superficies */
+    --void:#000000; --felt:#060707; --paper:#f7f6f2;
+    /* líneas y texto sobre negro */
+    --hairline:#2a2e31; --white:#ffffff; --bone:#ecebe6; --ash:#a1a4a5; --iron:#71757c;
+    /* texto sobre papel */
+    --ink:#111111; --ink-soft:#6b6f75; --rule:#d9d8d2;
+    /* las bolas: el único color del sistema */
+    --b1:#f4c20d; --b2:#4d7dff; --b3:#ff5c6e; --b4:#a375d8;
+    --b5:#ff9d3d; --b6:#3ad389; --b7:#e0765f; --b8:#e8e8e8;
+    /* UN acento por documento: elige una bola (por defecto, la 6) */
+    --accent:var(--b6);
+    --display:"Instrument Serif","Times New Roman",serif;
+    --ui:"Inter",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{margin:0;background:#1a1c1e;color:var(--bone);font-family:var(--ui);-webkit-font-smoothing:antialiased}
+  @page{size:A4;margin:0}
+
+  .sheet{
+    position:relative;width:210mm;height:297mm;margin:24px auto;padding:15mm 16mm 12mm;overflow:hidden;
+    display:flex;flex-direction:column;
+    background:var(--felt);
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+    page-break-after:always;break-after:page;
+  }
+  .sheet:last-child{page-break-after:auto;break-after:auto}
+  /* la cuadrícula tenue de la mesa, en vector y desvaneciéndose hacia abajo (liviana en PDF) */
+  .sheet::before{content:"";position:absolute;left:0;top:0;width:210mm;height:134mm;pointer-events:none;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22210mm%22%20height%3D%22134mm%22%20viewBox%3D%220%200%20210%20134%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20gradientUnits%3D%22userSpaceOnUse%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22134%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%22.035%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20stroke-width%3D%22.27%22%3E%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2210%22%20y1%3D%220%22%20x2%3D%2210%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2220%22%20y1%3D%220%22%20x2%3D%2220%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2230%22%20y1%3D%220%22%20x2%3D%2230%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2240%22%20y1%3D%220%22%20x2%3D%2240%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2250%22%20y1%3D%220%22%20x2%3D%2250%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2260%22%20y1%3D%220%22%20x2%3D%2260%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2270%22%20y1%3D%220%22%20x2%3D%2270%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2280%22%20y1%3D%220%22%20x2%3D%2280%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%2290%22%20y1%3D%220%22%20x2%3D%2290%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22100%22%20y1%3D%220%22%20x2%3D%22100%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22110%22%20y1%3D%220%22%20x2%3D%22110%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22120%22%20y1%3D%220%22%20x2%3D%22120%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22130%22%20y1%3D%220%22%20x2%3D%22130%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22140%22%20y1%3D%220%22%20x2%3D%22140%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22150%22%20y1%3D%220%22%20x2%3D%22150%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22160%22%20y1%3D%220%22%20x2%3D%22160%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22170%22%20y1%3D%220%22%20x2%3D%22170%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22180%22%20y1%3D%220%22%20x2%3D%22180%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22190%22%20y1%3D%220%22%20x2%3D%22190%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22200%22%20y1%3D%220%22%20x2%3D%22200%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%22210%22%20y1%3D%220%22%20x2%3D%22210%22%20y2%3D%22134%22%20stroke%3D%22url(%23g)%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%22210%22%20y2%3D%220%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0350%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2210%22%20x2%3D%22210%22%20y2%3D%2210%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0324%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2220%22%20x2%3D%22210%22%20y2%3D%2220%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0298%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2230%22%20x2%3D%22210%22%20y2%3D%2230%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0272%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2240%22%20x2%3D%22210%22%20y2%3D%2240%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0246%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2250%22%20x2%3D%22210%22%20y2%3D%2250%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0219%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2260%22%20x2%3D%22210%22%20y2%3D%2260%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0193%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2270%22%20x2%3D%22210%22%20y2%3D%2270%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0167%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2280%22%20x2%3D%22210%22%20y2%3D%2280%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0141%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2290%22%20x2%3D%22210%22%20y2%3D%2290%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0115%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%22100%22%20x2%3D%22210%22%20y2%3D%22100%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0089%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%22110%22%20x2%3D%22210%22%20y2%3D%22110%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0063%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%22120%22%20x2%3D%22210%22%20y2%3D%22120%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0037%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%22130%22%20x2%3D%22210%22%20y2%3D%22130%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%220.0010%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") no-repeat 0 0/210mm 134mm}
+  .sheet > *{position:relative}
+
+  /* --- encabezado --- */
+  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10mm;margin-bottom:7mm}
+  .brand{display:flex;align-items:center;gap:3mm;font-family:var(--mono);font-size:8.5pt;letter-spacing:.02em;color:var(--bone)}
+  .brand img{width:8mm;height:auto}
+  .kicker{margin:0;font-family:var(--mono);font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);text-align:right;line-height:1.6}
+  .kicker b{color:var(--accent);font-weight:500}
+
+  /* --- título e intro --- */
+  h1{margin:0 0 3mm;font-family:var(--display);font-weight:400;font-size:34pt;line-height:.95;letter-spacing:-.01em;color:var(--white)}
+  h1 em{font-style:italic;color:var(--accent)}
+  h2{margin:0 0 3mm;font-family:var(--display);font-weight:400;font-size:20pt;line-height:1.05;color:var(--white)}
+  h2 em{font-style:italic;color:var(--accent)}
+  .intro{margin:0 0 7mm;max-width:150mm;font-size:9.5pt;line-height:1.55;color:var(--ash)}
+  p{font-size:9.5pt;line-height:1.55;color:var(--bone)}
+
+  /* --- datos del cliente: cuadrícula de líneas finas --- */
+  .data{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--hairline);margin-bottom:7mm}
+  .data div{padding:2.6mm 4mm 2.6mm 0;border-bottom:1px solid var(--hairline)}
+  .data div:nth-child(odd){border-right:1px solid var(--hairline)}
+  .data div:nth-child(even){padding-left:4mm}
+  .data .wide{grid-column:1 / -1;border-right:0 !important;padding-left:0 !important}
+  .label{display:block;margin-bottom:1mm;font-family:var(--mono);font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+  .val{display:block;font-size:10.5pt;color:var(--white)}
+
+  /* --- bloques numerados con bolas --- */
+  .blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-bottom:7mm}
+  .blocks.two{grid-template-columns:repeat(2,1fr)}
+  .block{padding:4.5mm 4.5mm 4mm;border:1px solid var(--hairline);border-radius:4mm;background:rgba(255,255,255,.025)}
+  .block h3{margin:0 0 2.5mm;display:flex;align-items:center;gap:2.5mm;font-family:var(--display);font-weight:400;font-size:15pt;line-height:1.1;color:var(--white)}
+  .ball{
+    flex:none;width:6mm;height:6mm;border-radius:50%;display:inline-grid;place-items:center;
+    background:var(--c);box-shadow:inset -1mm -1mm 1.6mm rgba(0,0,0,.4);
+  }
+  .ball::after{content:attr(data-n);width:3mm;height:3mm;border-radius:50%;background:#fffdf5;color:#111;display:grid;place-items:center;font:600 5.5pt var(--ui)}
+  .block ul{margin:0;padding:0;list-style:none}
+  .block li{position:relative;padding-left:3.5mm;margin-bottom:1.6mm;font-size:8.6pt;line-height:1.45;color:var(--bone)}
+  .block li::before{content:"";position:absolute;left:0;top:1.9mm;width:1.4mm;height:1.4mm;border-radius:50%;background:var(--c)}
+  .block p{margin:0;font-size:8.6pt}
+  .c1{--c:var(--b1)} .c2{--c:var(--b2)} .c3{--c:var(--b3)} .c4{--c:var(--b4)}
+  .c5{--c:var(--b5)} .c6{--c:var(--b6)} .c7{--c:var(--b7)} .c8{--c:#111;}
+
+  /* --- frase destacada --- */
+  .highlight{margin:0 0 7mm;padding:4mm 6mm;border-left:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,transparent);border-radius:0 3mm 3mm 0}
+  .highlight p{margin:0;font-family:var(--display);font-size:13pt;line-height:1.35;color:var(--white)}
+  .highlight em{font-style:italic;color:var(--accent)}
+
+  /* --- tabla (inversión, cronograma…) --- */
+  table{width:100%;border-collapse:collapse;margin-bottom:7mm;font-size:9pt}
+  th{text-align:left;padding:2mm 0;font-family:var(--mono);font-weight:400;font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:var(--iron);border-bottom:1px solid var(--hairline)}
+  td{padding:2.4mm 0;border-bottom:1px solid var(--hairline);color:var(--bone);vertical-align:top}
+  td.num{text-align:right;font-family:var(--mono);color:var(--white)}
+  tr.total td{border-bottom:0;font-weight:500;color:var(--white)}
+
+  /* --- zona de papel: firmas o lo que el cliente escribe a mano.
+         Siempre al pie, con degradado desde el negro. --- */
+  .paper{
+    margin:auto -16mm -12mm;padding:13mm 16mm 7mm;color:var(--ink);
+    background:linear-gradient(180deg,var(--felt) 0,var(--paper) 11mm,var(--paper) 100%);
+  }
+  .signs{display:grid;grid-template-columns:1fr 1fr;gap:12mm;margin-bottom:6mm}
+  .sign .line{height:15mm;border-bottom:1px solid #8c9094}
+  .sign .name{margin-top:2mm;font-size:9.5pt;color:var(--ink)}
+  .sign .meta{margin-top:1mm;font-family:var(--mono);font-size:7pt;color:var(--ink-soft);letter-spacing:.04em}
+
+  /* --- pie --- */
+  .foot{display:flex;justify-content:space-between;align-items:center;padding-top:4mm;border-top:1px solid var(--hairline);font-family:var(--mono);font-size:7pt;color:var(--iron);margin-top:auto}
+  .paper .foot{border-top-color:var(--rule);margin-top:0}
+  .foot b{color:var(--bone);font-weight:400}
+  .paper .foot b{color:var(--ink)}
+
+  @media print{
+    body{background:var(--felt)}
+    .sheet{margin:0;box-shadow:none}
+  }

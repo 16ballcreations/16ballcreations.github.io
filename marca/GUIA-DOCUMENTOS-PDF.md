@@ -61,7 +61,7 @@ entenderse sin explicaciones.
   **No ofrecemos apps móviles.**
 - **MIRA** = Marca, Imagen, Redes y Alineación: el levantamiento que hacemos
   después de la primera llamada. Se escribe en mayúsculas.
-- **Precios:** en pesos colombianos; los proyectos van "desde $1.500.000 COP".
+- **Precios:** en pesos colombianos; los proyectos van "desde $700.000 COP".
   Nunca inventes cifras: si el pedido no trae precios, deja `$ 000` visible y
   avísalo al entregar.
 

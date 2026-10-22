@@ -37,7 +37,7 @@ const HEX = { 1:"#f4c20d", 2:"#4d7dff", 3:"#ff5c6e", 4:"#a375d8", 5:"#ff9d3d", 6
 const LOCALES = {
   es: {
     lang: "es", ogLocale: "es_CO", base: "/", dir: "servicios", home: "index.html", data: SERVICES,
-    mira: "/mira/?o=web", price: "$1.500.000 COP", minPrice: 1500000, currency: "COP",
+    mira: "/mira/?o=web", price: "$700.000 COP", minPrice: 700000, currency: "COP",
     status: {},
     t: {
       home: "Inicio", homeLabel: "16 Ball Creations, inicio", openMenu: "Abrir el men&uacute;", sections: "Secciones",
@@ -63,7 +63,7 @@ const LOCALES = {
   },
   en: {
     lang: "en", ogLocale: "en_US", base: "/en/", dir: "services", home: "en/index.html", data: SERVICES_EN,
-    mira: "/en/mira/?o=web", price: "US$400", minPrice: 400, currency: "USD",
+    mira: "/en/mira/?o=web", price: "US$200", minPrice: 200, currency: "USD",
     status: { "En línea":"Live", "Por estrenar":"Coming soon", "Continuo":"Ongoing", "En desarrollo":"In development" },
     t: {
       home: "Home", homeLabel: "16 Ball Creations, home", openMenu: "Open the menu", sections: "Sections",

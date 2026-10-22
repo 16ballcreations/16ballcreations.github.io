@@ -14,7 +14,7 @@ const LIVE_STEP = {
 
 const FAQ_PRICE = {
   q: "How much does it cost?",
-  a: "Projects start at US$400. The final price depends on what you need; after the call we send you a written proposal, with no commitment. Your MIRA and the first call are free."
+  a: "Projects start at US$200. The final price depends on what you need; after the call we send you a written proposal, with no commitment. Your MIRA and the first call are free."
 };
 const FAQ_WHERE = {
   q: "Do you work with clients outside Colombia?",

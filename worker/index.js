@@ -2455,13 +2455,18 @@ const QUALIFY = {
     coherencia:["Que su marca se sienta como una sola", 25], identidad:["Renovar su logo e identidad", 25], web:["Tener una página web", 25],
     tienda:["Tener una tienda en línea", 25], redes:["Ordenar sus redes", 25], sistema:["Organizar su negocio", 25], nose:["Todavía no lo sabe", 10] } },
   inversion: { label:"Piensa invertir", opts:{
-    r0:[{ es:"Menos de $1.500.000", en:"Menos de US$400" }, 0],
-    r1:[{ es:"$1.500.000 a $3.000.000", en:"US$400 a US$800" }, 30],
+    r0:[{ es:"Menos de $700.000", en:"Menos de US$200" }, 0],
+    r1:[{ es:"$700.000 a $3.000.000", en:"US$200 a US$800" }, 30],
     r2:[{ es:"$3.000.000 a $6.000.000", en:"US$800 a US$1.600" }, 30],
     r3:[{ es:"Más de $6.000.000", en:"Más de US$1.600" }, 30],
     hablar:["Prefiere hablarlo en la llamada", 15] } },
   decide: { label:"Decide", opts:{ yo:["Solo", 20], socio:["Con su socio o pareja", 12], equipo:["Un equipo o junta", 8] } },
   cuando: { label:"Quiere empezar", opts:{ ya:["Este mes", 25], pronto:["En 1 a 3 meses", 15], despues:["Más adelante: está explorando", 0] } }
+};
+/* the gift for the reds: the Google Business Profile guide, in their language */
+const GIFT = {
+  es:{ label:"Guía: tu perfil de empresa en Google", url:SITE + "/assets/guias/perfil-de-empresa-google.pdf" },
+  en:{ label:"Guide: your Google Business Profile (en inglés)", url:SITE + "/assets/guias/google-business-profile.pdf" }
 };
 const LIGHTS = {
   verde:{ label:"Verde", what:"Llámalo hoy" },
@@ -2495,7 +2500,8 @@ function miraAnswers(d){
   const light = d.semaforo && LIGHTS[d.semaforo.color];
   const project = p ? `
         <section class="mira-proj"><h3><i>6</i> Su proyecto</h3>
-          ${light ? `<p class="light l-${d.semaforo.color}"><b>Semáforo</b>${light.label} · ${d.semaforo.puntos} de 100 · ${light.what}${d.semaforo.color === "rojo" ? ": tres cambios rápidos para su marca, en un PDF con la plantilla de documentos" : ""}</p>` : ""}
+          ${light ? `<p class="light l-${d.semaforo.color}"><b>Semáforo</b>${light.label} · ${d.semaforo.puntos} de 100 · ${light.what}${d.semaforo.color === "rojo" ? ": envíale la guía de su perfil de Google" : ""}</p>` : ""}
+          ${d.semaforo && d.semaforo.color === "rojo" ? (g => `<div class="linkrow"><a class="pill go-chat" href="${g.url}" target="_blank" rel="noopener">${g.label}</a><button type="button" data-copy="${g.url}" data-label="Copiar enlace de la guía">Copiar enlace de la guía</button></div>`)(GIFT[d.idioma === "en" ? "en" : "es"]) : ""}
           ${Object.entries(QUALIFY).map(([k, q]) => row(q.label, qualifyLabel(k, p[k], d.idioma))).join("")}
           ${p.decide === "socio" ? `<p class="mono hintline">Decide con alguien más: invita a los dos a la llamada.</p>` : ""}
         </section>` : "";

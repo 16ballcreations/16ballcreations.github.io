@@ -27,7 +27,7 @@ const LIVE_STEP = {
 
 const FAQ_PRICE = {
   q: "¿Cuánto cuesta?",
-  a: "Los proyectos van desde $1.500.000 COP. El valor depende de lo que necesites; después de la llamada te enviamos una propuesta por escrito, sin compromiso. La MIRA y la primera llamada no cuestan nada."
+  a: "Los proyectos van desde $700.000 COP. El valor depende de lo que necesites; después de la llamada te enviamos una propuesta por escrito, sin compromiso. La MIRA y la primera llamada no cuestan nada."
 };
 const FAQ_WHERE = {
   q: "¿Trabajan solo en Medellín?",

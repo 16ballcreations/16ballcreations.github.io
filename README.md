@@ -54,7 +54,7 @@ Inter y JetBrains Mono).
   `hablar`, `yo`, `ya`…) y el Worker los convierte en puntos de 100 con la
   tabla `QUALIFY` de `worker/index.js`: verde desde 70 (llámalo hoy), amarillo
   desde 40 (llamada y seguimiento), rojo debajo o con el rango más bajo y "más
-  adelante" (regálale algo útil). **Si cambian los planes:** se cambian las
+  adelante" (regálale algo útil: el panel ofrece la guía de Google en su idioma). **Si cambian los planes:** se cambian las
   etiquetas de los rangos en `QUALIFY` y en las dos páginas (`mira/` y
   `en/mira/`, en USD); los códigos se quedan, así las MIRA viejas siguen
   leyéndose bien
@@ -82,8 +82,9 @@ Inter y JetBrains Mono).
   para Google). Los scripts (`site.js`, `table.js`, `v4.js`, `mira.js`) leen
   `<html lang>` y hablan en ese idioma. Lo que llega desde la versión en
   inglés (MIRA o contacto) trae `idioma: "en"` y el panel lo marca "En inglés".
-  Precio en inglés: desde US$400. Los textos de cada proyecto en inglés van en
+  Precio en inglés: desde US$200. Los textos de cada proyecto en inglés van en
   el campo `en` de `projects.js`
+- `marca/guias/`: las **guías de regalo** para los rojos de la MIRA. Hoy, "Tu perfil de empresa en Google" (`perfil-de-empresa-google.html`) y su versión en inglés (`google-business-profile.html`), con los estilos de la plantilla de documentos. Los PDF se publican en `assets/guias/` y el panel los enlaza en cada MIRA roja. Para regenerarlos: `node scripts/pdf.mjs marca/guias/<guia>.html assets/guias/<guia>.pdf`
 - `scripts/sitemap.mjs`: reescribe `sitemap.xml` con las páginas de los dos
   idiomas y sus pares. Córrelo después de `scripts/servicios.mjs`
 - La portada: proyectos arriba como tarjetas (los de `projects.js` con `order`,
