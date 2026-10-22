@@ -35,12 +35,16 @@ export const FAQ_MONTHLY = {
   q: "Do you charge for SEO every month?",
   a: "No. Every project has a fixed price. If you'd like us to keep looking after it afterwards, there's an optional care plan."
 };
+export const FAQ_INDEPENDENCE = {
+  q: "Will I depend on you for everything?",
+  a: "No, and that's the point. Everything we make is in your name: the domain, the accounts, the files and the copy. We teach you how to run it; if you'd rather we handle something, we do, but always with the information in your hands, so you're in control of your business."
+};
 export const FAQ_WEB_PRICE = {
   q: "How much does a website cost?",
   a: "It depends on what you need. There are template sites that cost very little and custom-designed sites that cost several times more. Ours are custom, built from your brand. After your MIRA and the call, we send you the exact price in writing, with no commitment."
 };
 /* the questions on the home page, with their FAQPage data */
-export const HOME_FAQ = [FAQ_AI, FAQ_BRAND_GOOGLE, FAQ_MONTHLY, FAQ_WEB_PRICE];
+export const HOME_FAQ = [FAQ_AI, FAQ_BRAND_GOOGLE, FAQ_MONTHLY, FAQ_INDEPENDENCE, FAQ_WEB_PRICE];
 
 const FAQ_START = {
   q: "Where do I start?",
@@ -139,6 +143,7 @@ export const SERVICES_EN = [
       { q: "Will my site rank first on Google?", a: "We won't promise that, on Google or on ChatGPT, because nobody can guarantee it. What we do is make everything say the same thing (your website, your Google profile and your social media) and build it properly: titles, descriptions, speed and a sitemap. That way Google and AI can understand you." },
       FAQ_AI,
       FAQ_MONTHLY,
+      FAQ_INDEPENDENCE,
       FAQ_WEB_PRICE
     ]
   },
@@ -222,7 +227,7 @@ export const SERVICES_EN = [
       MIRA_STEP,
       { t: "The review", d: "We go through your social profiles, your website and your pieces, and note where the story breaks." },
       { t: "Your plan", d: "We give you, in writing, what to change, in what order and how, with examples." },
-      { t: "Follow-through", d: "If you want, we apply it with you, or we do it for you." }
+      { t: "Follow-through", d: "If you want, we apply it with you, or we do it for you. We always show you how, so the control stays in your hands." }
     ],
     faq: [
       { q: "How is this different from the MIRA?", a: "The MIRA is the first, free look, to know where to start. The advisory is the full job: an in-depth review, a written plan and follow-through." },

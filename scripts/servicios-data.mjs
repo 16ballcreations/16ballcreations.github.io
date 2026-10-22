@@ -48,12 +48,17 @@ export const FAQ_MONTHLY = {
   q: "¿Ustedes cobran SEO cada mes?",
   a: "No. Cada proyecto tiene un precio cerrado. Si después quieres que sigamos cuidándolo, hay un plan de cuidado opcional."
 };
+/* our sell point: the client stays in control (Renne, 22 Oct) */
+export const FAQ_INDEPENDENCE = {
+  q: "¿Voy a depender de ustedes para todo?",
+  a: "No, y esa es la idea. Todo lo que hacemos queda a tu nombre: el dominio, las cuentas, los archivos y los textos. Te enseñamos a manejarlo; si prefieres que nos encarguemos de algo, lo hacemos, pero siempre con la información en tus manos, para que tengas el control de tu negocio."
+};
 export const FAQ_WEB_PRICE = {
   q: "¿Cuánto cuesta una página web en Medellín?",
   a: "Depende de lo que necesites. En el mercado hay páginas de plantilla por unos cientos de miles de pesos y páginas diseñadas a la medida que cuestan varias veces más. Las nuestras son a la medida, hechas desde tu marca. Después de tu MIRA y la llamada te enviamos el precio exacto por escrito, sin compromiso."
 };
 /* the questions on the home page, with their FAQPage data */
-export const HOME_FAQ = [FAQ_AI, FAQ_BRAND_GOOGLE, FAQ_MONTHLY, FAQ_WEB_PRICE];
+export const HOME_FAQ = [FAQ_AI, FAQ_BRAND_GOOGLE, FAQ_MONTHLY, FAQ_INDEPENDENCE, FAQ_WEB_PRICE];
 
 const FAQ_START = {
   q: "¿Por dónde empiezo?",
@@ -154,6 +159,7 @@ export const SERVICES = [
       { q: "¿Mi página va a salir primera en Google?", a: "No te lo vamos a prometer, ni en Google ni en ChatGPT, porque nadie puede garantizarlo. Lo que sí hacemos es que todo diga lo mismo (tu página, tu ficha de Google y tus redes) y dejarla bien hecha: títulos, descripciones, velocidad y un mapa del sitio. Así Google y la IA te entienden." },
       FAQ_AI,
       FAQ_MONTHLY,
+      FAQ_INDEPENDENCE,
       FAQ_WEB_PRICE
     ]
   },
@@ -237,7 +243,7 @@ export const SERVICES = [
       MIRA_STEP,
       { t: "La revisión", d: "Recorremos tus redes, tu página y tus piezas, y anotamos dónde la historia se rompe." },
       { t: "Tu plan", d: "Te entregamos por escrito qué cambiar, en qué orden y cómo, con ejemplos." },
-      { t: "Acompañamiento", d: "Si quieres, lo aplicamos contigo o lo hacemos por ti." }
+      { t: "Acompañamiento", d: "Si quieres, lo aplicamos contigo o lo hacemos por ti. Siempre te enseñamos cómo, para que el control quede en tus manos." }
     ],
     faq: [
       { q: "¿En qué se diferencia de la MIRA?", a: "La MIRA es el primer vistazo, gratis, para saber por dónde empezar. La asesoría es el trabajo completo: revisión a fondo, plan por escrito y acompañamiento." },

@@ -33,6 +33,8 @@ Archivos de referencia (todas las rutas son absolutas en este equipo):
   Creations)**. 16 Ball Creations no es una marca registrada, así que todo
   compromiso, autorización o acuerdo va a nombre de Renne, con la marca entre
   paréntesis.
+- **Cómo se presenta Renne**, igual en todas partes: «Renne Castellanos · Fundador
+  de 16 Ball Creations. Le doy vida a las ideas.»
 - **Contacto:** hola@16ballcreations.com · Medellín, Colombia.
 - **Trayectoria, si hace falta:** desde 2013; proyectos en Venezuela, Colombia
   y Costa Rica.
@@ -51,6 +53,10 @@ entenderse sin explicaciones.
   todas partes. **No prometemos** más ventas, más seguidores ni más
   visibilidad. Se habla de lo que el cliente quiere que su gente *sienta* y de
   que todo se vea y se sienta como una sola marca.
+- **El cliente queda en control.** Todo lo que hacemos queda a su nombre
+  (dominio, cuentas, archivos, textos) y le enseñamos a manejarlo. Si nos pide
+  que nos encarguemos de algo, lo hacemos, pero nunca dejamos que dependa de
+  nosotros.
 - **Sin jerga.** Nunca nombres de tecnologías (React, Angular, Django, Astro,
   Cloudflare, PHP…), ni "ERP", "BI", "backend", "full-stack", "deploy",
   "producción", "casos límite", "trazabilidad". Di lo que hace: "un sistema
