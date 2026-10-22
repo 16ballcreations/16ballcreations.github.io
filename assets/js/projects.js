@@ -80,7 +80,7 @@ window.PROJECTS = [
     },
     summary: "El relanzamiento de nuestra propia marca. Volvimos a su origen, la bola dieciséis que no existe, y desde ahí lo ordenamos todo: el sitio nuevo, la MIRA como primer paso, una guía para que cada documento que enviamos se vea y suene igual, y un panel privado donde llevamos cada MIRA, cada llamada y cada autorización.",
     tags: ["Relanzamiento de marca", "Sitio web", "Guía de documentos", "Sistema propio"],
-    image: "assets/img/projects/16-ball-creations.jpg?v=2",
+    image: "assets/img/projects/16-ball-creations.jpg?v=3",
     alt: "Portada del sitio de 16 Ball Creations: una mesa de pool con las bolas en juego y el titular «Si no existe, lo creamos»",
     links: []
   },
