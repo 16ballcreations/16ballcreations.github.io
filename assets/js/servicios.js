@@ -4,31 +4,31 @@ window.SERVICES = [
   {
     "key": "auditoria",
     "slug": "auditoria-de-marca",
-    "ball": 5,
+    "ball": 1,
     "name": "Auditoría de marca"
   },
   {
     "key": "marca",
     "slug": "identidad-de-marca",
-    "ball": 1,
+    "ball": 2,
     "name": "Identidad de marca"
   },
   {
     "key": "web",
     "slug": "paginas-web",
-    "ball": 2,
+    "ball": 3,
     "name": "Páginas web"
   },
   {
     "key": "tienda",
     "slug": "tiendas-en-linea",
-    "ball": 3,
+    "ball": 4,
     "name": "Tiendas en línea"
   },
   {
     "key": "sistemas",
     "slug": "sistemas-para-tu-negocio",
-    "ball": 4,
+    "ball": 5,
     "name": "Sistemas para tu negocio"
   },
   {
@@ -42,31 +42,31 @@ window.SERVICES_EN = [
   {
     "key": "auditoria",
     "slug": "brand-audit",
-    "ball": 5,
+    "ball": 1,
     "name": "Brand audit"
   },
   {
     "key": "marca",
     "slug": "brand-identity",
-    "ball": 1,
+    "ball": 2,
     "name": "Brand identity"
   },
   {
     "key": "web",
     "slug": "websites",
-    "ball": 2,
+    "ball": 3,
     "name": "Websites"
   },
   {
     "key": "tienda",
     "slug": "online-stores",
-    "ball": 3,
+    "ball": 4,
     "name": "Online stores"
   },
   {
     "key": "sistemas",
     "slug": "business-systems",
-    "ball": 4,
+    "ball": 5,
     "name": "Business systems"
   },
   {

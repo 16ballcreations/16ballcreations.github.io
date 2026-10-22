@@ -55,7 +55,7 @@ export const SERVICES_EN = [
   {
     key: "auditoria",
     slug: "brand-audit",
-    ball: 5,
+    ball: 1,
     price: 200,
     name: "Brand audit",
     title: "Brand audit",
@@ -86,7 +86,7 @@ export const SERVICES_EN = [
   {
     key: "marca",
     slug: "brand-identity",
-    ball: 1,
+    ball: 2,
     name: "Brand identity",
     title: "Brand identity",
     em: "people recognize",
@@ -116,7 +116,7 @@ export const SERVICES_EN = [
   {
     key: "web",
     slug: "websites",
-    ball: 2,
+    ball: 3,
     name: "Websites",
     title: "Website design",
     em: "that tells who you are",
@@ -150,7 +150,7 @@ export const SERVICES_EN = [
   {
     key: "tienda",
     slug: "online-stores",
-    ball: 3,
+    ball: 4,
     name: "Online stores",
     title: "Online stores",
     em: "with your brand end to end",
@@ -180,7 +180,7 @@ export const SERVICES_EN = [
   {
     key: "sistemas",
     slug: "business-systems",
-    ball: 4,
+    ball: 5,
     name: "Business systems",
     title: "Systems to run your business",
     em: "in one place",

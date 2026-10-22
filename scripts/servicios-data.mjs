@@ -71,7 +71,7 @@ export const SERVICES = [
   {
     key: "auditoria",
     slug: "auditoria-de-marca",
-    ball: 5,
+    ball: 1,
     price: 700000,
     name: "Auditoría de marca",
     title: "Auditoría de marca",
@@ -102,7 +102,7 @@ export const SERVICES = [
   {
     key: "marca",
     slug: "identidad-de-marca",
-    ball: 1,
+    ball: 2,
     name: "Identidad de marca",
     title: "Identidad de marca",
     em: "que se reconoce",
@@ -132,7 +132,7 @@ export const SERVICES = [
   {
     key: "web",
     slug: "paginas-web",
-    ball: 2,
+    ball: 3,
     name: "Páginas web",
     title: "Diseño de páginas web",
     em: "que cuentan quién eres",
@@ -166,7 +166,7 @@ export const SERVICES = [
   {
     key: "tienda",
     slug: "tiendas-en-linea",
-    ball: 3,
+    ball: 4,
     name: "Tiendas en línea",
     title: "Tiendas en línea",
     em: "con tu marca de punta a punta",
@@ -196,7 +196,7 @@ export const SERVICES = [
   {
     key: "sistemas",
     slug: "sistemas-para-tu-negocio",
-    ball: 4,
+    ball: 5,
     name: "Sistemas para tu negocio",
     title: "Sistemas para administrar tu negocio",
     em: "en un solo lugar",
