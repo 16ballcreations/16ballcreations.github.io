@@ -234,6 +234,13 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "") || "/";
 
+    /* plain http goes to https on the main domain in a single hop, www or not
+       (with "Always Use HTTPS" on, Cloudflare does it first and it takes two:
+       http://www → https://www → https://16ballcreations.com). Only our own
+       hostnames: wrangler dev serves http://localhost */
+    if(url.protocol === "http:" && (url.hostname === "16ballcreations.com" || MOVED_HOSTS.includes(url.hostname))){
+      return Response.redirect(SITE + url.pathname + url.search, request.method === "GET" || request.method === "HEAD" ? 301 : 308);
+    }
     if(MOVED_HOSTS.includes(url.hostname) && (request.method === "GET" || request.method === "HEAD") && !path.startsWith("/api/")){
       return Response.redirect(SITE + url.pathname + url.search, 301);
     }
