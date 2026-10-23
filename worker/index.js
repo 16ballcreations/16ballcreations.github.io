@@ -278,7 +278,13 @@ export default {
       out.headers.set("Content-Type", "text/plain; charset=utf-8");
       return out;
     }
-    return env.ASSETS.fetch(request);
+    const res = await env.ASSETS.fetch(request);
+    /* the asset handling adds the trailing slash (/servicios → /servicios/)
+       with a 307; the page did move for good, so it goes as a 301 */
+    if(res.status === 307 && (request.method === "GET" || request.method === "HEAD") && res.headers.get("Location")){
+      return Response.redirect(new URL(res.headers.get("Location"), url).toString(), 301);
+    }
+    return res;
   }
 };
 

@@ -7,7 +7,9 @@
    name      El nombre corto, para menús y etiquetas
    title     El título de la página (lo que la gente busca en Google)
    em        La parte del título que va en cursiva y en el color de la bola
-   line      Una frase: qué es
+   line      Una frase: qué es (la tarjeta de la portada)
+   what      La primera oración de su página: qué, para quién y dónde, en
+             tercera persona para que Google y la IA la puedan citar tal cual
    intro     Un párrafo: para quién es y qué cambia
    includes  Lo que incluye (entregables concretos)
    steps     El proceso de ese servicio, siempre en el orden de la marca
@@ -77,6 +79,7 @@ export const SERVICES = [
     title: "Auditoría de marca",
     em: "canal por canal",
     line: "Revisamos tu marca en cada lugar donde aparece y te entregamos, por escrito, qué está fallando y cómo corregirlo.",
+    what: "16 Ball Creations revisa la marca de negocios y marcas personales en cada lugar donde aparece y entrega por escrito qué corregir, desde Medellín.",
     intro: "Es la MIRA completa, a fondo. Revisamos cómo se ve y qué dice tu marca en tu página, tu ficha de Google, tus redes, tus datos de contacto y en lo que responde la IA cuando alguien pregunta por tu negocio. Te entregamos un documento con cada hallazgo, su prioridad y cómo corregirlo, y lo repasamos contigo. Las correcciones las puedes hacer tú, o hacerlas con nosotros.",
     includes: [
       "Revisión canal por canal: tu página, tu ficha de Google, tus redes y tus datos de contacto",
@@ -107,6 +110,7 @@ export const SERVICES = [
     title: "Identidad de marca",
     em: "que se reconoce",
     line: "Logo, colores, tipografía y una voz propia, construidos desde la historia de tu marca.",
+    what: "16 Ball Creations crea la identidad de negocios y marcas personales, logo, colores, tipografía y voz, a partir de su historia, desde Medellín.",
     intro: "Una marca no empieza en el logo: empieza en por qué existe. Partimos de tu historia, de a quién le hablas y de lo que quieres que sientan, y desde ahí le damos forma a todo lo que se ve. El resultado es una marca que se reconoce en cada pieza, del letrero a la última publicación.",
     includes: [
       "Tu historia escrita: origen, propósito y a quién le hablas",
@@ -137,6 +141,7 @@ export const SERVICES = [
     title: "Diseño de páginas web",
     em: "que cuentan quién eres",
     line: "Un sitio hecho a la medida de tu marca, que se ve bien en el celular y hace fácil que te escriban.",
+    what: "16 Ball Creations diseña páginas web a la medida para negocios y marcas personales, desde Medellín: se ven bien en el celular y hacen fácil que te escriban.",
     intro: "Tu página es el lugar donde tu marca habla sin interrupciones. La diseñamos a partir de tu historia, sin plantillas, para que se sienta como el resto de tu marca: tus redes, tu local, tus documentos. Y la dejamos lista para que Google la entienda.",
     includes: [
       "Estructura y textos pensados desde tu marca",
@@ -171,6 +176,7 @@ export const SERVICES = [
     title: "Tiendas en línea",
     em: "con tu marca de punta a punta",
     line: "Tu catálogo en internet, con pedidos por la página o por WhatsApp, y que se sienta como tu marca.",
+    what: "16 Ball Creations hace tiendas en línea para negocios que venden productos, con pedidos por la página o por WhatsApp, desde Medellín.",
     intro: "Una tienda en línea es tu marca atendiendo a alguien que no puede entrar a tu local. Por eso la hacemos con tu voz y tu estilo, no con la cara de una plantilla: un catálogo fácil de recorrer y una forma sencilla de pedir.",
     includes: [
       "Catálogo con fotos, precios y filtros",
@@ -201,6 +207,7 @@ export const SERVICES = [
     title: "Sistemas para administrar tu negocio",
     em: "en un solo lugar",
     line: "Pedidos, inventario, citas y facturas en un solo lugar, en vez de cuadernos y hojas de cálculo.",
+    what: "16 Ball Creations hace sistemas a la medida para que negocios pequeños lleven pedidos, inventario, citas y facturas en un solo lugar, desde Medellín.",
     intro: "Cuando el negocio crece, los cuadernos y las hojas de cálculo empiezan a contar historias distintas. Hacemos sistemas a la medida para que todo viva en un solo lugar, con las palabras de tu negocio, y cada persona vea solo lo que le toca.",
     includes: [
       "Pedidos y órdenes de trabajo",
@@ -231,6 +238,7 @@ export const SERVICES = [
     title: "Asesoría de imagen y redes",
     em: "para que todo cuente lo mismo",
     line: "Revisamos tus perfiles, tu imagen y tus piezas para que todo cuente la misma historia.",
+    what: "16 Ball Creations revisa los perfiles, la imagen y las piezas de negocios y marcas personales para que todo cuente la misma historia, desde Medellín.",
     intro: "A veces no hace falta construir nada nuevo: hace falta ordenar. Revisamos cómo se ve y cómo habla tu marca en cada lugar donde aparece, y te decimos qué cambiar para que todo se sienta como una sola marca. Sirve para negocios y para marcas personales.",
     includes: [
       "Revisión de tus perfiles: foto, nombre, descripción, destacados",

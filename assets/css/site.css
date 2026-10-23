@@ -201,18 +201,18 @@ h3{font-size:1.375rem;line-height:1.3;letter-spacing:-.02em;color:var(--white)}
 .hero-title{margin:0;color:var(--white);mix-blend-mode:difference}
 .hero-title em{color:var(--white)}
 .hero-title .line{display:block;overflow:hidden;padding-bottom:.06em}
-.hero-title .line > *{display:inline-block;transform:translateY(105%);animation:rise 1.1s var(--ease) forwards}
+.hero-title .line > *{display:inline-block;animation:rise 1.1s var(--ease) both}
 .hero-title .line:nth-child(2) > *{animation-delay:.12s}
-@keyframes rise{to{transform:none}}
+@keyframes rise{from{transform:translateY(.12em)}to{transform:none}}
 /* the card is glass: the balls that roll beneath it show through, blurred.
    It takes the pointer, so a click on it never fires a shot */
 .hero-card{
   position:relative;z-index:1;pointer-events:auto;padding:26px;border-radius:24px;
-  opacity:0;transform:translateY(16px);animation:card-in 1s .55s var(--ease) forwards;
+  animation:card-in 1s .2s var(--ease) both;
 }
 .hero-card .lead{margin:0 0 22px;font-size:1.0625rem;color:var(--bone)}
-@keyframes card-in{to{opacity:1;transform:none}}
-.hero .kicker{opacity:0;animation:fade .8s .2s ease-out forwards}
+@keyframes card-in{from{transform:translateY(12px)}to{transform:none}}
+.hero .kicker{animation:rise .8s var(--ease) both}
 @keyframes fade{to{opacity:1}}
 .hint{
   display:flex;align-items:center;gap:10px;margin:22px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);

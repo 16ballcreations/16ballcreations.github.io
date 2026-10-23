@@ -61,6 +61,7 @@ export const SERVICES_EN = [
     title: "Brand audit",
     em: "channel by channel",
     line: "We review your brand everywhere it shows up and give you, in writing, what's failing and how to fix it.",
+    what: "16 Ball Creations reviews the brand of businesses and personal brands everywhere it shows up and gives you, in writing, what to fix, from Medellín.",
     intro: "It's the full MIRA, in depth. We review how your brand looks and what it says on your website, your Google profile, your social media, your contact details and in what AI answers when someone asks about your business. You get a document with every finding, its priority and how to fix it, and we go through it with you. You can make the corrections yourself, or make them with us.",
     includes: [
       "A channel-by-channel review: your website, your Google profile, your social media and your contact details",
@@ -91,6 +92,7 @@ export const SERVICES_EN = [
     title: "Brand identity",
     em: "people recognize",
     line: "A logo, colors, typography and a voice of its own, built from your brand's story.",
+    what: "16 Ball Creations creates the identity of businesses and personal brands, logo, colors, typography and voice, from their story, working from Medellín.",
     intro: "A brand doesn't start with a logo: it starts with why it exists. We begin with your story, who you're speaking to and what you want them to feel, and from there we shape everything people see. The result is a brand that's recognizable in every piece, from the sign on the door to your latest post.",
     includes: [
       "Your story in writing: origin, purpose and who you speak to",
@@ -121,6 +123,7 @@ export const SERVICES_EN = [
     title: "Website design",
     em: "that tells who you are",
     line: "A site made to fit your brand, that looks right on a phone and makes it easy to reach you.",
+    what: "16 Ball Creations designs custom websites for businesses and personal brands from Medellín: they look right on a phone and make it easy to reach you.",
     intro: "Your website is where your brand speaks without interruptions. We design it from your story, with no templates, so it feels like the rest of your brand: your social profiles, your shop, your documents. And we set it up so Google can understand it.",
     includes: [
       "Structure and copy shaped by your brand",
@@ -155,6 +158,7 @@ export const SERVICES_EN = [
     title: "Online stores",
     em: "with your brand end to end",
     line: "Your catalog online, with orders through the site or WhatsApp, that feels like your brand.",
+    what: "16 Ball Creations builds online stores for businesses that sell products, with orders through the site or WhatsApp, working from Medellín.",
     intro: "An online store is your brand serving someone who can't walk into your shop. So we build it with your voice and your style, not the face of a template: a catalog that's easy to browse and a simple way to order.",
     includes: [
       "Catalog with photos, prices and filters",
@@ -185,6 +189,7 @@ export const SERVICES_EN = [
     title: "Systems to run your business",
     em: "in one place",
     line: "Orders, inventory, appointments and invoices in one place, instead of notebooks and spreadsheets.",
+    what: "16 Ball Creations builds custom systems so small businesses keep orders, inventory, appointments and invoices in one place, working from Medellín.",
     intro: "As a business grows, notebooks and spreadsheets start telling different stories. We build custom systems so everything lives in one place, in your business's own words, and each person sees only what they need.",
     includes: [
       "Orders and work orders",
@@ -215,6 +220,7 @@ export const SERVICES_EN = [
     title: "Image and social media advisory",
     em: "so everything tells the same story",
     line: "We review your profiles, your image and your pieces so everything tells the same story.",
+    what: "16 Ball Creations reviews the profiles, image and pieces of businesses and personal brands so everything tells the same story, from Medellín.",
     intro: "Sometimes you don't need to build anything new: you need to put things in order. We review how your brand looks and speaks everywhere it shows up, and tell you what to change so it all feels like one brand. It works for businesses and for personal brands.",
     includes: [
       "A review of your profiles: photo, name, bio, highlights",

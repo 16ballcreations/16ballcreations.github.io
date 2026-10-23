@@ -3,6 +3,7 @@
    del idioma de quien busca. Corre después de scripts/servicios.mjs:
      node scripts/sitemap.mjs */
 import { writeFile } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { SERVICES } from "./servicios-data.mjs";
@@ -11,6 +12,15 @@ import { SERVICES_EN } from "./services-en-data.mjs";
 const ORIGIN = "https://16ballcreations.com";
 const today = new Date().toISOString().slice(0, 10);
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+/* the date a page last changed: its last commit, or today if it has changes
+   not yet committed (the generators run right before a deploy) */
+const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+function lastmod(loc){
+  const file = (loc === "/" ? "" : loc.slice(1)) + "index.html";
+  if(git("status", "--porcelain", "--", file)){ return today; }
+  return git("log", "-1", "--format=%cs", "--", file) || today;
+}
 
 /* each entry is a pair: [Spanish path, English path, priority, changefreq] */
 const PAIRS = [
@@ -27,7 +37,7 @@ const links = (es, en) => [
 ].join("\n");
 const url = (loc, es, en, pr, cf) => `  <url>
     <loc>${ORIGIN}${loc}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${lastmod(loc)}</lastmod>
     <changefreq>${cf}</changefreq>
     <priority>${pr}</priority>
 ${links(es, en)}${loc === "/" || loc === "/en/" ? `\n    <image:image><image:loc>${ORIGIN}/assets/img/og-16ballcreations.jpg</image:loc></image:image>` : ""}

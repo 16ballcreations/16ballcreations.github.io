@@ -148,3 +148,7 @@
 .proj-pick span{padding-top:8px;padding-bottom:8px;font-size:.875rem}
 /* the project, as the fifth card of the result */
 .res:nth-child(5){--c:var(--b6);grid-column:1 / -1}
+
+/* what MIRA is, said inside the h1 (for people and for Google), in the voice of a label */
+.mira-what{display:block;margin:0 0 18px;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.8125rem;font-weight:400;
+  letter-spacing:.1em;line-height:1.5;text-transform:uppercase;color:var(--accent)}

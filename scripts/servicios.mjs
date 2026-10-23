@@ -53,10 +53,13 @@ const LOCALES = {
       ctaH: "Empieza por tu <em>MIRA</em>",
       ctaP: price => `Cinco preguntas sobre tu marca, unos tres minutos y gratis. Con tus respuestas preparamos una llamada de 30 minutos. Si quieres el diagnóstico completo por escrito, la auditoría de marca cuesta ${price}.`,
       others: "Otros servicios", seeService: "Ver el servicio",
-      desc: (s, price) => `${s.line} ${s.intro.split(". ")[0]}.${s.price ? " " + price + "." : ""} Empieza con tu MIRA gratis.`,
+      desc: (s, price) => s.what + (s.price ? ` Cuesta ${price}.` : ""),
+      where: "Dónde", from: "Precio", reach: "Escríbenos",
+      titleWhere: "desde Medellín",
       idxTitle: "Servicios: marca, páginas web, tiendas y redes · 16 Ball Creations",
-      idxDesc: price => `Auditoría de marca, identidad de marca, páginas web, tiendas en línea, sistemas para tu negocio y asesoría de imagen, para marcas de cualquier lugar. Todo empieza con tu MIRA, gratis; la auditoría de marca cuesta ${price}.`,
-      idxH1: "Lo que hacemos, <em>en orden</em>",
+      idxDesc: price => `Auditoría e identidad de marca, páginas web, tiendas en línea, sistemas y asesoría de imagen, desde Medellín. La auditoría cuesta ${price}.`,
+      idxH1: "Servicios de marca y páginas web, <em>en orden</em>",
+      idxH2: "Seis servicios, <em>una sola historia</em>",
       idxLine: price => `Primero entendemos tu marca: de dónde viene, por qué nació y a dónde va. Después le damos forma y la llevamos a donde vive. La puerta de entrada es la auditoría de marca, ${price}.`,
       listName: "Servicios de 16 Ball Creations", catalog: "Lo que incluye"
     }
@@ -79,10 +82,13 @@ const LOCALES = {
       ctaH: "Start with your <em>MIRA</em>",
       ctaP: price => `Five questions about your brand, about three minutes, and free. We use your answers to prepare a 30-minute call. If you want the full diagnosis in writing, the brand audit costs ${price}.`,
       others: "Other services", seeService: "See the service",
-      desc: (s, price) => `${s.line} ${s.intro.split(". ")[0]}.${s.price ? " " + price + "." : ""} Start with your free MIRA.`,
-      idxTitle: "Services: brand, websites, online stores and social media · 16 Ball Creations",
-      idxDesc: price => `Brand audit, brand identity, websites, online stores, business systems and image advisory, for brands anywhere. Everything starts with your free MIRA; the brand audit costs ${price}.`,
-      idxH1: "What we do, <em>in order</em>",
+      desc: (s, price) => s.what + (s.price ? ` It costs ${price}.` : ""),
+      where: "Where", from: "Price", reach: "Write to us",
+      titleWhere: "from Medellín",
+      idxTitle: "Services: brand, websites and stores · 16 Ball Creations",
+      idxDesc: price => `Brand audit and identity, websites, online stores, business systems and image advisory, from Medellín. The brand audit costs ${price}.`,
+      idxH1: "Brand and website services, <em>in order</em>",
+      idxH2: "Six services, <em>one story</em>",
       idxLine: price => `First we understand your brand: where it comes from, why it was born and where it's going. Then we give it shape and take it where it lives. The way in is the brand audit, ${price}.`,
       listName: "16 Ball Creations services", catalog: "What's included"
     }
@@ -139,8 +145,8 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/boska-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
-<link rel="stylesheet" href="/assets/css/site.css?v=13">
-<link rel="stylesheet" href="/assets/css/v4.css?v=12">
+<link rel="stylesheet" href="/assets/css/site.css?v=14">
+<link rel="stylesheet" href="/assets/css/v4.css?v=13">
 </head>`;
 }
 
@@ -222,6 +228,13 @@ const PROVIDER = {
   url: ORIGIN + "/"
 };
 /* where the studio is first, then where it has worked: listing Medellín does not limit the service */
+/* where we work, in words: the same zone the JSON-LD marks (areaServed) */
+const ZONE = {
+  es: "Medellín y el resto de Antioquia, y por videollamada en Colombia, Venezuela y Costa Rica",
+  en: "Medellín and the rest of Antioquia, and by video call in Colombia, Venezuela and Costa Rica"
+};
+const WA = { label: "+57 310 494 9979", href: "https://wa.me/573104949979" };
+
 const AREAS = [{ "@type": "City", name: "Medellín" }, { "@type": "AdministrativeArea", name: "Antioquia" }, { "@type": "Country", name: "Colombia" }, { "@type": "Country", name: "Venezuela" }, { "@type": "Country", name: "Costa Rica" }];
 
 function servicePage(L, s){
@@ -229,7 +242,7 @@ function servicePage(L, s){
   const path = svcPath(L, s);
   const projects = PROJECTS.filter(p => (p.services || []).includes(s.key));
   const others = L.data.filter(o => o !== s);
-  const description = t.desc(s, L.price).slice(0, 300);
+  const description = t.desc(s, L.price);
   const jsonld = {
     "@context": "https://schema.org",
     "@graph": [
@@ -266,7 +279,7 @@ function servicePage(L, s){
     ]
   };
 
-  return `${head(L, { title: `${s.title} · 16 Ball Creations`, description, path, key: s.key, jsonld })}
+  return `${head(L, { title: `${s.title} ${t.titleWhere} · 16 Ball Creations`, description, path, key: s.key, jsonld })}
 <body class="page-svc" style="--accent:${HEX[s.ball]}">
 ${header(L, s.key)}
 
@@ -280,11 +293,16 @@ ${header(L, s.key)}
       </ol>
       ${ball(s.ball)}
       <h1>${esc(s.title)}, <em>${esc(s.em)}</em></h1>
-      <p class="line">${esc(s.line)}</p>
+      <p class="line">${esc(s.what)}</p>
       <div class="actions">
         <a class="btn btn-primary" href="${L.mira}">${t.miraFree}</a>
         <a class="btn" href="${L.base}#contacto">${t.write}</a>
       </div>
+      <dl class="svc-facts">
+        ${s.price ? `<div><dt>${t.from}</dt><dd>${L.price}</dd></div>` : ""}
+        <div><dt>${t.where}</dt><dd>${ZONE[L.lang]}</dd></div>
+        <div><dt>${t.reach}</dt><dd><a href="${WA.href}" rel="noopener">WhatsApp ${WA.label}</a> · <a href="mailto:${MAIL}">${MAIL}</a></dd></div>
+      </dl>
     </div>
   </section>
 
@@ -427,6 +445,7 @@ ${header(L, null)}
 
   <section class="sec">
     <div class="wrap">
+      <div class="sec-head"><h2 class="big">${t.idxH2}</h2></div>
       <ul class="svc svc-all">
         ${L.data.map(s => serviceItem(L, s, L.base)).join("\n        ")}
       </ul>

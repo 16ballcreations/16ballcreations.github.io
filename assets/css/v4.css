@@ -183,8 +183,14 @@
 .svc-hero .ball{--s:64px;margin-bottom:28px}
 .svc-hero h1{font-family:var(--font-display);font-weight:400;font-size:clamp(3rem,8vw,7.2rem);line-height:.95;letter-spacing:-.02em;color:var(--white);max-width:14ch}
 .svc-hero h1 em{font-style:italic;color:var(--accent)}
-.svc-hero .line{margin:28px 0 0;font-size:clamp(1.15rem,1.6vw,1.4rem);font-weight:300;color:var(--bone);max-width:44ch}
+.svc-hero .line{margin:28px 0 0;font-size:clamp(1.15rem,1.6vw,1.4rem);font-weight:300;color:var(--bone);max-width:58ch}
 .svc-hero .actions{margin-top:36px}
+/* price, zone and contact, written out on every service page */
+.svc-facts{display:flex;flex-wrap:wrap;gap:14px 36px;margin:34px 0 0;padding-top:20px;border-top:1px solid var(--hairline);max-width:980px}
+.svc-facts > div{display:flex;flex-direction:column;gap:5px}
+.svc-facts dt{font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+.svc-facts dd{margin:0;font-size:.9375rem;color:var(--bone)}
+.svc-facts a{color:inherit;text-underline-offset:3px}
 .svc-intro{display:grid;grid-template-columns:1fr 1fr;gap:48px 72px;align-items:start}
 .svc-intro .lead{margin:0;max-width:none;font-size:1.1875rem}
 .svc-intro .inc{gap:0;border-top:1px solid var(--hairline)}
