@@ -8,6 +8,8 @@
    title     El título de la página (lo que la gente busca en Google)
    em        La parte del título que va en cursiva y en el color de la bola
    line      Una frase: qué es (la tarjeta de la portada)
+   from      El precio de partida (tarifario v5); fromLabel y fromNote si no es
+             «desde» (sistemas: el diagnóstico)
    what      La primera oración de su página: qué, para quién y dónde, en
              tercera persona para que Google y la IA la puedan citar tal cual
    intro     Un párrafo: para quién es y qué cambia
@@ -104,6 +106,7 @@ export const SERVICES = [
   },
   {
     key: "marca",
+    from: 1500000,
     slug: "identidad-de-marca",
     ball: 2,
     name: "Identidad de marca",
@@ -135,6 +138,7 @@ export const SERVICES = [
   },
   {
     key: "web",
+    from: 2500000,
     slug: "paginas-web",
     ball: 3,
     name: "Páginas web",
@@ -170,6 +174,7 @@ export const SERVICES = [
   },
   {
     key: "tienda",
+    from: 5500000,
     slug: "tiendas-en-linea",
     ball: 4,
     name: "Tiendas en línea",
@@ -201,6 +206,7 @@ export const SERVICES = [
   },
   {
     key: "sistemas",
+    from: 1500000, fromLabel: "Diagnóstico", fromNote: "el sistema se cotiza a la medida",
     slug: "sistemas-para-tu-negocio",
     ball: 5,
     name: "Sistemas para tu negocio",

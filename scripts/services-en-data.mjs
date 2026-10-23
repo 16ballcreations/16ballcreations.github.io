@@ -117,6 +117,7 @@ export const SERVICES_EN = [
   },
   {
     key: "web",
+    from: 750,
     slug: "websites",
     ball: 3,
     name: "Websites",
@@ -152,6 +153,7 @@ export const SERVICES_EN = [
   },
   {
     key: "tienda",
+    from: 1650,
     slug: "online-stores",
     ball: 4,
     name: "Online stores",
@@ -183,6 +185,7 @@ export const SERVICES_EN = [
   },
   {
     key: "sistemas",
+    from: 450, fromLabel: "Diagnosis", fromNote: "the system is quoted to fit",
     slug: "business-systems",
     ball: 5,
     name: "Business systems",

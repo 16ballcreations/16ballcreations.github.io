@@ -54,7 +54,7 @@ const LOCALES = {
       ctaP: price => `Cinco preguntas sobre tu marca, unos tres minutos y gratis. Con tus respuestas preparamos una llamada de 30 minutos. Si quieres el diagnóstico completo por escrito, la auditoría de marca cuesta ${price}.`,
       others: "Otros servicios", seeService: "Ver el servicio",
       desc: (s, price) => s.what + (s.price ? ` Cuesta ${price}.` : ""),
-      where: "Dónde", from: "Precio", reach: "Escríbenos",
+      where: "Dónde", price: "Precio", from: "Desde", reach: "Escríbenos",
       titleWhere: "desde Medellín",
       idxTitle: "Servicios: marca, páginas web, tiendas y redes · 16 Ball Creations",
       idxDesc: price => `Auditoría e identidad de marca, páginas web, tiendas en línea, sistemas y asesoría de imagen, desde Medellín. La auditoría cuesta ${price}.`,
@@ -83,7 +83,7 @@ const LOCALES = {
       ctaP: price => `Five questions about your brand, about three minutes, and free. We use your answers to prepare a 30-minute call. If you want the full diagnosis in writing, the brand audit costs ${price}.`,
       others: "Other services", seeService: "See the service",
       desc: (s, price) => s.what + (s.price ? ` It costs ${price}.` : ""),
-      where: "Where", from: "Price", reach: "Write to us",
+      where: "Where", price: "Price", from: "From", reach: "Write to us",
       titleWhere: "from Medellín",
       idxTitle: "Services: brand, websites and stores · 16 Ball Creations",
       idxDesc: price => `Brand audit and identity, websites, online stores, business systems and image advisory, from Medellín. The brand audit costs ${price}.`,
@@ -201,7 +201,7 @@ function footerServices(L, base){
 }
 
 /* a project card, the same markup v4.js draws on the home pages */
-function card(L, raw, i){
+function card(L, raw, i, cls = ""){
   const p = tr(L, raw);
   const first = (p.links || [])[0];
   const ext = l => l.url.startsWith("#") ? "" : ` rel="noopener noreferrer" target="_blank"`;
@@ -210,7 +210,7 @@ function card(L, raw, i){
   const tags = (p.services || []).map(k => L.data.find(s => s.key === k)).filter(Boolean)
     .map(s => `<li><a href="${L.base}${svcPath(L, s)}">${esc(s.name)}</a></li>`).join("");
   const status = L.status[p.status] || p.status;
-  return `<li class="card tile">
+  return `<li class="card tile${cls}">
           ${first ? `<a class="card-media" href="${esc(linkUrl(first))}"${ext(first)} aria-label="${esc(p.title + ": " + first.label)}">${media}</a>` : `<div class="card-media">${media}</div>`}
           <div class="card-body">
             <h3>${esc(p.title)}</h3>
@@ -227,15 +227,17 @@ const PROVIDER = {
   name: "16 Ball Creations",
   url: ORIGIN + "/"
 };
-/* where the studio is first, then where it has worked: listing Medellín does not limit the service */
 /* where we work, in words: the same zone the JSON-LD marks (areaServed) */
 const ZONE = {
-  es: "Medellín y el resto de Antioquia, y por videollamada en Colombia, Venezuela y Costa Rica",
-  en: "Medellín and the rest of Antioquia, and by video call in Colombia, Venezuela and Costa Rica"
+  es: "En persona en Medellín y el resto de Antioquia; por videollamada, en cualquier país",
+  en: "In person in Medellín and the rest of Antioquia; by video call, anywhere in the world"
 };
 const WA = { label: "+57 310 494 9979", href: "https://wa.me/573104949979" };
 
-const AREAS = [{ "@type": "City", name: "Medellín" }, { "@type": "AdministrativeArea", name: "Antioquia" }, { "@type": "Country", name: "Colombia" }, { "@type": "Country", name: "Venezuela" }, { "@type": "Country", name: "Costa Rica" }];
+/* the studio is in Medellín and works with brands anywhere */
+const AREAS = [{ "@type": "City", name: "Medellín" }, { "@type": "AdministrativeArea", name: "Antioquia" }, "Worldwide"];
+/* a price in the page's currency: $1.500.000 COP or US$750 */
+const money = (L, n) => L.currency === "COP" ? `$${n.toLocaleString("es-CO")} COP` : `US$${n.toLocaleString("en-US")}`;
 
 function servicePage(L, s){
   const t = L.t;
@@ -257,6 +259,7 @@ function servicePage(L, s){
         availableLanguage: ["es", "en"],
         url: abs(L, path),
         ...(s.price ? { offers: { "@type": "Offer", price: String(s.price), priceCurrency: L.currency } } : {}),
+        ...(s.from ? { offers: { "@type": "Offer", priceSpecification: { "@type": "PriceSpecification", minPrice: s.from, priceCurrency: L.currency } } } : {}),
         hasOfferCatalog: {
           "@type": "OfferCatalog",
           name: t.catalog,
@@ -299,7 +302,8 @@ ${header(L, s.key)}
         <a class="btn" href="${L.base}#contacto">${t.write}</a>
       </div>
       <dl class="svc-facts">
-        ${s.price ? `<div><dt>${t.from}</dt><dd>${L.price}</dd></div>` : ""}
+        ${s.price ? `<div><dt>${t.price}</dt><dd>${L.price}</dd></div>` : ""}
+        ${s.from ? `<div><dt>${esc(s.fromLabel || t.from)}</dt><dd>${money(L, s.from)}${s.fromNote ? " · " + esc(s.fromNote) : ""}</dd></div>` : ""}
         <div><dt>${t.where}</dt><dd>${ZONE[L.lang]}</dd></div>
         <div><dt>${t.reach}</dt><dd><a href="${WA.href}" rel="noopener">WhatsApp ${WA.label}</a> · <a href="mailto:${MAIL}">${MAIL}</a></dd></div>
       </dl>
@@ -486,6 +490,16 @@ for(const L of Object.values(LOCALES)){
   let home = await readFile(homePath, "utf8");
   home = fill(home, "servicios", L.data.map(s => serviceItem(L, s, "")).join("\n        "), "        ");
   home = fill(home, "servicios-pie", footerServices(L, ""), "    ");
+  /* the project cards, in the same order v4.js draws them (it redraws them
+     with the filters and the invitation card): the odd one out spans the row */
+  if(home.includes("<!-- proyectos:inicio")){
+    const regular = PROJECTS.filter(p => !p.wide), wide = PROJECTS.filter(p => p.wide);
+    const cards = [
+      ...regular.map((p, i) => card(L, p, i, regular.length % 2 && i === regular.length - 1 ? " card-wide" : "")),
+      ...wide.map((p, i) => card(L, p, regular.length + i, " card-wide"))
+    ];
+    home = fill(home, "proyectos", cards.join("\n        "), "        ");
+  }
   /* the home questions, visible and as FAQPage data, from the same text */
   if(home.includes("<!-- faq:inicio")){
     home = fill(home, "faq", L.homeFaq.map((f, i) => `<details${i === 0 ? " open" : ""}><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n        "), "        ");
