@@ -445,6 +445,18 @@ async function miraTokenFor(env, r){
   return null;
 }
 /* the channel the link goes out by, as the MIRA's origin */
+/* the ways we write to a prospect, for the "Escribir por" dropdowns */
+const CHANNELS = ["WhatsApp", "Instagram (DM)", "Facebook (Messenger)", "TikTok (DM)", "Correo", "Llamada", "Visita al local"];
+
+/* the options of a channel dropdown; a value from an older campaign that isn't
+   on the list stays as its own option, so saving never changes it silently */
+function channelOptions(current, blank = ""){
+  const v = String(current || "");
+  const list = v && !CHANNELS.includes(v) ? [v, ...CHANNELS] : CHANNELS;
+  return (blank ? `<option value=""${v ? "" : " selected"}>${blank}</option>` : "") +
+    list.map(c => `<option${c === v ? " selected" : ""}>${esc(c)}</option>`).join("");
+}
+
 function originOfChannel(canal){
   const c = String(canal || "").toLowerCase();
   if(c.includes("instagram")){ return "ig"; }
@@ -1493,7 +1505,7 @@ async function prospectPage(env, url){
           <form class="pform" method="post" action="/admin/prospecto">
             <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="contacto">
             <div class="fgrid">
-              <label>Escribir por<input name="canal" list="canales" value="${esc(r.canal || "")}" placeholder="Ej.: WhatsApp, Instagram (DM)"></label>
+              <label>Escribir por<select name="canal">${channelOptions(r.canal, "Sin definir")}</select></label>
               <label>Enlace del chat<input name="enlace" value="${esc(r.enlace || "")}" placeholder="https://wa.me/57… o el número"></label>
               <label>Teléfono<input name="telefono" value="${esc(d.telefono || "")}" placeholder="+57 300 000 0000"></label>
               <label>Correo<input name="correo" value="${esc(d.correo || "")}" placeholder="nombre@negocio.com · varios, separados por coma"></label>
@@ -1506,7 +1518,7 @@ async function prospectPage(env, url){
               <label>TikTok<input name="tiktok" value="${esc(r.tiktok || "")}" placeholder="@usuario o enlace"></label>
               <label>Página web<input name="web" value="${esc(r.web || "")}" placeholder="tumarca.com"></label>
             </div>
-            <datalist id="canales"><option value="WhatsApp"><option value="Instagram (DM)"><option value="Facebook (Messenger)"><option value="TikTok (DM)"><option value="Correo"><option value="Llamada"><option value="Visita"></datalist>
+            
             <p class="mono hintline">Un número de WhatsApp sin enlace se convierte en wa.me; un @usuario, en el enlace de su red. Si cambias la dirección, el punto del mapa no se mueve: ajústalo en Ubicación.</p>
             <div class="linkrow"><button type="submit" class="go">Guardar el contacto</button><button type="button" data-cancel>Cancelar</button></div>
           </form>
@@ -1958,7 +1970,7 @@ async function newProspectPage(env, url, error = "", values = {}){
       <label>Categoría<input name="categoria" value="${v("categoria")}" placeholder="Ej.: café, barbería, veterinaria"></label>
       <label>Barrio<input name="barrio" value="${v("barrio")}"></label>
       <label>Dirección<input name="direccion" value="${v("direccion")}" placeholder="Ej.: Cra. 76 #30-49"></label>
-      <label>Escribir por<select name="canal">${["Instagram (DM)", "WhatsApp", "Facebook (Messenger)", "Visita al local", "Correo", "Llamada"].map(c => `<option${values.canal === c ? " selected" : ""}>${c}</option>`).join("")}</select></label>
+      <label>Escribir por<select name="canal">${channelOptions(values.canal || "Instagram (DM)")}</select></label>
       <label>Enlace del chat<input name="enlace" value="${v("enlace")}" placeholder="https://instagram.com/… o https://wa.me/57…"></label>
       <label>Instagram<input name="instagram" value="${v("instagram")}" placeholder="https://www.instagram.com/…"></label>
       <label>Facebook<input name="facebook" value="${v("facebook")}" placeholder="https://www.facebook.com/…"></label>
