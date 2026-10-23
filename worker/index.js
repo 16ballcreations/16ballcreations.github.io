@@ -385,7 +385,7 @@ async function receive(request, env, url, kind){
 /* ---------- a MIRA and its prospect ---------- */
 
 const ORIGINS = { ig:"Instagram", bio:"la bio de Instagram", historia:"una historia", web:"el sitio", referido:"un referido",
-  whatsapp:"WhatsApp", facebook:"Facebook", visita:"una visita" };
+  whatsapp:"WhatsApp", facebook:"Facebook", visita:"una visita", correo:"un correo" };
 /* the stages a MIRA moves forward: it is the prospect's answer */
 const BEFORE_CALL = ["por_contactar", "contactado", "descartado", "respondio"];
 
@@ -476,6 +476,7 @@ function originOfChannel(canal){
   if(c.includes("whatsapp")){ return "whatsapp"; }
   if(c.includes("facebook")){ return "facebook"; }
   if(c.includes("visita")){ return "visita"; }
+  if(c.includes("correo")){ return "correo"; }
   return "ig";
 }
 
