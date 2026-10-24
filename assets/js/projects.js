@@ -55,14 +55,14 @@ window.PROJECTS = [
     short: "Tienda en línea de accesorios de café con un buscador que recomienda según cómo te gusta el café, pedidos por WhatsApp y redes que se sienten como la misma marca.",
     en: {
       short: "An online store for coffee accessories, with a finder that recommends gear based on how you like your coffee, WhatsApp ordering, and social profiles that feel like the same brand.",
-      alt: "Home page of the KaffeePlatz website: an AeroPress on a cream background, next to the headline «Eleva tu experiencia cafetera»"
+      alt: "Home page of the KaffeePlatz website: the brand's logo, a coffee plant drawn in dots, next to the headline «Eleva tu experiencia cafetera»"
     },
     year: "2026",
     types: ["Marca", "Web"],
     summary: "Nueva tienda en línea para una marca colombiana de accesorios de café: catálogo con filtros, un buscador que recomienda según cómo te gusta el café y pedidos directos por WhatsApp. También los asesoramos en sus redes y en su imagen, para que la tienda y sus perfiles se vean y se sientan como una sola marca.",
     tags: ["Tienda en línea", "Catálogo", "Pedidos por WhatsApp", "Asesoría de redes", "Asesoría de imagen"],
-    image: "assets/img/projects/kaffeeplatz.jpg?v=2",
-    alt: "Portada del sitio de KaffeePlatz: una AeroPress sobre fondo crema, junto al titular «Eleva tu experiencia cafetera»",
+    image: "assets/img/projects/kaffeeplatz.jpg?v=3",
+    alt: "Portada del sitio de KaffeePlatz: el logo de la marca, una planta de café dibujada con puntos, junto al titular «Eleva tu experiencia cafetera»",
     links: [{ label: "kaffeeplatz.co", url: "https://kaffeeplatz.co" }]
   },
   {
