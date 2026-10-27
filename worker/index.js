@@ -237,8 +237,9 @@ export default {
     /* plain http goes to https on the main domain in a single hop, www or not
        (with "Always Use HTTPS" on, Cloudflare does it first and it takes two:
        http://www → https://www → https://16ballcreations.com). Only our own
-       hostnames: wrangler dev serves http://localhost */
-    if(url.protocol === "http:" && (url.hostname === "16ballcreations.com" || MOVED_HOSTS.includes(url.hostname))){
+       hostnames, and only when Cloudflare's edge says the visit came over http
+       (cf-visitor): wrangler dev rewrites localhost to http://16ballcreations.com */
+    if(/"scheme":"http"/.test(request.headers.get("cf-visitor") || "") && (url.hostname === "16ballcreations.com" || MOVED_HOSTS.includes(url.hostname))){
       return Response.redirect(SITE + url.pathname + url.search, request.method === "GET" || request.method === "HEAD" ? 301 : 308);
     }
     if(MOVED_HOSTS.includes(url.hostname) && (request.method === "GET" || request.method === "HEAD") && !path.startsWith("/api/")){
@@ -997,8 +998,8 @@ async function submissionsPage(env, url, kind){
     ${sectionHead(isMira ? "Clientes · MIRA" : "Lo que llega · contacto", isMira ? "Las <em>MIRA</em>" : "Lo que <em>escriben</em>",
       `<p class="totals mono">${isMira ? "Marca, Imagen, Redes y Alineación: el primer filtro, antes de la llamada" : "El formulario de contacto del sitio"}</p>`)}
     ${pills}
-    ${results.length ? results.map(r => card(r, here)).join("") : `<p class="empty">No hay ${isMira ? "MIRA" : "mensajes"} ${pendientes ? "sin revisar " : unscheduled ? "sin agendar " : greens ? "verdes " : ""}todavía.</p>`}
-  `, 200, COPY_SCRIPT);
+    ${results.length ? (isMira ? `<div class="mlist">${results.map(r => miraRow(r, here)).join("")}</div>` : results.map(r => card(r, here)).join("")) : `<p class="empty">No hay ${isMira ? "MIRA" : "mensajes"} ${pendientes ? "sin revisar " : unscheduled ? "sin agendar " : greens ? "verdes " : ""}todavía.</p>`}
+  `, 200, COPY_SCRIPT + (isMira ? MIRA_LIST_SCRIPT : ""));
 }
 
 /* linking by hand: the prospects that look like the brand first, then a search */
@@ -2540,8 +2541,10 @@ function lightTag(d){
   return l ? `<span class="tag t-${d.semaforo.color}" title="${l.what}">${l.label} · ${d.semaforo.puntos}</span>` : "";
 }
 
-/* the four parts of a MIRA, as the panel shows them, and the project */
-function miraAnswers(d){
+/* the four parts of a MIRA, as the panel shows them, and the project. With a
+   key they come as tabs (the MIRA list, one at a time); without one, as a
+   grid (the prospect's page, everything in view for the call) */
+function miraAnswers(d, tabs){
   const p = d.proyecto || null;
   const light = d.semaforo && LIGHTS[d.semaforo.color];
   const project = p ? `
@@ -2551,12 +2554,26 @@ function miraAnswers(d){
           ${Object.entries(QUALIFY).map(([k, q]) => row(q.label, qualifyLabel(k, p[k], d.idioma))).join("")}
           ${p.decide === "socio" ? `<p class="mono hintline">Decide con alguien más: invita a los dos a la llamada.</p>` : ""}
         </section>` : "";
-  return `
+  const parts = [
+    ["m", "M", "Marca", `${row("Nombre", d.marca)}${row("Qué hace", d.queHace)}${row("Su historia", d.historia)}`],
+    ["i", "I", "Imagen", row("Ya cuenta con", list(d.tiene))],
+    ["r", "R", "Redes", row("Dónde encontrarla", d.enlaces)],
+    ["a", "A", "Alineación", `${row("Le habla a", [list(d.publico), d.publicoDetalle].filter(Boolean).join(", "))}${row("Quiere que sientan", list(d.objetivos))}`]
+  ];
+  if(!tabs){
+    return `
       <div class="mira">
-        <section><h3><i>M</i> Marca</h3>${row("Nombre", d.marca)}${row("Qué hace", d.queHace)}${row("Su historia", d.historia)}</section>
-        <section><h3><i>I</i> Imagen</h3>${row("Ya cuenta con", list(d.tiene))}</section>
-        <section><h3><i>R</i> Redes</h3>${row("Dónde encontrarla", d.enlaces)}</section>
-        <section><h3><i>A</i> Alineación</h3>${row("Le habla a", [list(d.publico), d.publicoDetalle].filter(Boolean).join(", "))}${row("Quiere que sientan", list(d.objetivos))}</section>${project}
+${parts.map(([, l, name, body]) => `        <section><h3><i>${l}</i> ${name}</h3>${body}</section>`).join("\n")}${project}
+      </div>`;
+  }
+  /* tabs without a script: one radio per tab, the checked one shows its pane */
+  if(project){ parts.push(["p", "6", "Proyecto", project.replace(/^\s*<section class="mira-proj"><h3><i>6<\/i> Su proyecto<\/h3>/, "").replace(/<\/section>\s*$/, "")]); }
+  return `
+      <div class="mtabs">
+${parts.map(([k, l, name], i) => `        <input type="radio" class="mt-${k}" name="mt${tabs}" id="mt${tabs}${k}"${i === 0 ? " checked" : ""}><label for="mt${tabs}${k}" class="mt-l-${k}"><i>${l}</i> ${name}</label>`).join("\n")}
+        <div class="mpanes">
+${parts.map(([k, , , body]) => `          <section class="mp mp-${k}${k === "p" ? " mira-proj" : ""}">${body}</section>`).join("\n")}
+        </div>
       </div>`;
 }
 
@@ -2576,6 +2593,49 @@ function miraLinkLine(r){
       <a class="pill" href="/admin/prospecto/nuevo?mira=${r.id}">Crear prospecto</a>
     </div>`;
 }
+
+/* a MIRA in the list: one line with what decides the call (light, brand,
+   who, prospect, date, reviewed), and its details when opened */
+function miraRow(r, here){
+  let d = {};
+  try{ d = JSON.parse(r.data); }catch(e){}
+  const when = new Date(r.created_at.replace(" ", "T") + "Z").toLocaleString("es-CO", { timeZone:"America/Bogota", dateStyle:"medium", timeStyle:"short" });
+  const owner = r.prospect_id ? `<span class="mr-biz">${esc(r.p_negocio || r.prospect_id)}</span>${r.p_etapa ? " " + stageTag(r.p_etapa) : ""}` : `<span class="tag t-wait">Sin prospecto</span>`;
+  return `
+    <details class="mrow${r.reviewed ? " done" : ""}" id="m${r.id}">
+      <summary>
+        <span class="mr-light">${lightTag(d) || '<span class="tag t-none">Sin semáforo</span>'}</span>
+        <span class="mr-name"><b>${esc(r.brand || d.marca || r.name)}</b><span class="mono">${esc(d.nombre || r.name)}${d.idioma === "en" ? " · en inglés" : ""}</span></span>
+        <span class="mr-owner">${owner}</span>
+        <span class="mr-when mono">${esc(when)}</span>
+        <span class="mr-state mono">${r.reviewed ? "Revisada ✓" : '<i class="dot"></i>Sin revisar'}</span>
+      </summary>
+      <div class="mrow-body">
+        ${miraLinkLine(r)}
+        ${miraAnswers(d, r.id)}
+        <div class="mrow-foot">
+          <p class="who mono">Respondió ${esc(d.nombre)} · ${esc(d.contacto)}</p>
+          <form method="post" action="/admin/revisado">
+            <input type="hidden" name="id" value="${r.id}">
+            <input type="hidden" name="revisado" value="${r.reviewed ? "0" : "1"}">
+            <input type="hidden" name="volver" value="${esc(here)}#m${r.id}">
+            <button type="submit">${r.reviewed ? "Revisada ✓ · deshacer" : "Marcar como revisada"}</button>
+          </form>
+        </div>
+      </div>
+    </details>`;
+}
+
+/* a link to /admin/mira#m12 opens that MIRA */
+const MIRA_LIST_SCRIPT = `<script>
+(function(){
+  function openHash(){
+    var el = location.hash && document.getElementById(location.hash.slice(1));
+    if(el && el.tagName === "DETAILS"){ el.open = true; el.scrollIntoView({ block:"start" }); }
+  }
+  openHash(); window.addEventListener("hashchange", openHash);
+})();
+</script>`;
 
 function card(r, here){
   let d = {};
@@ -2660,6 +2720,47 @@ function page(title, content, status = 200, script = "", shell = false){
   .mira .light{padding:8px 12px;border-radius:10px;border:1px solid var(--line)}
   .mira .light.l-verde{border-color:#3ad389} .mira .light.l-amarillo{border-color:#f4c20d} .mira .light.l-rojo{border-color:#ff5c6e}
   .sub.fresh{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  /* the MIRA list: one row each, details on demand, the answers in tabs */
+  .mlist{border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .mrow{margin:0;padding:0;border-top:0}
+  .mrow + .mrow{border-top:1px solid var(--line)}
+  .mrow > summary{display:grid;grid-template-columns:150px minmax(0,1fr) minmax(0,220px) 170px 120px;gap:16px;align-items:center;padding:14px 20px;cursor:pointer;list-style:none}
+  .mrow > summary::-webkit-details-marker{display:none}
+  .mrow > summary:hover{background:rgba(255,255,255,.03)}
+  .mrow[open] > summary{background:rgba(255,255,255,.04);border-bottom:1px solid var(--line)}
+  .mrow.done > summary{opacity:.55}
+  .mr-name{display:flex;flex-direction:column;min-width:0}
+  .mr-name b{font:400 1.3rem/1.15 "Boska",serif;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mr-owner{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+  .mr-biz{color:var(--bone);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+  .mr-state{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+  .mr-state .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .tag.t-none{background:transparent;border:1px solid var(--line);color:var(--iron)}
+  .mrow-body{padding:18px 20px 22px}
+  .mrow-body p{margin:0 0 10px}
+  .mrow-body p b{display:block;font:400 11px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:var(--iron)}
+  .mrow-foot{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px}
+  .mrow-foot .who{margin:0 !important}
+  .mrow.done .mrow-foot button{border-color:var(--accent);color:var(--accent)}
+  .mtabs{position:relative;margin-top:16px}
+  .mtabs > input{position:absolute;opacity:0;pointer-events:none}
+  .mtabs > label{display:inline-flex;align-items:center;gap:6px;margin:0 6px 8px 0;padding:6px 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;
+    font:12px "Recursive",monospace;font-variation-settings:"MONO" 1;letter-spacing:.06em;text-transform:uppercase;color:var(--ash)}
+  .mtabs > label i{font:500 1rem "Recursive",sans-serif;font-style:normal;font-variation-settings:"CASL" 1,"slnt" -15,"MONO" 0;text-transform:none;color:var(--c)}
+  .mt-l-m{--c:var(--b1)} .mt-l-i{--c:var(--b2)} .mt-l-r{--c:var(--b3)} .mt-l-a{--c:var(--b4)} .mt-l-p{--c:var(--accent)}
+  .mtabs > input:checked + label{border-color:var(--c);color:var(--white);background:color-mix(in srgb,var(--c) 14%,transparent)}
+  .mtabs > input:focus-visible + label{outline:2px solid var(--c);outline-offset:2px}
+  .mpanes{padding:16px 18px;border:1px solid var(--line);border-radius:12px;min-height:120px}
+  .mp{display:none}
+  .mt-m:checked ~ .mpanes .mp-m,.mt-i:checked ~ .mpanes .mp-i,.mt-r:checked ~ .mpanes .mp-r,
+  .mt-a:checked ~ .mpanes .mp-a,.mt-p:checked ~ .mpanes .mp-p{display:block}
+  .mp .light{padding:8px 12px;border-radius:10px;border:1px solid var(--line)}
+  .mp .light.l-verde{border-color:#3ad389} .mp .light.l-amarillo{border-color:#f4c20d} .mp .light.l-rojo{border-color:#ff5c6e}
+  @media (max-width:760px){
+    .mrow > summary{grid-template-columns:1fr auto;gap:6px 12px}
+    .mr-light{grid-column:1 / -1} .mr-owner{grid-column:1 / -1} .mr-when{grid-column:1} .mr-state{grid-column:2}
+    .mr-name{grid-column:1 / -1}
+  }
   .linkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
   .props{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
   .prop{display:flex;flex-direction:column;gap:10px;margin:0;padding:12px 12px 18px}
