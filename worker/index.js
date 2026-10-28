@@ -1404,7 +1404,7 @@ async function prospectsPage(env, url){
   if(bola){ where.push(BALL_SQL + " = " + Number(bola)); }
   if(etapa){ binds.push(etapa); where.push("etapa = ?" + binds.length); }
   if(hoy){ binds.push(today); where.push("proxima_fecha IS NOT NULL AND proxima_fecha <= ?" + binds.length + " AND etapa NOT IN ('cliente', 'descartado')"); }
-  if(text){ binds.push("%" + text + "%"); const n = binds.length; where.push(`(negocio LIKE ?${n} OR barrio LIKE ?${n} OR categoria LIKE ?${n} OR code LIKE ?${n})`); }
+  if(text){ binds.push("%" + text + "%"); const n = binds.length; where.push(`(negocio LIKE ?${n} OR barrio LIKE ?${n} OR categoria LIKE ?${n} OR code LIKE ?${n} OR canal LIKE ?${n} OR proxima_accion LIKE ?${n})`); }
   const { results } = await env.DB.prepare(
     "SELECT id, code, rank, prioridad, score, bola, negocio, categoria, barrio, canal, enlace, etapa, proxima_accion, proxima_fecha FROM prospects WHERE " +
     where.join(" AND ") + " ORDER BY " + BALL_SQL + ", rank LIMIT 300"
@@ -1452,7 +1452,7 @@ async function prospectsPage(env, url){
         <input type="hidden" name="c" value="${esc(campaign)}">
         ${bola ? `<input type="hidden" name="bola" value="${esc(bola)}">` : ""}
         ${etapa ? `<input type="hidden" name="etapa" value="${esc(etapa)}">` : ""}
-        <input name="q" value="${esc(text)}" placeholder="Buscar negocio, barrio o categoría">
+        <input name="q" value="${esc(text)}" placeholder="Buscar negocio, barrio, categoría, canal o próximo paso">
       </form>
     </nav>
     ${results.length ? `

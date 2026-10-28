@@ -35,10 +35,10 @@ Archivos de referencia (rutas absolutas en este equipo):
 | Rol | Tipografía | Archivo | Uso |
 |---|---|---|---|
 | **Subtítulos personales** (blog, diario, opinión) | **Caveat Brush** | `CaveatBrush-Regular.ttf` (SIL OFL) | En minúscula normal, como se escribe; nada de MAYÚSCULAS forzadas. |
-| **Textos informativos largos** (paneles, listas, datos, pasos) | **Recursive**, la del sitio | `recursive-*.woff2` (SIL OFL) | Sans (MONO 0) para el texto; en modo mono (`"MONO" 1`) para etiquetas, cifras y rótulos cortos en mayúscula. |
+| **Textos informativos largos** (paneles, listas, datos, pasos) | **Recursive**, la del sitio | `recursive-*.woff2` (SIL OFL) | Sans (MONO 0, peso 300-500) para el texto; en modo mono (`"MONO" 1`) para etiquetas, cifras y rótulos cortos en mayúscula. |
 | **Llamar la atención** (una palabra o cifra que tiene que saltar) | **Sekaiwo** | `Sekaiwo-Regular.ttf` (libre, también comercial) | Una o dos palabras, grande, junto a los trazos de lápiz (§4). Nunca para frases ni para subtítulos. |
 | **Subtítulos técnicos** (explicar cómo se hace algo) | **Recursive** | `recursive-*.woff2` | Sans, peso 600-700. La misma letra del sitio, para que la imagen quede unificada. |
-| **Títulos, cierres y portadas** | **Boska** + **Recursive casual**, como el sitio | `boska-*.woff2`, `recursive-*.woff2` (ITF Free Font License · SIL OFL) | El título en Boska; la parte emocional en Recursive casual inclinado (`"CASL" 1, "slnt" -15`, peso 500), como «*lo creamos.*» en el sitio. Reemplaza a Instrument Serif. |
+| **Títulos, cierres y portadas** | **Boska** + **Recursive casual**, como el sitio | `boska-*.woff2`, `recursive-*.woff2` (ITF Free Font License · SIL OFL) | El título en Boska; la parte emocional en Recursive casual inclinado (`"CASL" 1, "slnt" -15, "MONO" 0`, peso 500, al 90 % del tamaño del título y en el color del acento), como «*lo creamos.*» en el sitio. Reemplaza a Instrument Serif; Mr Dafoe se probó y se descartó el 22 oct. |
 
 **Trebuchet MS no se usa en video** (su licencia no permite publicarla); queda solo para los documentos PDF.
 
