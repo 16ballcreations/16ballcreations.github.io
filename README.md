@@ -52,7 +52,7 @@ sitio: Boska para los títulos y Recursive para el texto, las etiquetas y los ac
   marca vienen cuatro de una opción (qué resolver primero, cuánto piensa
   invertir, quién decide, cuándo empezar). Llegan como códigos (`r0`…`r3`,
   `hablar`, `yo`, `ya`…) y el Worker los convierte en puntos de 100 con la
-  tabla `QUALIFY` de `worker/index.js`: verde desde 70 (llámalo hoy), amarillo
+  tabla `QUALIFY` de `worker/mira.js`: verde desde 70 (llámalo hoy), amarillo
   desde 40 (llamada y seguimiento), rojo debajo o con el rango más bajo y "más
   adelante" (regálale algo útil: el panel ofrece la guía de Google en su idioma). **Si cambian los planes:** se cambian las
   etiquetas de los rangos en `QUALIFY` y en las dos páginas (`mira/` y
@@ -85,7 +85,7 @@ sitio: Boska para los títulos y Recursive para el texto, las etiquetas y los ac
   Precio en inglés: desde US$200. Los textos de cada proyecto en inglés van en
   el campo `en` de `projects.js`
 - `marca/guias/`: las **guías de regalo** para los rojos de la MIRA. Hoy, "Tu perfil de empresa en Google" (`perfil-de-empresa-google.html`) y su versión en inglés (`google-business-profile.html`), con los estilos de la plantilla de documentos. Los PDF se publican en `assets/guias/` y el panel los enlaza en cada MIRA roja. Para regenerarlos: `node scripts/pdf.mjs marca/guias/<guia>.html assets/guias/<guia>.pdf`
-- **Oferta (22 oct):** la puerta de entrada pagada es la **Auditoría de marca** ($700.000 COP · US$200), la única con precio público (`price` en su servicio). "Video para redes" salió de la oferta: sus direcciones viejas redirigen con 301 a los servicios (`RETIRED` en `worker/index.js`). El teléfono comercial (+57 310 494 9979) va en los datos de la empresa y en el contacto; debe ser el mismo de la ficha de Google y de Instagram
+- **Oferta (22 oct):** la puerta de entrada pagada es la **Auditoría de marca** ($700.000 COP · US$200), la única con precio público (`price` en su servicio). "Video para redes" salió de la oferta: sus direcciones viejas redirigen con 301 a los servicios (`RETIRED` en `worker/comun/config.js`). El teléfono comercial (+57 310 494 9979) va en los datos de la empresa y en el contacto; debe ser el mismo de la ficha de Google y de Instagram
 - **Tipografías (22 oct):** Boska para los títulos y Recursive para todo lo demás: el texto (`"MONO" 0`), las etiquetas en modo monoespaciado (`"MONO" 1`) y la parte destacada de los títulos en modo casual inclinado (`"CASL" 1, "slnt" -15`). Se declaran en `assets/css/fuentes.css` y viven en `assets/fonts/` (licencias en `LICENCIAS.md`); el sitio ya no usa Google Fonts. Trebuchet MS no se publica: su licencia no lo permite (`.gitignore` y `scripts/build.mjs`)
 - `llms.txt`: resumen en texto plano del estudio para las herramientas de IA (llmstxt.org): quiénes somos, dónde estamos, qué hacemos, proyectos y enlaces. Si cambian los servicios, los precios o los proyectos, se actualiza a mano
 - Preguntas frecuentes de la portada (las de Google, la IA y el precio): salen de `HOME_FAQ` en `scripts/servicios-data.mjs` y `scripts/services-en-data.mjs`; `scripts/servicios.mjs` las escribe en la portada, visibles y como `FAQPage`, entre los marcadores `faq` y `faq-ld`
@@ -108,7 +108,18 @@ Todo vive en un Worker de Cloudflare llamado `page`
 
 - `scripts/build.mjs` copia el sitio a `dist/`, que es lo único que se publica.
   Si agregas una carpeta nueva al sitio, súmala a la lista de ese archivo.
-- `worker/index.js` atiende lo que no es un archivo:
+- El Worker atiende lo que no es un archivo. Está partido por funcionalidad
+  (28 oct 2026):
+  - `worker/index.js`: la entrada (sitio, API y correo) y la lista de rutas.
+  - `worker/panel.js`: el enrutador del panel (`/admin/…`).
+  - `worker/comun/`: configuración, utilidades, la API pública, la sesión y la
+    página del panel (marco, menú y estilos). No importa nada de las funcionalidades.
+  - `worker/ventas/`: el modelo (etapas, bolas, canales, campañas), los
+    prospectos, la llamada, el mapa y los recursos. Es la base de
+    «Modularity · Prospectos», el módulo de ventas que se regala aparte
+    (`C:Devmodularity-prospectosPLAN.md`).
+  - `worker/mira.js`, `autorizaciones.js`, `testimonios.js`, `propuestas.js`,
+    `correo.js` (DMARC) e `inicio.js`: una funcionalidad cada uno.
   - `POST /api/mira` y `POST /api/contacto` guardan cada envío en la base D1
     `16bc` (tabla `submissions`, ver `migrations/`).
   - `/admin` es el panel. Se entra por **`/admin/entrar`** (una página con la
