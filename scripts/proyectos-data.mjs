@@ -316,9 +316,9 @@ export const CASES = [
     }
   },
   {
-    slug:"modularity", year:"2026", ball:5,
+    slug:"modularity", year:"2015", ball:5,
     es: {
-      title:"Modularity", em:"un negocio en un solo lugar",
+      title:"Modularity", em:"una idea que volvió más fuerte",
       seoTitle:"Modularity: sistema para administrar tu negocio a la medida",
       desc:"Nuestro sistema propio para administrar negocios: pedidos, citas, inventario y facturas en un solo lugar, con las palabras de cada negocio.",
       kind:"Producto propio · en desarrollo",
@@ -326,10 +326,11 @@ export const CASES = [
       client:"Cafés, talleres, salones, clínicas y tiendas",
       tech:"Angular, Django y PostgreSQL",
       start:[
-        "Muchos negocios llevan su día en cuadernos, hojas de cálculo y chats. Cada herramienta cuenta una parte, y al final del día nadie tiene la historia completa.",
-        "Y los sistemas que existen suelen hablar en el idioma del software, no en el del negocio: a una mesa le dicen «registro» y a un paciente, «cliente»."
+        "La idea nació en 2015: un sistema que pusiera en un solo lugar el día de un negocio. La primera versión se construyó con Angular y un servidor en PHP, y se perdió. De ella quedó solo un documento con su estructura.",
+        "La idea, en cambio, no se perdió. Muchos negocios siguen llevando su día en cuadernos, hojas de cálculo y chats, y los sistemas que existen hablan el idioma del software, no el del negocio. Por eso hoy la estamos construyendo de nuevo, con una visión más clara."
       ],
       why:[
+        ["Empezar de nuevo sin olvidar", "Del primer Modularity quedó el documento de su estructura. Lo usamos como memoria, no como molde: la nueva versión parte de lo que aprendimos en estos años sobre cómo trabaja de verdad un negocio."],
         ["Un solo núcleo para muchos negocios", "Un café, un taller, un salón y una clínica comparten más de lo que parece. Modularity tiene un solo núcleo que se adapta a cada uno, encendiendo solo lo que ese negocio necesita."],
         ["Las palabras de cada negocio", "En un café se habla de mesas; en un taller, de vehículos; en una clínica, de pacientes. El sistema cambia sus palabras para que cada dueño se sienta en su casa."],
         ["Pensado para quien no es técnico", "Está hecho para el dueño que atiende, cobra y decide. Si hay que leer un manual para usarlo, algo falló."],
@@ -345,13 +346,13 @@ export const CASES = [
         "Una demo con los datos de un taller, para recorrerla sin registrarte"
       ],
       result:[
-        "Modularity está en desarrollo y ya se puede probar: la demo muestra cómo se ve el día de un taller cuando todo vive en un solo lugar.",
+        "Lo que en 2015 era una idea hoy se puede probar: Modularity está en desarrollo, y la demo muestra cómo se ve el día de un taller cuando todo vive en un solo lugar.",
         "Es también la base de nuestro servicio de sistemas a la medida: cuando un negocio necesita su propio sistema, empezamos desde aquí."
       ],
       links:[{ label:"Probar la demo", url:"https://modularity.16ballcreations.workers.dev/?demo" }]
     },
     en: {
-      title:"Modularity", em:"a business in one place",
+      title:"Modularity", em:"an idea that came back stronger",
       seoTitle:"Modularity: a system to run your business, built to fit",
       desc:"Our own system to run a business: orders, bookings, stock and invoices in one place, in each business's own words.",
       kind:"Our own product · in development",
@@ -359,10 +360,11 @@ export const CASES = [
       client:"Coffee shops, repair shops, salons, clinics and retail",
       tech:"Angular, Django and PostgreSQL",
       start:[
-        "Many businesses run their day on notebooks, spreadsheets and chats. Each tool tells part of the story, and at the end of the day nobody has the whole of it.",
-        "And existing systems tend to speak the software's language, not the business's: a table is a \"record\" and a patient is a \"customer\"."
+        "The idea was born in 2015: a system that would put a business's whole day in one place. The first version was built with Angular and a PHP backend, and it was lost. All that remained was a document with its structure.",
+        "The idea, though, wasn't lost. Many businesses still run their day on notebooks, spreadsheets and chats, and existing systems speak the software's language, not the business's. That's why today we're building it again, with a clearer vision."
       ],
       why:[
+        ["Starting over without forgetting", "From the first Modularity, the document of its structure remained. We use it as memory, not as a mold: the new version starts from what we've learned over these years about how a business really works."],
         ["One core for many businesses", "A coffee shop, a repair shop, a salon and a clinic share more than it seems. Modularity has a single core that adapts to each one, turning on only what that business needs."],
         ["Each business's own words", "A coffee shop talks about tables; a repair shop, about vehicles; a clinic, about patients. The system changes its words so every owner feels at home."],
         ["Made for people who aren't technical", "It's built for the owner who serves, charges and decides. If you need to read a manual to use it, something went wrong."],
@@ -378,7 +380,7 @@ export const CASES = [
         "A demo with a repair shop's data, to explore without signing up"
       ],
       result:[
-        "Modularity is in development and you can already try it: the demo shows what a repair shop's day looks like when everything lives in one place.",
+        "What was an idea in 2015 can now be tried: Modularity is in development, and the demo shows what a repair shop's day looks like when everything lives in one place.",
         "It's also the base of our custom systems service: when a business needs its own system, we start from here."
       ],
       links:[{ label:"Try the demo", url:"https://modularity.16ballcreations.workers.dev/?demo" }]
