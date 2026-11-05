@@ -149,7 +149,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=16">
-<link rel="stylesheet" href="/assets/css/v4.css?v=15">
+<link rel="stylesheet" href="/assets/css/v4.css?v=16">
 </head>`;
 }
 
@@ -662,7 +662,7 @@ ${header(L, null, otherCaseUrl(L, c.slug))}
       <h1>${esc(C.title)}, <em>${esc(C.em)}</em></h1>
       <p class="line">${esc(C.line)}</p>
       <div class="actions">
-        ${(C.links || p.links || []).filter(l => /^https?:/.test(l.url)).slice(0, 2).map((l, i) => `<a class="btn${i === 0 ? " btn-primary" : ""}" href="${esc(l.url)}" rel="noopener" target="_blank">${esc(l.label)} <span aria-hidden="true">&nearr;</span></a>`).join("\n        ")}
+        ${(C.links || p.links || []).filter(l => /^https?:/.test(l.url)).slice(0, 2).map((l, i) => `<a class="btn${i === 0 ? " btn-primary" : ""}" href="${esc(l.url)}" rel="noopener" target="_blank">${esc(l.label)} <span class="btn-ico" aria-hidden="true">&nearr;</span></a>`).join("\n        ")}
         <a class="btn" href="${L.mira}">${t.miraFree}</a>
       </div>
     </div>
@@ -722,7 +722,7 @@ ${others.map(o => `        <li><a class="tile" href="${caseUrl(L, o.slug)}"><spa
     <div class="wrap">
       <h2>${t.ctaH}</h2>
       <p>${esc(t.ctaP(L.price))}</p>
-      <div class="actions"><a class="btn btn-primary" href="${L.mira}">${t.miraFree}</a><a class="btn" href="${L.base}#contacto">${t.write}</a></div>
+      <div class="actions"><a class="btn btn-primary" href="${L.mira}">${t.miraFree} <span class="btn-ico" aria-hidden="true">&rarr;</span></a><a class="btn" href="${L.base}#contacto">${t.write}</a></div>
     </div>
   </section>
 </main>

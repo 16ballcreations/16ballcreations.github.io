@@ -270,6 +270,13 @@
 .case-text p{margin:0 0 16px;font-size:clamp(1.05rem,1.4vw,1.2rem);line-height:1.65;color:var(--bone)}
 .case-why{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .case-why li{padding:24px 26px;border:1px solid var(--hairline);border-radius:22px;background:rgba(255,255,255,.02)}
+/* the arrow in its own circle, flush with the button edge; it leans out on hover
+   (Docs/Marketing/estrategia/referencias-web/patrones-de-acabado.md) */
+.btn .btn-ico{display:inline-grid;place-items:center;width:28px;height:28px;margin:-6px -12px -6px 2px;border-radius:50%;background:rgba(255,255,255,.1);font-size:.9em;line-height:1;transition:transform .5s cubic-bezier(.32,.72,0,1),background .25s ease-out}
+.btn-primary .btn-ico{background:rgba(0,0,0,.08)}
+.btn:hover .btn-ico{transform:translate(2px,-1px) scale(1.06);background:rgba(0,0,0,.12)}
+.btn:active{transform:scale(.98)}
+@media (prefers-reduced-motion:reduce){ .btn .btn-ico,.btn:active{transition:none;transform:none} }
 .case-why h3{margin:14px 0 8px;font-family:var(--font-display);font-weight:400;font-size:1.6rem;line-height:1.1;color:var(--white)}
 .case-why p{margin:0;color:var(--ash);line-height:1.6}
 .case-svc{margin:22px 0 0;color:var(--ash)}
