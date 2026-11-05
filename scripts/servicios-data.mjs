@@ -5,7 +5,11 @@
    slug      La dirección: /servicios/<slug>/
    ball      La bola que lo marca (1 a 6)
    name      El nombre corto, para menús y etiquetas
-   title     El título de la página (lo que la gente busca en Google)
+   title     El título de la página (el h1)
+   seo       El <title>: con las palabras que la gente busca (se le suma «desde Medellín»)
+   who       Una línea: para quién es (la lista de /servicios/)
+   desc      La descripción para Google, si la automática pasa de ~155 caracteres
+   examples  Opcional: ejemplos por industria y una demo (sistemas)
    em        La parte del título que va en cursiva y en el color de la bola
    line      Una frase: qué es (la tarjeta de la portada)
    from      El precio de partida (tarifario v5); fromLabel y fromNote si no es
@@ -79,6 +83,9 @@ export const SERVICES = [
     price: 700000,
     name: "Auditoría de marca",
     title: "Auditoría de marca",
+    seo: "Auditoría de marca: web, Google y redes",
+    who: "Para negocios que ya tienen página y redes, y sienten que algo no cuadra.",
+    desc: "Auditoría de marca desde Medellín: revisamos tu web, tu ficha de Google y tus redes, y te entregamos por escrito qué corregir. $700.000 COP.",
     em: "canal por canal",
     line: "Revisamos tu marca en cada lugar donde aparece y te entregamos, por escrito, qué está fallando y cómo corregirlo.",
     what: "16 Ball Creations revisa la marca de negocios y marcas personales en cada lugar donde aparece y entrega por escrito qué corregir, desde Medellín.",
@@ -111,6 +118,8 @@ export const SERVICES = [
     ball: 2,
     name: "Identidad de marca",
     title: "Identidad de marca",
+    seo: "Diseño de identidad de marca y logo",
+    who: "Para marcas que nacen, o que crecieron sin una identidad que las cuente.",
     em: "que se reconoce",
     line: "Logo, colores, tipografía y una voz propia, construidos desde la historia de tu marca.",
     what: "16 Ball Creations crea la identidad de negocios y marcas personales, logo, colores, tipografía y voz, a partir de su historia, desde Medellín.",
@@ -143,6 +152,8 @@ export const SERVICES = [
     ball: 3,
     name: "Páginas web",
     title: "Diseño de páginas web",
+    seo: "Diseño de páginas web a la medida",
+    who: "Para negocios y marcas personales que necesitan una página que hable por ellos.",
     em: "que cuentan quién eres",
     line: "Un sitio hecho a la medida de tu marca, que se ve bien en el celular y hace fácil que te escriban.",
     what: "16 Ball Creations diseña páginas web a la medida para negocios y marcas personales, desde Medellín: se ven bien en el celular y hacen fácil que te escriban.",
@@ -179,6 +190,8 @@ export const SERVICES = [
     ball: 4,
     name: "Tiendas en línea",
     title: "Tiendas en línea",
+    seo: "Tiendas en línea con pedidos por WhatsApp",
+    who: "Para negocios que venden productos y hoy toman los pedidos a mano.",
     em: "con tu marca de punta a punta",
     line: "Tu catálogo en internet, con pedidos por la página o por WhatsApp, y que se sienta como tu marca.",
     what: "16 Ball Creations hace tiendas en línea para negocios que venden productos, con pedidos por la página o por WhatsApp, desde Medellín.",
@@ -211,6 +224,36 @@ export const SERVICES = [
     ball: 5,
     name: "Sistemas para tu negocio",
     title: "Sistemas para administrar tu negocio",
+    seo: "Sistema de pedidos, inventario y citas",
+    who: "Para negocios que llevan pedidos, citas o inventario en cuadernos y hojas de cálculo.",
+    examples: {
+      "kicker": "Para qué sirve",
+      "h": "Un sistema que habla <em>como tu negocio</em>",
+      "lead": "Cada negocio cuenta su día con sus propias palabras. El sistema se arma con ellas: lo que pides, lo que vendes, lo que agendas.",
+      "items": [
+        [
+          "Cafés y restaurantes",
+          "Pedidos en mesa y para llevar, domicilios, inventario de insumos que avisa antes de que se acabe y el cierre de caja del día."
+        ],
+        [
+          "Talleres",
+          "Órdenes de trabajo con fotos del antes y el después, repuestos usados, el estado de cada vehículo y la factura al entregar."
+        ],
+        [
+          "Salones y barberías",
+          "Agenda por profesional, recordatorios de cita, historial de cada cliente y lo que se vendió en productos."
+        ],
+        [
+          "Clínicas y consultorios",
+          "Citas, la ficha de cada paciente, los servicios que se le hicieron y lo que falta por cobrar."
+        ]
+      ],
+      "demo": {
+        "label": "Probar la demo de Modularity",
+        "note": "Modularity es nuestro sistema propio: con datos de ejemplo de un taller, puedes recorrer pedidos, inventario, citas y facturas.",
+        "url": "https://modularity.16ballcreations.workers.dev/?demo"
+      }
+    },
     em: "en un solo lugar",
     line: "Pedidos, inventario, citas y facturas en un solo lugar, en vez de cuadernos y hojas de cálculo.",
     what: "16 Ball Creations hace sistemas a la medida para que negocios pequeños lleven pedidos, inventario, citas y facturas en un solo lugar, desde Medellín.",
@@ -242,6 +285,8 @@ export const SERVICES = [
     ball: 6,
     name: "Asesoría de imagen y redes",
     title: "Asesoría de imagen y redes",
+    seo: "Asesoría de imagen y redes sociales",
+    who: "Para marcas que ya existen y quieren que todo cuente la misma historia.",
     em: "para que todo cuente lo mismo",
     line: "Revisamos tus perfiles, tu imagen y tus piezas para que todo cuente la misma historia.",
     what: "16 Ball Creations revisa los perfiles, la imagen y las piezas de negocios y marcas personales para que todo cuente la misma historia, desde Medellín.",

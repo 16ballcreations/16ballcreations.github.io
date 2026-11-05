@@ -94,7 +94,7 @@
 .svc{position:relative;isolation:isolate;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .svc > li.tile{gap:14px}
 .svc .ball{--s:40px}
-.svc h3{font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;margin:6px 0 0}
+.svc h2,.svc h3{font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;margin:6px 0 0}
 .svc p{margin:0;color:var(--ash);font-size:.9375rem}
 .inc-label{margin:6px 0 0;font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--iron)}
 .inc{list-style:none;margin:0;padding:0;display:grid;gap:7px}
@@ -253,3 +253,12 @@
   .svc-hero{padding-top:calc(var(--header-h) + 48px)}
   .cta-band{padding:28px 22px}
 }
+
+/* /servicios/: who each service is for */
+.svc .who{margin:8px 0 6px;color:var(--white);font-weight:500}
+/* business systems: examples by industry, and the demo */
+.svc.examples{grid-template-columns:repeat(2,1fr)}
+.svc.examples h3{font-size:1.6rem}
+.demo-line{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 28px;margin-top:28px;padding-top:24px;border-top:1px solid var(--hairline)}
+.demo-line p{margin:0;max-width:60ch;color:var(--bone)}
+@media (max-width:760px){ .svc.examples{grid-template-columns:1fr} }

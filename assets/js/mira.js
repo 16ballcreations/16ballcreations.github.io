@@ -310,6 +310,11 @@
   var t = (params.get("t") || "").trim().toLowerCase(), o = (params.get("o") || "").trim().toLowerCase();
   if(/^[a-z2-9]{6}$/.test(t)){ ref.token = t; }
   if(/^[a-z]{2,12}$/.test(o)){ ref.origen = o; }
+  /* the site's own buttons link to the plain /mira/ (the address Google indexes):
+     coming from one of its pages is the origin "web" */
+  else if(!ref.origen){
+    try{ if(document.referrer && new URL(document.referrer).host === location.host){ ref.origen = "web"; } }catch(e){}
+  }
   try{ localStorage.setItem(STORE + ":ref", JSON.stringify(ref)); }catch(e){}
   /* ?nombre= and ?marca= greet and fill in; the English page also takes ?name= and ?brand= */
   var pName = (params.get("nombre") || params.get("name") || "").trim(), pBrand = (params.get("marca") || params.get("brand") || "").trim();

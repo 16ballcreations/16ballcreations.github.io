@@ -147,7 +147,7 @@
   function invite(){
     var li = el("li", "card tile card-wide card-invite");
     var media = el("a", "card-media invite-slot");
-    media.href = EN ? "/en/mira/?o=web" : "/mira/?o=web";
+    media.href = EN ? "/en/mira/" : "/mira/";
     media.setAttribute("aria-label", EN ? "Start your free MIRA" : "Haz tu MIRA gratis");
     media.insertAdjacentHTML("beforeend", sketch16());
     media.appendChild(el("span", "card-n", "16"));

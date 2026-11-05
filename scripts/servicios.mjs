@@ -37,7 +37,7 @@ const HEX = { 1:"#f4c20d", 2:"#4d7dff", 3:"#ff5c6e", 4:"#a375d8", 5:"#ff9d3d", 6
 const LOCALES = {
   es: {
     lang: "es", ogLocale: "es_CO", base: "/", dir: "servicios", home: "index.html", data: SERVICES, homeFaq: HOME_FAQ,
-    mira: "/mira/?o=web", price: "$700.000 COP", minPrice: 700000, currency: "COP",
+    mira: "/mira/", price: "$700.000 COP", minPrice: 700000, currency: "COP",
     status: {},
     t: {
       home: "Inicio", homeLabel: "16 Ball Creations, inicio", openMenu: "Abrir el men&uacute;", sections: "Secciones",
@@ -66,7 +66,7 @@ const LOCALES = {
   },
   en: {
     lang: "en", ogLocale: "en_US", base: "/en/", dir: "services", home: "en/index.html", data: SERVICES_EN, homeFaq: HOME_FAQ_EN,
-    mira: "/en/mira/?o=web", price: "US$200", minPrice: 200, currency: "USD",
+    mira: "/en/mira/", price: "US$200", minPrice: 200, currency: "USD",
     status: { "En línea":"Live", "Por estrenar":"Coming soon", "Continuo":"Ongoing", "En desarrollo":"In development" },
     t: {
       home: "Home", homeLabel: "16 Ball Creations, home", openMenu: "Open the menu", sections: "Sections",
@@ -146,7 +146,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=15">
-<link rel="stylesheet" href="/assets/css/v4.css?v=13">
+<link rel="stylesheet" href="/assets/css/v4.css?v=14">
 </head>`;
 }
 
@@ -244,7 +244,7 @@ function servicePage(L, s){
   const path = svcPath(L, s);
   const projects = PROJECTS.filter(p => (p.services || []).includes(s.key));
   const others = L.data.filter(o => o !== s);
-  const description = t.desc(s, L.price);
+  const description = s.desc || t.desc(s, L.price);
   const jsonld = {
     "@context": "https://schema.org",
     "@graph": [
@@ -282,7 +282,7 @@ function servicePage(L, s){
     ]
   };
 
-  return `${head(L, { title: `${s.title} ${t.titleWhere} · 16 Ball Creations`, description, path, key: s.key, jsonld })}
+  return `${head(L, { title: `${s.seo || s.title} ${t.titleWhere} · 16 Ball Creations`, description, path, key: s.key, jsonld })}
 <body class="page-svc" style="--accent:${HEX[s.ball]}">
 ${header(L, s.key)}
 
@@ -325,6 +325,22 @@ ${s.includes.map(i => `          <li>${esc(i)}</li>`).join("\n")}
     </div>
   </section>
 
+${s.examples ? `
+  <section class="sec" id="ejemplos">
+    <div class="wrap">
+      <div class="sec-head row-head">
+        <div>
+          <p class="kicker">${esc(s.examples.kicker)}</p>
+          <h2 class="big">${s.examples.h}</h2>
+        </div>
+        <p class="lead">${esc(s.examples.lead)}</p>
+      </div>
+      <ul class="svc examples">
+${s.examples.items.map(([h, p]) => `        <li class="tile reveal"><h3>${esc(h)}</h3><p>${esc(p)}</p></li>`).join("\n")}
+      </ul>
+      ${s.examples.demo ? `<div class="demo-line"><p>${esc(s.examples.demo.note)}</p><a class="btn btn-primary" href="${esc(s.examples.demo.url)}" target="_blank" rel="noopener">${esc(s.examples.demo.label)} <span aria-hidden="true">&rarr;</span></a></div>` : ""}
+    </div>
+  </section>` : ""}
   <section class="sec" id="proceso">
     <div class="wrap">
       <div class="sec-head row-head">
@@ -396,10 +412,13 @@ ${footer(L)}`;
 }
 
 /* a service as a list item: shared by the overview pages and the home pages */
-function serviceItem(L, s, base){
+/* on /servicios/ each one is an h2 with who it's for; on the home page, an h3 under the section's h2 */
+function serviceItem(L, s, base, index = false){
+  const h = index ? "h2" : "h3";
   return `<li class="tile reveal" style="--c:${HEX[s.ball]}">
           ${ball(s.ball)}
-          <h3><a href="${base}${svcPath(L, s)}">${esc(s.name)}</a></h3>
+          <${h}><a href="${base}${svcPath(L, s)}">${esc(s.name)}</a></${h}>
+          ${index && s.who ? `<p class="who">${esc(s.who)}</p>` : ""}
           <p>${esc(s.line)}</p>
           <p class="inc-label">${L.t.includes}</p>
           <ul class="inc">${s.includes.slice(0, 4).map(i => `<li>${esc(i)}</li>`).join("")}</ul>
@@ -451,7 +470,7 @@ ${header(L, null)}
     <div class="wrap">
       <div class="sec-head"><h2 class="big">${t.idxH2}</h2></div>
       <ul class="svc svc-all">
-        ${L.data.map(s => serviceItem(L, s, L.base)).join("\n        ")}
+        ${L.data.map(s => serviceItem(L, s, L.base, true)).join("\n        ")}
       </ul>
     </div>
   </section>

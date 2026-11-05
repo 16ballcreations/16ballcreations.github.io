@@ -59,6 +59,9 @@ export const SERVICES_EN = [
     price: 200,
     name: "Brand audit",
     title: "Brand audit",
+    seo: "Brand audit: website, Google and social",
+    who: "For businesses that already have a website and social profiles, and feel something doesn't add up.",
+    desc: "Brand audit from Medellín: we review your website, Google listing, social profiles and contact details, and give you in writing what to fix. US$200.",
     em: "channel by channel",
     line: "We review your brand everywhere it shows up and give you, in writing, what's failing and how to fix it.",
     what: "16 Ball Creations reviews the brand of businesses and personal brands everywhere it shows up and gives you, in writing, what to fix, from Medellín.",
@@ -90,6 +93,8 @@ export const SERVICES_EN = [
     ball: 2,
     name: "Brand identity",
     title: "Brand identity",
+    seo: "Brand identity and logo design",
+    who: "For brands that are starting out, or grew without an identity that tells their story.",
     em: "people recognize",
     line: "A logo, colors, typography and a voice of its own, built from your brand's story.",
     what: "16 Ball Creations creates the identity of businesses and personal brands, logo, colors, typography and voice, from their story, working from Medellín.",
@@ -122,6 +127,8 @@ export const SERVICES_EN = [
     ball: 3,
     name: "Websites",
     title: "Website design",
+    seo: "Custom website design",
+    who: "For businesses and personal brands that need a website that speaks for them.",
     em: "that tells who you are",
     line: "A site made to fit your brand, that looks right on a phone and makes it easy to reach you.",
     what: "16 Ball Creations designs custom websites for businesses and personal brands from Medellín: they look right on a phone and make it easy to reach you.",
@@ -158,6 +165,8 @@ export const SERVICES_EN = [
     ball: 4,
     name: "Online stores",
     title: "Online stores",
+    seo: "Online stores with WhatsApp ordering",
+    who: "For businesses that sell products and still take orders by hand.",
     em: "with your brand end to end",
     line: "Your catalog online, with orders through the site or WhatsApp, that feels like your brand.",
     what: "16 Ball Creations builds online stores for businesses that sell products, with orders through the site or WhatsApp, working from Medellín.",
@@ -190,6 +199,36 @@ export const SERVICES_EN = [
     ball: 5,
     name: "Business systems",
     title: "Systems to run your business",
+    seo: "Order, inventory and booking systems",
+    who: "For businesses that track orders, bookings or stock in notebooks and spreadsheets.",
+    examples: {
+      "kicker": "What it's for",
+      "h": "A system that speaks <em>like your business</em>",
+      "lead": "Every business tells its day in its own words. The system is built with them: what you order, what you sell, what you book.",
+      "items": [
+        [
+          "Coffee shops and restaurants",
+          "Table and takeaway orders, deliveries, a stock of supplies that warns you before it runs out, and the day's cash count."
+        ],
+        [
+          "Repair shops",
+          "Work orders with before-and-after photos, the parts used, the status of every vehicle and the invoice at handover."
+        ],
+        [
+          "Salons and barbershops",
+          "A calendar per professional, appointment reminders, each client's history and the products sold."
+        ],
+        [
+          "Clinics and practices",
+          "Appointments, each patient's record, the services they received and what's still to be paid."
+        ]
+      ],
+      "demo": {
+        "label": "Try the Modularity demo",
+        "note": "Modularity is our own system: with sample data from a repair shop, you can walk through orders, stock, bookings and invoices.",
+        "url": "https://modularity.16ballcreations.workers.dev/?demo"
+      }
+    },
     em: "in one place",
     line: "Orders, inventory, appointments and invoices in one place, instead of notebooks and spreadsheets.",
     what: "16 Ball Creations builds custom systems so small businesses keep orders, inventory, appointments and invoices in one place, working from Medellín.",
@@ -221,6 +260,8 @@ export const SERVICES_EN = [
     ball: 6,
     name: "Image and social media advisory",
     title: "Image and social media advisory",
+    seo: "Image and social media advisory",
+    who: "For brands that already exist and want everything to tell the same story.",
     em: "so everything tells the same story",
     line: "We review your profiles, your image and your pieces so everything tells the same story.",
     what: "16 Ball Creations reviews the profiles, image and pieces of businesses and personal brands so everything tells the same story, from Medellín.",
