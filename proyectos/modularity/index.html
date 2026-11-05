@@ -80,7 +80,7 @@
 <link rel="preload" href="/assets/fonts/boska-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
-<link rel="stylesheet" href="/assets/css/site.css?v=15">
+<link rel="stylesheet" href="/assets/css/site.css?v=16">
 <link rel="stylesheet" href="/assets/css/v4.css?v=15">
 </head>
 <body class="page-svc page-case" style="--accent:#ff9d3d">
@@ -118,13 +118,29 @@
       <h1>Modularity, <em>una idea que volvió más fuerte</em></h1>
       <p class="line">Un sistema para dueños de negocio que no son técnicos: pedidos, citas, inventario y facturas en un solo lugar, hablando el idioma de cada negocio.</p>
       <div class="actions">
-        <a class="btn btn-primary" href="https://modularity.16ballcreations.workers.dev/?demo" rel="noopener" target="_blank">Probar la demo <span aria-hidden="true">&nearr;</span></a>
+        <a class="btn btn-primary" href="https://modularity.16ballcreations.com/" rel="noopener" target="_blank">Conoce Modularity <span aria-hidden="true">&nearr;</span></a>
+        <a class="btn" href="https://modularity.16ballcreations.workers.dev/?demo" rel="noopener" target="_blank">Probar la demo <span aria-hidden="true">&nearr;</span></a>
         <a class="btn" href="/mira/">Haz tu MIRA gratis</a>
       </div>
     </div>
   </section>
 
-  <section class="case-shot"><div class="wrap"><img src="/assets/img/projects/modularity.jpg?v=2" alt="Panel principal de Modularity para un taller de demostración" width="1200" height="750" fetchpriority="high"></div></section>
+  <section class="case-shot sec modularity"><div class="wrap"><div class="stage" id="modStage">
+        <div class="mod-tabs" role="tablist" aria-label="Estilos de la interfaz"><button type="button" role="tab" id="modTab-glass" aria-controls="modWindow" aria-selected="true" data-dark="/assets/img/modularity-glass-dark.jpg?v=1" data-light="/assets/img/modularity-glass-light.jpg?v=1" data-alt-dark="Panel principal de Modularity en estilo Glass y tema oscuro, para un taller de demostración: ventas del día, citas, facturas pendientes, órdenes de reparación y estado del equipo" data-alt-light="El mismo panel en estilo Glass y tema claro">Glass</button><button type="button" role="tab" id="modTab-classic" aria-controls="modWindow" aria-selected="false" tabindex="-1" data-dark="/assets/img/modularity-classic-dark.jpg?v=1" data-light="/assets/img/modularity-classic-light.jpg?v=1" data-alt-dark="Panel principal de Modularity en estilo Classic y tema oscuro, para un taller de demostración: ventas del día, citas, facturas pendientes, órdenes de reparación y estado del equipo" data-alt-light="El mismo panel en estilo Classic y tema claro">Classic</button></div>
+        <figure class="window" id="modWindow" role="tabpanel" aria-labelledby="modTab-glass">
+          <div class="window-bar" aria-hidden="true"><span></span><span></span><span></span><em class="mono">modularity / taller demo</em></div>
+          <!-- the same screen in both themes, one over the other; the divider
+               shows the light one to its right (assets/js/site.js) -->
+          <div class="compare" id="compare" style="--pos:50%">
+            <img class="cmp-dark" src="/assets/img/modularity-glass-dark.jpg?v=1" alt="Panel principal de Modularity en estilo Glass y tema oscuro, para un taller de demostración: ventas del día, citas, facturas pendientes, órdenes de reparación y estado del equipo" width="1301" height="900">
+            <img class="cmp-light" src="/assets/img/modularity-glass-light.jpg?v=1" alt="El mismo panel en estilo Glass y tema claro" width="1301" height="900">
+            <span class="cmp-tag cmp-tag-dark mono" aria-hidden="true">Oscuro</span>
+            <span class="cmp-tag cmp-tag-light mono" aria-hidden="true">Claro</span>
+            <div class="cmp-handle" id="compareHandle" role="slider" tabindex="0" aria-label="Comparar el tema oscuro y el claro" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Mitad oscuro, mitad claro"><span class="cmp-knob" aria-hidden="true"></span></div>
+          </div>
+        </figure>
+        <p class="cmp-note mono">Dos estilos, Glass y Classic, cada uno en oscuro o claro: cada negocio elige cómo se ve. Desliza para comparar.</p>
+      </div></div></section>
 
   <section class="sec" id="punto-de-partida">
     <div class="wrap case-two">
@@ -205,6 +221,6 @@
     </div>
   </div>
 </footer>
-<script src="/assets/js/site.js?v=7" defer></script>
+<script src="/assets/js/site.js?v=8" defer></script>
 </body>
 </html>

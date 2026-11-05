@@ -349,7 +349,7 @@ export const CASES = [
         "Lo que en 2015 era una idea hoy se puede probar: Modularity está en desarrollo, y la demo muestra cómo se ve el día de un taller cuando todo vive en un solo lugar.",
         "Es también la base de nuestro servicio de sistemas a la medida: cuando un negocio necesita su propio sistema, empezamos desde aquí."
       ],
-      links:[{ label:"Probar la demo", url:"https://modularity.16ballcreations.workers.dev/?demo" }]
+      links:[{ label:"Conoce Modularity", url:"https://modularity.16ballcreations.com/" }, { label:"Probar la demo", url:"https://modularity.16ballcreations.workers.dev/?demo" }]
     },
     en: {
       title:"Modularity", em:"an idea that came back stronger",
@@ -383,7 +383,7 @@ export const CASES = [
         "What was an idea in 2015 can now be tried: Modularity is in development, and the demo shows what a repair shop's day looks like when everything lives in one place.",
         "It's also the base of our custom systems service: when a business needs its own system, we start from here."
       ],
-      links:[{ label:"Try the demo", url:"https://modularity.16ballcreations.workers.dev/?demo" }]
+      links:[{ label:"Discover Modularity", url:"https://modularity.16ballcreations.com/en/" }, { label:"Try the demo", url:"https://modularity.16ballcreations.workers.dev/?demo" }]
     }
   }
 ];

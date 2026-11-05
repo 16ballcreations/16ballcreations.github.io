@@ -149,7 +149,7 @@
 <link rel="preload" href="/assets/fonts/boska-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
-<link rel="stylesheet" href="/assets/css/site.css?v=15">
+<link rel="stylesheet" href="/assets/css/site.css?v=16">
 <link rel="stylesheet" href="/assets/css/v4.css?v=15">
 </head>
 <body>
@@ -526,21 +526,24 @@
         </div>
         <p class="lead">A system to run your business from one place: orders, inventory, appointments, invoices and customers. It was born in 2015 for a concrete company, and today we're turning it into a product any business can adapt to the way it works.</p>
       </div>
+      <!-- modularity:inicio (lo escribe scripts/servicios.mjs) -->
       <div class="stage" id="modStage">
-        <figure class="window" id="modWindow">
+        <div class="mod-tabs" role="tablist" aria-label="Interface styles"><button type="button" role="tab" id="modTab-glass" aria-controls="modWindow" aria-selected="true" data-dark="/assets/img/modularity-glass-dark.jpg?v=1" data-light="/assets/img/modularity-glass-light.jpg?v=1" data-alt-dark="Modularity's main dashboard in the Glass style and dark theme, for a demo repair shop: today's sales, appointments, pending invoices, repair orders and team status (interface in Spanish)" data-alt-light="The same dashboard in the Glass style and light theme">Glass</button><button type="button" role="tab" id="modTab-classic" aria-controls="modWindow" aria-selected="false" tabindex="-1" data-dark="/assets/img/modularity-classic-dark.jpg?v=1" data-light="/assets/img/modularity-classic-light.jpg?v=1" data-alt-dark="Modularity's main dashboard in the Classic style and dark theme, for a demo repair shop: today's sales, appointments, pending invoices, repair orders and team status (interface in Spanish)" data-alt-light="The same dashboard in the Classic style and light theme">Classic</button></div>
+        <figure class="window" id="modWindow" role="tabpanel" aria-labelledby="modTab-glass">
           <div class="window-bar" aria-hidden="true"><span></span><span></span><span></span><em class="mono">modularity / demo shop</em></div>
           <!-- the same screen in both themes, one over the other; the divider
                shows the light one to its right (assets/js/site.js) -->
           <div class="compare" id="compare" style="--pos:50%">
-            <img class="cmp-dark" src="/assets/img/modularity-dashboard.jpg?v=3" alt="Modularity's main dashboard in the dark theme, for a demo repair shop: today's sales, appointments, pending invoices, repair orders and team status (interface in Spanish)" width="1301" height="900" loading="lazy">
-            <img class="cmp-light" src="/assets/img/modularity-dashboard-light.jpg?v=1" alt="The same dashboard in the light theme" width="1301" height="900" loading="lazy">
+            <img class="cmp-dark" src="/assets/img/modularity-glass-dark.jpg?v=1" alt="Modularity's main dashboard in the Glass style and dark theme, for a demo repair shop: today's sales, appointments, pending invoices, repair orders and team status (interface in Spanish)" width="1301" height="900" loading="lazy">
+            <img class="cmp-light" src="/assets/img/modularity-glass-light.jpg?v=1" alt="The same dashboard in the Glass style and light theme" width="1301" height="900" loading="lazy">
             <span class="cmp-tag cmp-tag-dark mono" aria-hidden="true">Dark</span>
             <span class="cmp-tag cmp-tag-light mono" aria-hidden="true">Light</span>
             <div class="cmp-handle" id="compareHandle" role="slider" tabindex="0" aria-label="Compare the dark and light themes" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Half dark, half light"><span class="cmp-knob" aria-hidden="true"></span></div>
           </div>
         </figure>
-        <p class="cmp-note mono">Dark or light: each business chooses how it looks. Slide to compare.</p>
+        <p class="cmp-note mono">Two styles, Glass and Classic, each in dark or light: every business picks how it looks. Drag to compare.</p>
       </div>
+      <!-- modularity:fin -->
       <ul class="modules" id="modules">
         <li><span class="mono">01</span>Orders and work orders, always up to date</li>
         <li><span class="mono">02</span>Calendar and appointments with your customers</li>
@@ -564,7 +567,8 @@
         </div>
       </div>
       <div class="actions center">
-        <a class="btn btn-primary" href="https://modularity.16ballcreations.workers.dev/?demo" target="_blank" rel="noopener noreferrer">Try the demo <span aria-hidden="true">&nearr;</span></a>
+        <a class="btn btn-primary" href="https://modularity.16ballcreations.com/en/" rel="noopener">Discover Modularity <span aria-hidden="true">&rarr;</span></a>
+        <a class="btn" href="https://modularity.16ballcreations.workers.dev/?demo" target="_blank" rel="noopener noreferrer">Try the demo <span aria-hidden="true">&nearr;</span></a>
         <a class="btn" href="mailto:crea@16ballcreations.com?subject=Guided%20Modularity%20demo">Ask for a guided demo</a>
         <span class="note mono">Sample data: explore freely</span>
       </div>
@@ -690,7 +694,7 @@
 <script src="/assets/js/projects.js?v=22"></script>
 <script src="/assets/js/servicios.js?v=3"></script>
 <script src="/assets/js/v4.js?v=7"></script>
-<script src="/assets/js/site.js?v=7" defer></script>
+<script src="/assets/js/site.js?v=8" defer></script>
 <script src="/assets/js/table.js?v=3" defer></script>
 <script src="/assets/js/orb.js?v=2" defer></script>
 </body>

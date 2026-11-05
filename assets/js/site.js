@@ -300,6 +300,34 @@
     });
     setPos(50);
 
+    /* Glass and Classic: each tab swaps both screens, the divider stays put */
+    var tabs = [].slice.call(document.querySelectorAll(".mod-tabs [role=tab]"));
+    var imgDark = compare.querySelector(".cmp-dark"), imgLight = compare.querySelector(".cmp-light");
+    function pick(tab, focus){
+      tabs.forEach(function(t){
+        var on = t === tab;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+      });
+      imgDark.src = tab.getAttribute("data-dark"); imgDark.alt = tab.getAttribute("data-alt-dark");
+      imgLight.src = tab.getAttribute("data-light"); imgLight.alt = tab.getAttribute("data-alt-light");
+      document.getElementById("modWindow").setAttribute("aria-labelledby", tab.id);
+      if(focus){ tab.focus(); }
+    }
+    tabs.forEach(function(tab, i){
+      tab.addEventListener("click", function(){ pick(tab); });
+      tab.addEventListener("keydown", function(e){
+        var n = tabs.length, j = null;
+        if(e.key === "ArrowRight"){ j = (i + 1) % n; }
+        else if(e.key === "ArrowLeft"){ j = (i - 1 + n) % n; }
+        else if(e.key === "Home"){ j = 0; }
+        else if(e.key === "End"){ j = n - 1; }
+        if(j !== null){ pick(tabs[j], true); e.preventDefault(); }
+      });
+      /* the other style's screens load in the background, so the switch is instant */
+      if(i){ window.addEventListener("load", function(){ [tab.getAttribute("data-dark"), tab.getAttribute("data-light")].forEach(function(u){ new Image().src = u; }); }); }
+    });
+
     /* the first time it comes on screen, the divider sweeps once to show it moves */
     if(!reduce && "IntersectionObserver" in window){
       var hint = new IntersectionObserver(function(entries){

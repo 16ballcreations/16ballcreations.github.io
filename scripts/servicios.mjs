@@ -148,7 +148,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/boska-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
-<link rel="stylesheet" href="/assets/css/site.css?v=15">
+<link rel="stylesheet" href="/assets/css/site.css?v=16">
 <link rel="stylesheet" href="/assets/css/v4.css?v=15">
 </head>`;
 }
@@ -194,13 +194,50 @@ function footer(L){
     </div>
   </div>
 </footer>
-<script src="/assets/js/site.js?v=7" defer></script>
+<script src="/assets/js/site.js?v=8" defer></script>
 </body>
 </html>
 `;
 }
 function footerServices(L, base){
   return `<ul class="footer-svc">${L.data.map(s => `<li><a href="${base}${svcPath(L, s)}">${esc(s.name)}</a></li>`).join("")}<li><a href="${L.mira}">MIRA</a></li></ul>`;
+}
+
+/* Modularity's own site, and its two styles shown with the dark/light slider
+   (assets/js/site.js): the home section and the case page share this markup */
+const MODY_SITE = { es: "https://modularity.16ballcreations.com/", en: "https://modularity.16ballcreations.com/en/" };
+const MODY_STYLES = {
+  es: { list: "Estilos de la interfaz", bar: "modularity / taller demo", slider: "Comparar el tema oscuro y el claro", half: "Mitad oscuro, mitad claro", dark: "Oscuro", light: "Claro",
+    note: "Dos estilos, Glass y Classic, cada uno en oscuro o claro: cada negocio elige cómo se ve. Desliza para comparar.",
+    altDark: s => `Panel principal de Modularity en estilo ${s} y tema oscuro, para un taller de demostración: ventas del día, citas, facturas pendientes, órdenes de reparación y estado del equipo`,
+    altLight: s => `El mismo panel en estilo ${s} y tema claro` },
+  en: { list: "Interface styles", bar: "modularity / demo shop", slider: "Compare the dark and light themes", half: "Half dark, half light", dark: "Dark", light: "Light",
+    note: "Two styles, Glass and Classic, each in dark or light: every business picks how it looks. Drag to compare.",
+    altDark: s => `Modularity's main dashboard in the ${s} style and dark theme, for a demo repair shop: today's sales, appointments, pending invoices, repair orders and team status (interface in Spanish)`,
+    altLight: s => `The same dashboard in the ${s} style and light theme` }
+};
+function modShowcase(L, lazy = true){
+  const W = MODY_STYLES[L.lang];
+  const img = (style, theme) => `/assets/img/modularity-${style}-${theme}.jpg?v=1`;
+  const styles = [["glass", "Glass"], ["classic", "Classic"]];
+  const tabs = styles.map(([k, name], i) => `<button type="button" role="tab" id="modTab-${k}" aria-controls="modWindow" aria-selected="${i === 0}"${i ? ' tabindex="-1"' : ""} data-dark="${img(k, "dark")}" data-light="${img(k, "light")}" data-alt-dark="${esc(W.altDark(name))}" data-alt-light="${esc(W.altLight(name))}">${name}</button>`).join("");
+  const ld = lazy ? ' loading="lazy"' : "";
+  return `<div class="stage" id="modStage">
+        <div class="mod-tabs" role="tablist" aria-label="${W.list}">${tabs}</div>
+        <figure class="window" id="modWindow" role="tabpanel" aria-labelledby="modTab-glass">
+          <div class="window-bar" aria-hidden="true"><span></span><span></span><span></span><em class="mono">${W.bar}</em></div>
+          <!-- the same screen in both themes, one over the other; the divider
+               shows the light one to its right (assets/js/site.js) -->
+          <div class="compare" id="compare" style="--pos:50%">
+            <img class="cmp-dark" src="${img("glass", "dark")}" alt="${esc(W.altDark("Glass"))}" width="1301" height="900"${ld}>
+            <img class="cmp-light" src="${img("glass", "light")}" alt="${esc(W.altLight("Glass"))}" width="1301" height="900"${ld}>
+            <span class="cmp-tag cmp-tag-dark mono" aria-hidden="true">${W.dark}</span>
+            <span class="cmp-tag cmp-tag-light mono" aria-hidden="true">${W.light}</span>
+            <div class="cmp-handle" id="compareHandle" role="slider" tabindex="0" aria-label="${W.slider}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="${W.half}"><span class="cmp-knob" aria-hidden="true"></span></div>
+          </div>
+        </figure>
+        <p class="cmp-note mono">${W.note}</p>
+      </div>`;
 }
 
 /* a project card, the same markup v4.js draws on the home pages */
@@ -524,6 +561,9 @@ for(const L of Object.values(LOCALES)){
     ];
     home = fill(home, "proyectos", cards.join("\n        "), "        ");
   }
+  if(home.includes("<!-- modularity:inicio")){
+    home = fill(home, "modularity", modShowcase(L), "      ");
+  }
   /* the home questions, visible and as FAQPage data, from the same text */
   if(home.includes("<!-- faq:inicio")){
     home = fill(home, "faq", L.homeFaq.map((f, i) => `<details${i === 0 ? " open" : ""}><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n        "), "        ");
@@ -628,7 +668,7 @@ ${header(L, null, otherCaseUrl(L, c.slug))}
     </div>
   </section>
 
-  ${p.image ? `<section class="case-shot"><div class="wrap"><img src="/${esc(p.image)}" alt="${esc(p.alt || C.title)}" width="1200" height="750" fetchpriority="high"></div></section>` : ""}
+  ${c.slug === "modularity" ? `<section class="case-shot sec modularity"><div class="wrap">${modShowcase(L, false)}</div></section>` : p.image ? `<section class="case-shot"><div class="wrap"><img src="/${esc(p.image)}" alt="${esc(p.alt || C.title)}" width="1200" height="750" fetchpriority="high"></div></section>` : ""}
 
   <section class="sec" id="punto-de-partida">
     <div class="wrap case-two">

@@ -80,7 +80,7 @@
 <link rel="preload" href="/assets/fonts/boska-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
-<link rel="stylesheet" href="/assets/css/site.css?v=15">
+<link rel="stylesheet" href="/assets/css/site.css?v=16">
 <link rel="stylesheet" href="/assets/css/v4.css?v=15">
 </head>
 <body class="page-svc page-case" style="--accent:#ff9d3d">
@@ -118,13 +118,29 @@
       <h1>Modularity, <em>an idea that came back stronger</em></h1>
       <p class="line">A system for business owners who aren't technical: orders, bookings, stock and invoices in one place, speaking each business's language.</p>
       <div class="actions">
-        <a class="btn btn-primary" href="https://modularity.16ballcreations.workers.dev/?demo" rel="noopener" target="_blank">Try the demo <span aria-hidden="true">&nearr;</span></a>
+        <a class="btn btn-primary" href="https://modularity.16ballcreations.com/en/" rel="noopener" target="_blank">Discover Modularity <span aria-hidden="true">&nearr;</span></a>
+        <a class="btn" href="https://modularity.16ballcreations.workers.dev/?demo" rel="noopener" target="_blank">Try the demo <span aria-hidden="true">&nearr;</span></a>
         <a class="btn" href="/en/mira/">Start your free MIRA</a>
       </div>
     </div>
   </section>
 
-  <section class="case-shot"><div class="wrap"><img src="/assets/img/projects/modularity.jpg?v=2" alt="Main dashboard of Modularity for a demo auto repair shop" width="1200" height="750" fetchpriority="high"></div></section>
+  <section class="case-shot sec modularity"><div class="wrap"><div class="stage" id="modStage">
+        <div class="mod-tabs" role="tablist" aria-label="Interface styles"><button type="button" role="tab" id="modTab-glass" aria-controls="modWindow" aria-selected="true" data-dark="/assets/img/modularity-glass-dark.jpg?v=1" data-light="/assets/img/modularity-glass-light.jpg?v=1" data-alt-dark="Modularity's main dashboard in the Glass style and dark theme, for a demo repair shop: today's sales, appointments, pending invoices, repair orders and team status (interface in Spanish)" data-alt-light="The same dashboard in the Glass style and light theme">Glass</button><button type="button" role="tab" id="modTab-classic" aria-controls="modWindow" aria-selected="false" tabindex="-1" data-dark="/assets/img/modularity-classic-dark.jpg?v=1" data-light="/assets/img/modularity-classic-light.jpg?v=1" data-alt-dark="Modularity's main dashboard in the Classic style and dark theme, for a demo repair shop: today's sales, appointments, pending invoices, repair orders and team status (interface in Spanish)" data-alt-light="The same dashboard in the Classic style and light theme">Classic</button></div>
+        <figure class="window" id="modWindow" role="tabpanel" aria-labelledby="modTab-glass">
+          <div class="window-bar" aria-hidden="true"><span></span><span></span><span></span><em class="mono">modularity / demo shop</em></div>
+          <!-- the same screen in both themes, one over the other; the divider
+               shows the light one to its right (assets/js/site.js) -->
+          <div class="compare" id="compare" style="--pos:50%">
+            <img class="cmp-dark" src="/assets/img/modularity-glass-dark.jpg?v=1" alt="Modularity's main dashboard in the Glass style and dark theme, for a demo repair shop: today's sales, appointments, pending invoices, repair orders and team status (interface in Spanish)" width="1301" height="900">
+            <img class="cmp-light" src="/assets/img/modularity-glass-light.jpg?v=1" alt="The same dashboard in the Glass style and light theme" width="1301" height="900">
+            <span class="cmp-tag cmp-tag-dark mono" aria-hidden="true">Dark</span>
+            <span class="cmp-tag cmp-tag-light mono" aria-hidden="true">Light</span>
+            <div class="cmp-handle" id="compareHandle" role="slider" tabindex="0" aria-label="Compare the dark and light themes" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Half dark, half light"><span class="cmp-knob" aria-hidden="true"></span></div>
+          </div>
+        </figure>
+        <p class="cmp-note mono">Two styles, Glass and Classic, each in dark or light: every business picks how it looks. Drag to compare.</p>
+      </div></div></section>
 
   <section class="sec" id="punto-de-partida">
     <div class="wrap case-two">
@@ -205,6 +221,6 @@
     </div>
   </div>
 </footer>
-<script src="/assets/js/site.js?v=7" defer></script>
+<script src="/assets/js/site.js?v=8" defer></script>
 </body>
 </html>
