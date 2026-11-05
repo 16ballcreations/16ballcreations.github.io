@@ -148,7 +148,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/mira/</loc>
-    <lastmod>2026-11-05</lastmod>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/mira/"/>
@@ -157,11 +157,119 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/mira/</loc>
-    <lastmod>2026-11-05</lastmod>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/mira/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/mira/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/mira/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/proyectos/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/projects/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/proyectos/psicoformando/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/psicoformando/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/psicoformando/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/psicoformando/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/projects/psicoformando/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/psicoformando/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/psicoformando/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/psicoformando/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/proyectos/kaffeeplatz/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/kaffeeplatz/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/kaffeeplatz/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/kaffeeplatz/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/projects/kaffeeplatz/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/kaffeeplatz/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/kaffeeplatz/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/kaffeeplatz/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/proyectos/rivas-seven/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/rivas-seven/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/rivas-seven/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/rivas-seven/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/projects/rivas-seven/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/rivas-seven/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/rivas-seven/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/rivas-seven/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/proyectos/16-ball-creations/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/16-ball-creations/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/16-ball-creations/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/16-ball-creations/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/projects/16-ball-creations/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/16-ball-creations/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/16-ball-creations/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/16-ball-creations/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/proyectos/modularity/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/modularity/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/modularity/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/modularity/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/projects/modularity/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/modularity/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/modularity/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/modularity/"/>
   </url>
 </urlset>

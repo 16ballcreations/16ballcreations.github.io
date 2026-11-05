@@ -262,3 +262,20 @@
 .demo-line{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 28px;margin-top:28px;padding-top:24px;border-top:1px solid var(--hairline)}
 .demo-line p{margin:0;max-width:60ch;color:var(--bone)}
 @media (max-width:760px){ .svc.examples{grid-template-columns:1fr} }
+
+/* ---------- case pages: what we did, and why ---------- */
+.case-shot{padding:0 0 clamp(40px,6vw,72px)}
+.case-shot img{display:block;width:100%;height:auto;border-radius:24px;border:1px solid var(--hairline);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.case-two{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,5vw,72px);align-items:start}
+.case-text p{margin:0 0 16px;font-size:clamp(1.05rem,1.4vw,1.2rem);line-height:1.65;color:var(--bone)}
+.case-why{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.case-why li{padding:24px 26px;border:1px solid var(--hairline);border-radius:22px;background:rgba(255,255,255,.02)}
+.case-why h3{margin:14px 0 8px;font-family:var(--font-display);font-weight:400;font-size:1.6rem;line-height:1.1;color:var(--white)}
+.case-why p{margin:0;color:var(--ash);line-height:1.6}
+.case-svc{margin:22px 0 0;color:var(--ash)}
+.case-svc a{color:var(--white)}
+.case-facts{display:flex;flex-wrap:wrap;gap:14px 36px;margin:26px 0 0;padding-top:20px;border-top:1px solid var(--hairline)}
+.case-facts dt{font-family:var(--font-mono);font-variation-settings:"MONO" 1;font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+.case-facts dd{margin:4px 0 0;color:var(--bone)}
+.page-case .svc-hero .kicker{margin:18px 0 0}
+@media (max-width:760px){ .case-two,.case-why{grid-template-columns:1fr} }

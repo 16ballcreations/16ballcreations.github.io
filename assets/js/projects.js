@@ -16,6 +16,7 @@
             "Del archivo", en una línea y sin imagen (opcional)
 
    Para la portada nueva (v4) y las páginas de servicio:
+   case     La dirección de su página de caso: /proyectos/<case>/ (opcional)
    services Los servicios que tocó, por su clave: marca, web, tienda,
             sistemas, video, asesoria (ver scripts/servicios-data.mjs)
    status   En qué está hoy: "En línea", "Por estrenar", "Continuo",
@@ -31,6 +32,7 @@
 window.PROJECTS = [
   {
     title: "Rivas Seven",
+    case: "rivas-seven",
     services: ["marca", "asesoria", "web"],
     status: "En línea",
     order: 3,
@@ -49,6 +51,7 @@ window.PROJECTS = [
   },
   {
     title: "KaffeePlatz",
+    case: "kaffeeplatz",
     services: ["tienda", "web", "asesoria"],
     status: "En línea",
     order: 2,
@@ -67,6 +70,7 @@ window.PROJECTS = [
   },
   {
     title: "16 Ball Creations",
+    case: "16-ball-creations",
     year: "2013 a hoy",
     types: ["Marca", "Web"],
     services: ["marca", "web", "sistemas"],
@@ -86,6 +90,7 @@ window.PROJECTS = [
   },
   {
     title: "Modularity",
+    case: "modularity",
     services: ["sistemas"],
     status: "En desarrollo",
     wide: true,
@@ -113,6 +118,7 @@ window.PROJECTS = [
   },
   {
     title: "PsicoFormando",
+    case: "psicoformando",
     services: ["marca", "video", "asesoria", "web"],
     status: "Continuo",
     order: 1,

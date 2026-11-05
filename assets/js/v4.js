@@ -42,8 +42,12 @@
   function card(p, i){
     var li = el("li", "card tile");
     var first = (p.links || [])[0];
-    var media = el(first ? "a" : "div", "card-media");
-    if(first){
+    var casePage = p.case ? (EN ? "/en/projects/" : "/proyectos/") + p.case + "/" : "";
+    var media = el(first || casePage ? "a" : "div", "card-media");
+    if(casePage){
+      media.href = casePage;
+      media.setAttribute("aria-label", (EN ? "See the case: " : "Ver el caso: ") + p.title);
+    } else if(first){
       media.href = first.url;
       if(first.url.charAt(0) !== "#"){ media.rel = "noopener noreferrer"; media.target = "_blank"; }
       media.setAttribute("aria-label", p.title + ": " + first.label);
@@ -56,7 +60,9 @@
     li.appendChild(media);
 
     var body = el("div", "card-body");
-    body.appendChild(el("h3", null, p.title));
+    var h3 = el("h3");
+    if(casePage){ var ha = el("a", null, p.title); ha.href = casePage; h3.appendChild(ha); } else { h3.textContent = p.title; }
+    body.appendChild(h3);
     if(p.short || p.summary){ body.appendChild(el("p", null, p.short || p.summary)); }
 
     var foot = el("div", "card-foot");
@@ -73,8 +79,9 @@
     foot.appendChild(st);
     body.appendChild(foot);
 
-    if((p.links || []).length){
+    if((p.links || []).length || casePage){
       var links = el("div", "card-links");
+      if(casePage){ var ca = el("a", "btn btn-sm btn-primary", EN ? "See the case" : "Ver el caso"); ca.href = casePage; links.appendChild(ca); }
       p.links.forEach(function(l){
         var a = el("a", "btn btn-sm", l.label);
         a.href = l.url;

@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { SERVICES } from "./servicios-data.mjs";
 import { SERVICES_EN } from "./services-en-data.mjs";
+import { CASES } from "./proyectos-data.mjs";
 
 const ORIGIN = "https://16ballcreations.com";
 const today = new Date().toISOString().slice(0, 10);
@@ -27,7 +28,9 @@ const PAIRS = [
   ["/", "/en/", "1.0", "weekly"],
   ["/servicios/", "/en/services/", "0.9", "monthly"],
   ...SERVICES.map(s => [`/servicios/${s.slug}/`, `/en/services/${SERVICES_EN.find(e => e.key === s.key).slug}/`, "0.8", "monthly"]),
-  ["/mira/", "/en/mira/", "0.8", "monthly"]
+  ["/mira/", "/en/mira/", "0.8", "monthly"],
+  ["/proyectos/", "/en/projects/", "0.7", "monthly"],
+  ...CASES.map(c => [`/proyectos/${c.slug}/`, `/en/projects/${c.slug}/`, "0.7", "monthly"])
 ];
 
 const links = (es, en) => [

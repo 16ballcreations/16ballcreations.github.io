@@ -1,4 +1,6 @@
-/* Genera las páginas de servicio, en español y en inglés:
+/* Genera las páginas de servicio y de proyecto, en español y en inglés:
+     /proyectos/ y /proyectos/<caso>/          desde scripts/proyectos-data.mjs
+     /en/projects/ y /en/projects/<caso>/      (el mismo archivo, campo en)
      /servicios/ y /servicios/<slug>/          desde scripts/servicios-data.mjs
      /en/services/ y /en/services/<slug>/      desde scripts/services-en-data.mjs
      assets/js/servicios.js                    lo mínimo para las portadas
@@ -17,6 +19,7 @@ import { dirname, join } from "node:path";
 import vm from "node:vm";
 import { SERVICES, HOME_FAQ } from "./servicios-data.mjs";
 import { SERVICES_EN, HOME_FAQ as HOME_FAQ_EN } from "./services-en-data.mjs";
+import { CASES, CASE_WORDS } from "./proyectos-data.mjs";
 
 const PREVIEW = false;
 const ORIGIN = "https://16ballcreations.com";
@@ -107,9 +110,9 @@ function pair(L, key){
 /* a project in this language: the English fields over the Spanish ones */
 const tr = (L, p) => L.lang === "en" && p.en ? { ...p, ...p.en } : p;
 
-function head(L, { title, description, path, key, jsonld }){
+function head(L, { title, description, path, key, jsonld, other, image }){
   const O = LOCALES[OTHER[L.lang]];
-  const here = abs(L, path), there = ORIGIN + pair(L, key);
+  const here = abs(L, path), there = ORIGIN + (other || pair(L, key));
   const es = L.lang === "es" ? here : there, en = L.lang === "en" ? here : there;
   return `<!DOCTYPE html>
 <html lang="${L.lang}">
@@ -131,9 +134,9 @@ function head(L, { title, description, path, key, jsonld }){
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${here}">
-<meta property="og:image" content="${ORIGIN}/assets/img/og-16ballcreations.jpg">
+<meta property="og:image" content="${image ? ORIGIN + "/" + image.replace(/\?.*$/, "") : ORIGIN + "/assets/img/og-16ballcreations.jpg"}">
 <meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:height" content="${image ? 750 : 630}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/assets/img/icon-192.png" type="image/png" sizes="192x192">
@@ -146,11 +149,11 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=15">
-<link rel="stylesheet" href="/assets/css/v4.css?v=14">
+<link rel="stylesheet" href="/assets/css/v4.css?v=15">
 </head>`;
 }
 
-function header(L, key){
+function header(L, key, other){
   const t = L.t;
   return `<div class="progress" id="progress" aria-hidden="true"></div>
 <header class="site-header is-stuck" id="siteHeader">
@@ -168,7 +171,7 @@ function header(L, key){
       <a href="${L.base}#proceso">${t.how}</a>
       <a href="${L.base}#estudio">${t.studio}</a>
       <a href="${L.base}#contacto">${t.contact}</a>
-      <a class="lang" href="${pair(L, key)}" hreflang="${OTHER[L.lang]}" lang="${OTHER[L.lang]}" aria-label="${t.other}">${t.otherShort}</a>
+      <a class="lang" href="${other || pair(L, key)}" hreflang="${OTHER[L.lang]}" lang="${OTHER[L.lang]}" aria-label="${t.other}">${t.otherShort}</a>
       <a class="btn btn-sm btn-primary" href="${L.mira}">${t.miraBtn}</a>
     </nav>
   </div>
@@ -210,13 +213,15 @@ function card(L, raw, i, cls = ""){
   const tags = (p.services || []).map(k => L.data.find(s => s.key === k)).filter(Boolean)
     .map(s => `<li><a href="${L.base}${svcPath(L, s)}">${esc(s.name)}</a></li>`).join("");
   const status = L.status[p.status] || p.status;
+  const casePage = p.case ? caseUrl(L, p.case) : "";
   return `<li class="card tile${cls}">
-          ${first ? `<a class="card-media" href="${esc(linkUrl(first))}"${ext(first)} aria-label="${esc(p.title + ": " + first.label)}">${media}</a>` : `<div class="card-media">${media}</div>`}
+          ${casePage ? `<a class="card-media" href="${casePage}" aria-label="${esc(CASE_WORDS[L.lang].seeCase + ": " + p.title)}">${media}</a>`
+            : first ? `<a class="card-media" href="${esc(linkUrl(first))}"${ext(first)} aria-label="${esc(p.title + ": " + first.label)}">${media}</a>` : `<div class="card-media">${media}</div>`}
           <div class="card-body">
-            <h3>${esc(p.title)}</h3>
+            <h3>${casePage ? `<a href="${casePage}">${esc(p.title)}</a>` : esc(p.title)}</h3>
             <p>${esc(p.short || p.summary)}</p>
             <div class="card-foot"><ul class="svc-tags">${tags}</ul><span class="status" data-s="${esc(p.status)}">${esc(status)}${p.year ? " · " + esc(p.year) : ""}</span></div>
-            ${(p.links || []).length ? `<div class="card-links">${p.links.map(l => `<a class="btn btn-sm" href="${esc(linkUrl(l))}"${ext(l)}>${esc(l.label)}</a>`).join("")}</div>` : p.note ? `<span class="note mono">${esc(p.note)}</span>` : ""}
+            ${(p.links || []).length || casePage ? `<div class="card-links">${casePage ? `<a class="btn btn-sm btn-primary" href="${casePage}">${esc(CASE_WORDS[L.lang].seeCase)}</a>` : ""}${(p.links || []).map(l => `<a class="btn btn-sm" href="${esc(linkUrl(l))}"${ext(l)}>${esc(l.label)}</a>`).join("")}</div>` : p.note ? `<span class="note mono">${esc(p.note)}</span>` : ""}
           </div>
         </li>`;
 }
@@ -530,3 +535,157 @@ ${JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", inLangu
   console.log(`${L.lang}: ${L.data.length} páginas en ${L.base}${L.dir}/ ${PREVIEW ? "(vista previa, noindex)" : ""}`);
 }
 await writeFile(join(root, "assets/js/servicios.js"), clientData);
+
+/* ---------- the case pages: what we did, and why ---------- */
+for(const L of Object.values(LOCALES)){
+  const W = CASE_WORDS[L.lang];
+  const outDir = join(root, L.base.replace(/^\/|\/$/g, ""), W.dir);
+  await rm(outDir, { recursive: true, force: true });
+  await mkdir(outDir, { recursive: true });
+  await writeFile(join(outDir, "index.html"), casesIndexPage(L));
+  for(const c of CASES){
+    await mkdir(join(outDir, c.slug), { recursive: true });
+    await writeFile(join(outDir, c.slug, "index.html"), casePage(L, c));
+  }
+  console.log(`${L.lang}: ${CASES.length} casos en ${L.base}${W.dir}/`);
+}
+
+/* ---------- case pages ---------- */
+function caseUrl(L, slug){ return L.base + CASE_WORDS[L.lang].dir + "/" + slug + "/"; }
+function otherCaseUrl(L, slug){ const O = LOCALES[OTHER[L.lang]]; return O.base + CASE_WORDS[O.lang].dir + "/" + (slug ? slug + "/" : ""); }
+
+function casesIndexPage(L){
+  const t = L.t, W = CASE_WORDS[L.lang];
+  const path = W.dir + "/";
+  const list = CASES.map(c => ({ c, p:PROJECTS.find(p => p.case === c.slug) })).filter(x => x.p);
+  const jsonld = { "@context":"https://schema.org", "@graph":[
+    { "@type":"CollectionPage", name:W.indexTitle, url:abs(L, path), inLanguage:L.lang,
+      hasPart:list.map(({ c }) => ({ "@type":"CreativeWork", name:c[L.lang].title, url:ORIGIN + caseUrl(L, c.slug) })) },
+    { "@type":"BreadcrumbList", itemListElement:[
+      { "@type":"ListItem", position:1, name:t.home, item:abs(L, "") },
+      { "@type":"ListItem", position:2, name:W.crumb, item:abs(L, path) } ] }
+  ] };
+  return `${head(L, { title:W.indexTitle, description:W.indexDesc, path, jsonld, other:otherCaseUrl(L) })}
+<body class="page-svc">
+${header(L, null, otherCaseUrl(L))}
+
+<main id="top">
+  <section class="svc-hero">
+    <div class="wrap">
+      <ol class="crumbs"><li><a href="${L.base}">${t.home}</a></li><li aria-current="page">${W.crumb}</li></ol>
+      <h1>${W.indexH1}</h1>
+      <p class="line">${esc(W.indexLine)}</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <ol class="work">
+        ${list.map(({ p }, i) => card(L, p, i, p.wide ? " card-wide" : "")).join("\n        ")}
+      </ol>
+    </div>
+  </section>
+</main>
+
+${footer(L)}`;
+}
+
+function casePage(L, c){
+  const t = L.t, W = CASE_WORDS[L.lang], C = c[L.lang];
+  const p = tr(L, PROJECTS.find(x => x.case === c.slug) || {});
+  const path = W.dir + "/" + c.slug + "/";
+  const services = (p.services || []).map(k => L.data.find(s => s.key === k)).filter(Boolean);
+  const live = (p.links || [])[0];
+  const others = CASES.filter(o => o.slug !== c.slug);
+  const jsonld = { "@context":"https://schema.org", "@graph":[
+    { "@type":"CreativeWork", "@id":ORIGIN + caseUrl(L, c.slug) + "#caso", name:C.title, headline:C.seoTitle, description:C.desc, url:ORIGIN + caseUrl(L, c.slug),
+      inLanguage:L.lang, image:p.image ? ORIGIN + "/" + p.image.replace(/\?.*$/, "") : undefined, creator:PROVIDER, dateCreated:c.year,
+      about:services.map(s => s.name), ...(live && /^https?:/.test(live.url) ? { mainEntityOfPage:live.url } : {}) },
+    { "@type":"BreadcrumbList", itemListElement:[
+      { "@type":"ListItem", position:1, name:t.home, item:abs(L, "") },
+      { "@type":"ListItem", position:2, name:W.crumb, item:abs(L, W.dir + "/") },
+      { "@type":"ListItem", position:3, name:C.title, item:abs(L, path) } ] }
+  ] };
+  const accent = c.ball ? HEX[c.ball] : null;
+  return `${head(L, { title:C.seoTitle + " · 16 Ball Creations", description:C.desc, path, jsonld, other:otherCaseUrl(L, c.slug), image:p.image })}
+<body class="page-svc page-case"${accent ? ` style="--accent:${accent}"` : ""}>
+${header(L, null, otherCaseUrl(L, c.slug))}
+
+<main id="top">
+  <section class="svc-hero">
+    <div class="wrap">
+      <ol class="crumbs">
+        <li><a href="${L.base}">${t.home}</a></li>
+        <li><a href="${L.base}${W.dir}/">${W.crumb}</a></li>
+        <li aria-current="page">${esc(C.title)}</li>
+      </ol>
+      <p class="kicker">${esc([C.kind, c.year].filter(Boolean).join(" · "))}</p>
+      <h1>${esc(C.title)}, <em>${esc(C.em)}</em></h1>
+      <p class="line">${esc(C.line)}</p>
+      <div class="actions">
+        ${(C.links || p.links || []).filter(l => /^https?:/.test(l.url)).slice(0, 2).map((l, i) => `<a class="btn${i === 0 ? " btn-primary" : ""}" href="${esc(l.url)}" rel="noopener" target="_blank">${esc(l.label)} <span aria-hidden="true">&nearr;</span></a>`).join("\n        ")}
+        <a class="btn" href="${L.mira}">${t.miraFree}</a>
+      </div>
+    </div>
+  </section>
+
+  ${p.image ? `<section class="case-shot"><div class="wrap"><img src="/${esc(p.image)}" alt="${esc(p.alt || C.title)}" width="1200" height="750" fetchpriority="high"></div></section>` : ""}
+
+  <section class="sec" id="punto-de-partida">
+    <div class="wrap case-two">
+      <div><p class="kicker">${W.startK}</p><h2 class="big">${W.startH}</h2></div>
+      <div class="case-text">${C.start.map(x => `<p>${esc(x)}</p>`).join("")}</div>
+    </div>
+  </section>
+
+  <section class="sec" id="por-que">
+    <div class="wrap">
+      <div class="sec-head"><p class="kicker">${W.whyK}</p><h2 class="big">${W.whyH}</h2></div>
+      <ol class="case-why">
+${C.why.map(([h, x], i) => `        <li class="reveal">${ball(i + 1)}<h3>${esc(h)}</h3><p>${esc(x)}</p></li>`).join("\n")}
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="lo-que-hicimos">
+    <div class="wrap case-two">
+      <div><p class="kicker">${W.didK}</p><h2 class="big">${W.didH}</h2></div>
+      <div>
+        <ul class="inc">${C.did.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+        ${services.length ? `<p class="case-svc">${W.services}: ${services.map(s => `<a href="${L.base}${svcPath(L, s)}">${esc(s.name)}</a>`).join(" · ")}</p>` : ""}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="resultado">
+    <div class="wrap case-two">
+      <div><p class="kicker">${W.resultK}</p><h2 class="big">${W.resultH}</h2></div>
+      <div class="case-text">${C.result.map(x => `<p>${esc(x)}</p>`).join("")}
+        <dl class="case-facts">
+          ${C.client ? `<div><dt>${W.client}</dt><dd>${esc(C.client)}</dd></div>` : ""}
+          <div><dt>${W.year}</dt><dd>${esc(c.year)}</dd></div>
+          ${C.tech ? `<div><dt>${W.tech}</dt><dd>${esc(C.tech)}</dd></div>` : ""}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="otros">
+    <div class="wrap">
+      <div class="sec-head"><p class="kicker">${W.crumb}</p><h2 class="big">${W.othersH}</h2></div>
+      <ul class="others">
+${others.map(o => `        <li><a class="tile" href="${caseUrl(L, o.slug)}"><span>${esc(o[L.lang].title)}</span><span class="mono">${esc(o[L.lang].em)}</span></a></li>`).join("\n")}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec cta-band">
+    <div class="wrap">
+      <h2>${t.ctaH}</h2>
+      <p>${esc(t.ctaP(L.price))}</p>
+      <div class="actions"><a class="btn btn-primary" href="${L.mira}">${t.miraFree}</a><a class="btn" href="${L.base}#contacto">${t.write}</a></div>
+    </div>
+  </section>
+</main>
+
+${footer(L)}`;
+}
