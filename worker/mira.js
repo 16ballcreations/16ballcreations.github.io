@@ -382,13 +382,14 @@ export function card(r, here){
       <div class="contacto">
         ${row("Necesita", d.tipo || "Todavía no sabe qué necesita")}
         ${row("La idea", d.idea)}
+        ${d.producto === "modularity" && d.pagina ? row("Desde", "modularity.16ballcreations.com" + d.pagina) : ""}
       </div>
       <p class="who mono">Escribió ${esc(d.nombre)}${d.contacto ? " · " + esc(d.contacto) : ""}</p>`;
   }
   return `
     <article class="sub${r.reviewed ? " done" : ""}" id="${r.kind === "mira" ? "m" : "c"}${r.id}">
       <header>
-        <span class="tag t-${r.kind}">${r.kind === "mira" ? "MIRA" : "Contacto"}</span>${d.idioma === "en" ? `<span class="tag t-net" title="Llegó desde la versión en inglés del sitio: respóndele en inglés">En inglés</span>` : ""}${r.kind === "mira" ? lightTag(d) : ""}
+        <span class="tag t-${r.kind}">${r.kind === "mira" ? "MIRA" : "Contacto"}</span>${d.producto === "modularity" ? `<span class="tag t-net" title="Llegó desde el formulario de modularity.16ballcreations.com">Modularity</span>` : ""}${d.idioma === "en" ? `<span class="tag t-net" title="Llegó desde la versión en inglés del sitio: respóndele en inglés">En inglés</span>` : ""}${r.kind === "mira" ? lightTag(d) : ""}
         <h2>${esc(r.kind === "mira" ? (r.brand || r.name) : r.name)}</h2>
         <span class="when mono">${esc(when)}</span>
         <form method="post" action="/admin/revisado">

@@ -2,6 +2,9 @@
 
 export const ALLOWED_ORIGINS = [
   "https://16ballcreations.github.io",
+  /* Modularity's own site posts its contact form here, tagged producto: modularity */
+  "https://modularity.16ballcreations.com",
+  "http://localhost:8790",
   "http://localhost:8717",
   "http://localhost:8787",
   "http://127.0.0.1:8787"
