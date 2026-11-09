@@ -1,4 +1,4 @@
-/* The studio's services, in English: the same six, the same keys and balls as
+/* The studio's services, in English: the same five, the same keys and balls as
    scripts/servicios-data.mjs (keep both in step), with their own slugs under
    /en/services/. Same rules of tone: plain words, no promises of sales,
    followers or reach, and no mobile apps. */
@@ -14,7 +14,7 @@ const LIVE_STEP = {
 
 const FAQ_PRICE = {
   q: "How much does it cost?",
-  a: "It depends on what you need; after the call we send you a written proposal, with no commitment. Your MIRA and the first call are free, and if you want the full diagnosis in writing, the brand audit costs US$200."
+  a: "Everything has a fixed price, shown on each service: the brand audit costs US$150, brand guidelines go from US$390 to US$910, and websites come in three plans, from US$970 to US$2,580. Your MIRA and the first call are free."
 };
 const FAQ_WHERE = {
   q: "Do you work with clients outside Colombia?",
@@ -33,7 +33,7 @@ export const FAQ_BRAND_GOOGLE = {
 };
 export const FAQ_MONTHLY = {
   q: "Do you charge for SEO every month?",
-  a: "No. Every project has a fixed price. If you'd like us to keep looking after it afterwards, there's an optional care plan."
+  a: "No. Every project has a fixed price. If you'd like us to keep looking after it afterwards, there's optional maintenance for US$100 a month, with no minimum term."
 };
 export const FAQ_INDEPENDENCE = {
   q: "Will I depend on you for everything?",
@@ -41,7 +41,7 @@ export const FAQ_INDEPENDENCE = {
 };
 export const FAQ_WEB_PRICE = {
   q: "How much does a website cost?",
-  a: "It depends on what you need. There are template sites that cost very little and custom-designed sites that cost several times more. Ours are custom, built from your brand. After your MIRA and the call, we send you the exact price in writing, with no commitment."
+  a: "There are template sites that cost very little and custom-designed sites that cost several times more. Ours are custom, built from your brand, in three plans with a fixed price: Essential, US$970; Professional, US$1,360; and Complete, US$2,580. All of them include the brand audit and your domain for a year, and they're ready in one week."
 };
 /* the questions on the home page, with their FAQPage data */
 export const HOME_FAQ = [FAQ_AI, FAQ_BRAND_GOOGLE, FAQ_MONTHLY, FAQ_INDEPENDENCE, FAQ_WEB_PRICE];
@@ -51,17 +51,51 @@ const FAQ_START = {
   a: "With your MIRA: five questions about your brand. We use your answers to prepare the call, and we write back within 24 hours to schedule it."
 };
 
+/* The Brand Ecosystem: the sum of two lines (rate card v7, 9 Nov 2026) */
+export const LINES_EN = {
+  esencia: { id: "brand-essence", name: "Brand Essence", em: "who you are", line: "Your brand feeling like yours and saying the same thing everywhere: the brand audit and your brand guidelines." },
+  ecosistema: { id: "digital-ecosystem", name: "Digital Ecosystem", em: "where people find you", line: "Where your brand serves, sells and keeps itself organized: your website, your store or your system." }
+};
+export const UMBRELLA_EN = {
+  name: "Brand Ecosystem",
+  line: "Your brand essence and your digital ecosystem, telling the same story."
+};
+export const PLANS_EN = [
+  { n: "Essential", tag: "Get found and understood", time: "Ready in 1 week", v: 970, items: [
+    "The brand audit and your MIRA",
+    "Your channels aligned: Instagram, Facebook, LinkedIn, WhatsApp Business and Google",
+    "Your Google profile completed",
+    "An information website with a gallery of up to 6 projects",
+    "Contact by WhatsApp, form and map",
+    "Domain, hosting and an email on your domain for a year"
+  ] },
+  { n: "Professional", tag: "Get chosen", time: "Ready in 1 week", v: 1360, items: [
+    "Everything in Essential",
+    "Your express brand guidelines",
+    "A page for each project, up to 8",
+    "Ready for AI search to understand it"
+  ] },
+  { n: "Complete", tag: "Your whole ecosystem", time: "Ready in 1 week", v: 2580, items: [
+    "Everything in Professional",
+    "Your complete brand guidelines",
+    "A page for each project, up to 12",
+    "An assistant so you can edit your site yourself, with a 45-minute session",
+    "3 months of maintenance"
+  ] }
+];
+
 export const SERVICES_EN = [
   {
     key: "auditoria",
     slug: "brand-audit",
     ball: 1,
-    price: 200,
+    group: "esencia",
+    prices: [{ n: "Brand audit", v: 150, d: "Paid upfront. Ready in 2 days, with the walkthrough call." }],
     name: "Brand audit",
     title: "Brand audit",
     seo: "Brand audit: website, Google and social",
     who: "For businesses that already have a website and social profiles, and feel something doesn't add up.",
-    desc: "Brand audit from Medellín: we review your website, Google listing, social profiles and contact details, and give you in writing what to fix. US$200.",
+    desc: "Brand audit from Medellín: we review your website, Google listing, social profiles and contact details, and give you in writing what to fix. US$150.",
     em: "channel by channel",
     line: "We review your brand everywhere it shows up and give you, in writing, what's failing and how to fix it.",
     what: "16 Ball Creations reviews the brand of businesses and personal brands everywhere it shows up and gives you, in writing, what to fix, from Medellín.",
@@ -72,7 +106,7 @@ export const SERVICES_EN = [
       "Every finding with its priority and how to fix it",
       "A written document, yours to keep",
       "A 45-minute walkthrough by video call",
-      "If you make the corrections with us within 30 days, what you paid is credited"
+      "If you hire brand guidelines or a plan within 30 days, what you paid is credited"
     ],
     steps: [
       MIRA_STEP,
@@ -81,14 +115,23 @@ export const SERVICES_EN = [
       { t: "The walkthrough", d: "We go through it with you in 45 minutes by video call and answer your questions." }
     ],
     faq: [
-      { q: "How much does the audit cost?", a: "US$200, paid upfront. If within the next 30 days you decide to have us make the corrections and your website, what you paid is credited to the project." },
-      { q: "Does the audit include the corrections?", a: "No. We tell you what to fix and how, so you or your team can do it. If you'd rather we do it, we quote it separately and the audit is credited." },
+      { q: "How much does the audit cost?", a: "US$150, paid upfront. If within the next 30 days you hire brand guidelines or one of the website plans, what you paid is credited." },
+      { q: "Does the audit include the corrections?", a: "No. We tell you what to fix and how, so you or your team can do it. If you'd rather we do it, that is part of the website plans, which already include the audit, and what you paid is credited." },
       { q: "How is it different from the MIRA?", a: "The MIRA is free: five questions about your brand, a call and a first look. The audit is the full detail, in writing: what's failing, on which channel and how to fix it." },
       FAQ_AI
     ]
   },
   {
     key: "marca",
+    group: "esencia",
+    prices: [
+      { n: "Express brand guidelines", v: 390, d: "The essentials of your identity in writing: your logo, colors, typography and tone." },
+      { n: "Complete brand guidelines", v: 910, d: "Your whole identity: essence, voice, logo and its uses, colors, typefaces, photography and applications." }
+    ],
+    extras: [
+      { n: "New logo", v: 450, d: "If your logo needs a redesign: three proposals and the final version, inside your guidelines." },
+      { n: "Professional photography", d: "Priced per shoot. Medellín only, with our partner photographers." }
+    ],
     slug: "brand-identity",
     ball: 2,
     name: "Brand identity",
@@ -96,33 +139,40 @@ export const SERVICES_EN = [
     seo: "Brand identity and logo design",
     who: "For brands that are starting out, or grew without an identity that tells their story.",
     em: "people recognize",
-    line: "A logo, colors, typography and a voice of its own, built from your brand's story.",
-    what: "16 Ball Creations creates the identity of businesses and personal brands, logo, colors, typography and voice, from their story, working from Medellín.",
+    line: "Your logo, colors, typography and voice, put in order in brand guidelines that tell your story.",
+    what: "16 Ball Creations puts the identity of businesses and personal brands in order, logo, colors, typography and voice, in brand guidelines built from their story, working from Medellín.",
     intro: "A brand doesn't start with a logo: it starts with why it exists. We begin with your story, who you're speaking to and what you want them to feel, and from there we shape everything people see. The result is a brand that's recognizable in every piece, from the sign on the door to your latest post.",
     includes: [
       "Your story in writing: origin, purpose and who you speak to",
-      "Logo and its versions (horizontal, vertical, icon)",
+      "Your logo in order, with its versions and uses",
       "Colors and typefaces",
-      "Brand guidelines: how to use it well",
       "Brand voice: how it speaks, and how it doesn't",
-      "Core pieces: business cards, social templates, stationery"
+      "Brand guidelines: how to use it well, so anyone can apply it without blurring it",
+      "If your logo needs a redesign, we do it separately with our partner designer"
     ],
     steps: [
       MIRA_STEP,
       { t: "Your story", d: "Together we write where the brand comes from and what it should make people feel. That story guides every decision." },
-      { t: "Your identity", d: "We propose the logo, the colors and the voice, and refine them with you until they feel like yours." },
+      { t: "Your identity", d: "We put your logo, colors and voice in order, and refine them with you until they feel like yours." },
       { t: "Your guidelines", d: "We hand over the files and the brand guidelines, so anyone can use your brand without blurring it." }
     ],
     faq: [
       { q: "I already have a logo. Do I have to change it?", a: "Not necessarily. Often the logo is fine and what's missing is order: colors that don't repeat, social profiles telling a different story. Your MIRA tells us whether to update it or just tidy things up." },
-      { q: "What do I get at the end?", a: "Your logo files in every format, the color palette, the typefaces, the brand guidelines and the agreed pieces, ready to use." },
+      { q: "What do I get at the end?", a: "Your brand guidelines, express or complete, with your logo files in every format, the color palette, the typefaces and the voice, ready to use." },
+      { q: "Does it work for a personal brand?", a: "Yes. We've done it with artists and outreach projects: putting image and voice in order so the person and the brand say the same thing." },
       FAQ_PRICE,
       FAQ_START
     ]
   },
   {
     key: "web",
-    from: 750,
+    group: "ecosistema",
+    plans: true,
+    extras: [
+      { n: "Monthly maintenance", v: 100, d: "Per month, no minimum term: 2 changes a month plus a technical and Google profile check." },
+      { n: "Extra project page", v: 80, d: "With the same design as the rest." },
+      { n: "SEO and AI search review", v: 450, d: "For a website we didn't build, with the full report." }
+    ],
     slug: "websites",
     ball: 3,
     name: "Websites",
@@ -139,7 +189,7 @@ export const SERVICES_EN = [
       "Looks right on phone, tablet and desktop",
       "Contact form and WhatsApp button",
       "Ready for Google and AI to understand it: your name, location and services stated the same way as on your Google profile and social media",
-      "Your domain set up (email on your domain is separate)",
+      "Your domain, hosting and an email on your domain to receive mail, for a year",
       "We show you how to update what changes often"
     ],
     steps: [
@@ -160,7 +210,8 @@ export const SERVICES_EN = [
   },
   {
     key: "tienda",
-    from: 1650,
+    group: "ecosistema",
+    prices: [{ n: "The Store", v: 1670, d: "Your catalog online, with orders through the site or WhatsApp, payments and shipping." }],
     slug: "online-stores",
     ball: 4,
     name: "Online stores",
@@ -194,7 +245,8 @@ export const SERVICES_EN = [
   },
   {
     key: "sistemas",
-    from: 450, fromLabel: "Diagnosis", fromNote: "the system is quoted to fit",
+    group: "ecosistema",
+    prices: [{ n: "Diagnosis", v: 450, d: "We walk through how your business works and hand you the system it needs, with a fixed price. If you go ahead within 60 days, it's credited." }],
     slug: "business-systems",
     ball: 5,
     name: "Business systems",
@@ -252,38 +304,6 @@ export const SERVICES_EN = [
       { q: "Do I need to know about technology?", a: "No. The system uses your business's own words, and we teach you and your team how to use it." },
       FAQ_PRICE,
       FAQ_START
-    ]
-  },
-  {
-    key: "asesoria",
-    slug: "image-and-social-advisory",
-    ball: 6,
-    name: "Image and social media advisory",
-    title: "Image and social media advisory",
-    seo: "Image and social media advisory",
-    who: "For brands that already exist and want everything to tell the same story.",
-    em: "so everything tells the same story",
-    line: "We review your profiles, your image and your pieces so everything tells the same story.",
-    what: "16 Ball Creations reviews the profiles, image and pieces of businesses and personal brands so everything tells the same story, from Medellín.",
-    intro: "Sometimes you don't need to build anything new: you need to put things in order. We review how your brand looks and speaks everywhere it shows up, and tell you what to change so it all feels like one brand. It works for businesses and for personal brands.",
-    includes: [
-      "A review of your profiles: photo, name, bio, highlights",
-      "What your brand says today, and what it should say",
-      "An image guide: colors, photos and style for your posts",
-      "Personal image advice, if you are the brand",
-      "A written plan with what to change first"
-    ],
-    steps: [
-      MIRA_STEP,
-      { t: "The review", d: "We go through your social profiles, your website and your pieces, and note where the story breaks." },
-      { t: "Your plan", d: "We give you, in writing, what to change, in what order and how, with examples." },
-      { t: "Follow-through", d: "If you want, we apply it with you, or we do it for you. We always show you how, so the control stays in your hands." }
-    ],
-    faq: [
-      { q: "How is this different from the MIRA?", a: "The MIRA is the first, free look, to know where to start. The advisory is the full job: an in-depth review, a written plan and follow-through." },
-      { q: "Does it work for a personal brand?", a: "Yes. We've done it with artists and with outreach projects: putting profiles, image and voice in order so the person and the brand say the same thing." },
-      FAQ_PRICE,
-      FAQ_WHERE
     ]
   }
 ];

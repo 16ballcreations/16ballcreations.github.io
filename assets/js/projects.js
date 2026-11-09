@@ -18,7 +18,7 @@
    Para la portada nueva (v4) y las páginas de servicio:
    case     La dirección de su página de caso: /proyectos/<case>/ (opcional)
    services Los servicios que tocó, por su clave: marca, web, tienda,
-            sistemas, video, asesoria (ver scripts/servicios-data.mjs)
+            sistemas, video (ver scripts/servicios-data.mjs)
    status   En qué está hoy: "En línea", "Por estrenar", "Continuo",
             "En desarrollo"
    short    Una o dos frases para la tarjeta
@@ -33,7 +33,7 @@ window.PROJECTS = [
   {
     title: "Rivas Seven",
     case: "rivas-seven",
-    services: ["marca", "asesoria", "web"],
+    services: ["marca", "web"],
     status: "En línea",
     order: 3,
     short: "Marca personal para un cantautor de Medellín con raíces chocoanas: identidad, colores, redes y un sitio que va, como su música, del duelo a la luz.",
@@ -52,7 +52,7 @@ window.PROJECTS = [
   {
     title: "KaffeePlatz",
     case: "kaffeeplatz",
-    services: ["tienda", "web", "asesoria"],
+    services: ["marca", "tienda", "web"],
     status: "En línea",
     order: 2,
     short: "Tienda en línea de accesorios de café con un buscador que recomienda según cómo te gusta el café, pedidos por WhatsApp y redes que se sienten como la misma marca.",
@@ -119,7 +119,7 @@ window.PROJECTS = [
   {
     title: "PsicoFormando",
     case: "psicoformando",
-    services: ["marca", "video", "asesoria", "web"],
+    services: ["marca", "video", "web"],
     status: "Continuo",
     order: 1,
     short: "Empezó con nada más que un nombre. Le dimos marca, estilo visual, videos, redes y sitio; hoy es un proyecto de divulgación sobre psicología que se reconoce en cada pieza.",

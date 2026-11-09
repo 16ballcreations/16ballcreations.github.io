@@ -30,12 +30,6 @@ window.SERVICES = [
     "slug": "sistemas-para-tu-negocio",
     "ball": 5,
     "name": "Sistemas para tu negocio"
-  },
-  {
-    "key": "asesoria",
-    "slug": "asesoria-de-imagen-y-redes",
-    "ball": 6,
-    "name": "Asesoría de imagen y redes"
   }
 ];
 window.SERVICES_EN = [
@@ -68,11 +62,5 @@ window.SERVICES_EN = [
     "slug": "business-systems",
     "ball": 5,
     "name": "Business systems"
-  },
-  {
-    "key": "asesoria",
-    "slug": "image-and-social-advisory",
-    "ball": 6,
-    "name": "Image and social media advisory"
   }
 ];

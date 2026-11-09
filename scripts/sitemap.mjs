@@ -30,6 +30,7 @@ const PAIRS = [
   ...SERVICES.map(s => [`/servicios/${s.slug}/`, `/en/services/${SERVICES_EN.find(e => e.key === s.key).slug}/`, "0.8", "monthly"]),
   ["/mira/", "/en/mira/", "0.8", "monthly"],
   ["/proyectos/", "/en/projects/", "0.7", "monthly"],
+  ["/privacidad/", "/en/privacy/", "0.3", "yearly"],
   ...CASES.map(c => [`/proyectos/${c.slug}/`, `/en/projects/${c.slug}/`, "0.7", "monthly"])
 ];
 

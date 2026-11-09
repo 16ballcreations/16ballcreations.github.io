@@ -221,15 +221,52 @@
 .others a.tile{gap:14px;height:100%;padding:22px;color:var(--bone);font-size:.9375rem}
 .others a.tile:hover{color:var(--white)}
 .others .ball{--s:28px}
-/* the overview page lists every service as a full row */
-.svc.svc-all{grid-template-columns:repeat(2,1fr)}
+/* the Brand Ecosystem: two lines, each a header over its services. Six
+   columns so Esencia (2 services) and Ecosistema (3) both fill the row */
+.svc,.svc.svc-all{grid-template-columns:repeat(6,1fr)}
+.svc > li.svc-mira,.svc > li.svc-line{grid-column:1 / -1}
+.svc > li[data-g="esencia"]{grid-column:span 3}
+.svc > li[data-g="ecosistema"]{grid-column:span 2}
+.svc-line{list-style:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:6px 48px;align-items:end;padding:44px 0 10px;border-bottom:1px solid var(--hairline);margin-bottom:6px}
+.svc-line .kicker{grid-column:1 / -1;margin:0}
+.svc .svc-line h2,.svc .svc-line h3{margin:0;font-size:clamp(2.4rem,4.4vw,3.6rem);color:var(--white)}
+.svc-line h2 em,.svc-line h3 em{font-style:italic;color:var(--accent)}
+.svc .svc-line p:not(.kicker){color:var(--bone);font-size:1.0625rem;max-width:52ch}
+.svc .svc-price{margin:2px 0 0;font-size:.75rem;letter-spacing:.02em;color:var(--white)}
+.svc-hero .svc-line-k{margin:0 0 14px}
+/* prices: a row per item, the amount to the right */
+.prices{list-style:none;margin:0;padding:0;border-top:1px solid var(--hairline)}
+.prices li{display:flex;justify-content:space-between;align-items:baseline;gap:12px 32px;padding:22px 0;border-bottom:1px solid var(--hairline)}
+.prices h3{margin:0;font-family:var(--font-display);font-weight:400;font-size:1.7rem;line-height:1.1;color:var(--white)}
+.prices p{margin:6px 0 0;color:var(--ash);font-size:.9375rem;max-width:62ch}
+.prices .amount{margin:0;flex:none;font-family:var(--font-display);font-size:clamp(1.5rem,2.4vw,2rem);color:var(--white);white-space:nowrap}
+.prices-sm h3{font-size:1.3rem}
+.prices-sm .amount{font-size:1.25rem;color:var(--bone)}
+.extras-k{margin:34px 0 10px}
+.price-lines{display:grid;gap:64px}
+.price-line > .kicker:first-child{margin:0 0 14px}
+.plans-h{margin:8px 0 4px;font-family:var(--font-display);font-weight:400;font-size:clamp(2rem,3.2vw,2.6rem);color:var(--white)}
+.plans-lead{margin:0 0 22px;color:var(--ash)}
+/* the website plans, side by side, by name */
+.plans{list-style:none;margin:0 0 26px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.plan{display:flex;flex-direction:column;gap:8px;padding:28px 26px;border-radius:24px}
+.plan h3,.plan h4{margin:0;font-family:var(--font-display);font-weight:400;font-size:2.1rem;line-height:1;color:var(--white)}
+.plan-tag{margin:0;color:var(--bone);font-style:italic}
+.plan-price{margin:12px 0 0;font-family:var(--font-display);font-size:clamp(1.8rem,2.6vw,2.3rem);line-height:1;color:var(--accent)}
+.plan-time{margin:0;font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--iron)}
+.plan .inc{margin:14px 0 18px;flex:1}
+.plan .inc li{font-size:.9rem}
+.plan .btn{align-self:flex-start}
 
 /* ---------- responsive ---------- */
 @media (max-width:1000px){
   .stats.stats-4{grid-template-columns:1fr 1fr}
   .stats.stats-4 div:nth-child(2){border-right:0}
   .stats.stats-4 div:nth-child(3){padding-left:0}
-  .svc,.others{grid-template-columns:1fr 1fr}
+  .svc,.svc.svc-all,.others{grid-template-columns:1fr 1fr}
+  .svc > li[data-g]{grid-column:auto}
+  .svc-line{grid-template-columns:1fr}
+  .plans{grid-template-columns:1fr}
   .svc > li.svc-mira{grid-template-columns:1fr}
   .tri,.mod-detail{grid-template-columns:1fr}
   .tri > div,.tri > div + div,.mod-detail > div,.mod-detail > div + div{padding:32px 0;border-right:0;border-bottom:1px solid var(--hairline)}
@@ -244,6 +281,7 @@
   .stats.stats-4{grid-template-columns:1fr}
   .stats.stats-4 div:nth-child(3){padding-left:0}
   .work,.svc,.svc.svc-all,.paths,.svc-steps,.others{grid-template-columns:1fr}
+  .prices li{flex-direction:column;gap:6px}
   .work .card:last-child:nth-child(odd),.work .card-wide{flex-direction:column}
   .work .card:last-child:nth-child(odd) .card-media,.work .card-wide .card-media{flex:none}
   .work .card-invite .invite-slot{flex:none;min-height:0;aspect-ratio:16/9}

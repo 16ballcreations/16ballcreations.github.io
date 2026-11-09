@@ -5,7 +5,10 @@
      /en/services/ y /en/services/<slug>/      desde scripts/services-en-data.mjs
      assets/js/servicios.js                    lo mínimo para las portadas
    y escribe la lista de servicios en index.html y en/index.html, entre los
-   marcadores servicios:inicio y servicios-pie:inicio.
+   marcadores servicios:inicio, precios:inicio y servicios-pie:inicio.
+   Los servicios se agrupan en las dos líneas del Ecosistema de Marca
+   (LINES: Esencia de marca y Ecosistema digital), con sus precios cerrados
+   y los planes de página por nombre (tarifario v7).
    Los proyectos de cada página salen de assets/js/projects.js (su campo en
    para el inglés). Cada página enlaza a su par en el otro idioma.
 
@@ -17,8 +20,8 @@ import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import vm from "node:vm";
-import { SERVICES, HOME_FAQ } from "./servicios-data.mjs";
-import { SERVICES_EN, HOME_FAQ as HOME_FAQ_EN } from "./services-en-data.mjs";
+import { SERVICES, HOME_FAQ, LINES, PLANS, UMBRELLA } from "./servicios-data.mjs";
+import { SERVICES_EN, HOME_FAQ as HOME_FAQ_EN, LINES_EN, PLANS_EN, UMBRELLA_EN } from "./services-en-data.mjs";
 import { CASES, CASE_WORDS } from "./proyectos-data.mjs";
 
 const PREVIEW = false;
@@ -39,14 +42,14 @@ const HEX = { 1:"#f4c20d", 2:"#4d7dff", 3:"#ff5c6e", 4:"#a375d8", 5:"#ff9d3d", 6
 /* everything that changes with the language */
 const LOCALES = {
   es: {
-    lang: "es", ogLocale: "es_CO", base: "/", dir: "servicios", home: "index.html", data: SERVICES, homeFaq: HOME_FAQ,
-    mira: "/mira/", price: "$700.000 COP", minPrice: 700000, currency: "COP",
+    lang: "es", ogLocale: "es_CO", base: "/", dir: "servicios", home: "index.html", data: SERVICES, homeFaq: HOME_FAQ, lines: LINES, plans: PLANS, umbrella: UMBRELLA,
+    mira: "/mira/", price: "$500.000 COP", minPrice: 500000, currency: "COP",
     status: {},
     t: {
       home: "Inicio", homeLabel: "16 Ball Creations, inicio", openMenu: "Abrir el men&uacute;", sections: "Secciones",
       work: "Proyectos", services: "Servicios", how: "Cómo trabajamos", studio: "Estudio", contact: "Contacto",
       miraBtn: "Haz tu MIRA", miraFree: "Haz tu MIRA gratis", write: "Escríbenos", seeWork: "Ver proyectos",
-      slogan: "Si no existe, lo creamos.", mail: "Correo", other: "English", otherShort: "EN",
+      slogan: "Si no existe, lo creamos.", mail: "Correo", privacy: "Privacidad", privacyHref: "/privacidad/", other: "English", otherShort: "EN",
       forWhom: "Para quién es", includes: "Lo que incluye", howK: "Cómo lo hacemos", stepsH: "Paso a <em>paso</em>",
       stepsLead: "Siempre en el mismo orden: primero entendemos tu marca, después construimos. Ningún paso se salta.",
       workH: "Lo hemos <em>hecho</em>",
@@ -57,25 +60,30 @@ const LOCALES = {
       ctaP: price => `Cinco preguntas sobre tu marca, unos tres minutos y gratis. Con tus respuestas preparamos una llamada de 30 minutos. Si quieres el diagnóstico completo por escrito, la auditoría de marca cuesta ${price}.`,
       others: "Otros servicios", seeService: "Ver el servicio",
       desc: (s, price) => s.what + (s.price ? ` Cuesta ${price}.` : ""),
-      where: "Dónde", price: "Precio", from: "Desde", reach: "Escríbenos",
+      where: "Dónde", price: "Precio", reach: "Escríbenos",
       titleWhere: "desde Medellín",
-      idxTitle: "Servicios: marca, páginas web, tiendas y redes · 16 Ball Creations",
-      idxDesc: price => `Auditoría e identidad de marca, páginas web, tiendas en línea, sistemas y asesoría de imagen, desde Medellín. La auditoría cuesta ${price}.`,
-      idxH1: "Servicios de marca y páginas web, <em>en orden</em>",
-      idxH2: "Seis servicios, <em>una sola historia</em>",
-      idxLine: price => `Primero entendemos tu marca: de dónde viene, por qué nació y a dónde va. Después le damos forma y la llevamos a donde vive. La puerta de entrada es la auditoría de marca, ${price}.`,
+      idxTitle: "Servicios y precios: marca, páginas web y tiendas · 16 Ball Creations",
+      idxDesc: price => `Ecosistema de Marca: auditoría y manual de marca, páginas web en tres planes, tiendas en línea y sistemas, con precios cerrados. La auditoría cuesta ${price}.`,
+      idxH1: "Tu Ecosistema de Marca, <em>en orden</em>",
+      idxH2: "Dos líneas, <em>una sola historia</em>",
+      idxLine: price => `Primero tu esencia: quién eres, de dónde viene tu marca y a dónde va. Después tu ecosistema: el lugar donde te encuentran. Cada cosa con su precio cerrado; la puerta de entrada es la auditoría de marca, ${price}.`,
+      pricesK: "Precios", pricesH: "Lo que cuesta, <em>sin letra pequeña</em>",
+      pricesLead: "Precios cerrados, con IVA incluido. Pagas la mitad al empezar y la otra mitad al recibir; la auditoría, de contado.",
+      plansH: "Los planes de tu página", plansLead: "Los tres incluyen la auditoría de marca y quedan listos en una semana.",
+      extrasK: "Adicionales", agree: "A convenir", lineK: "Línea", seePrices: "Ver precios", planCta: "Empezar por mi MIRA",
+      usdNote: "Fuera de Colombia, en dólares: lo verás en la versión en inglés.",
       listName: "Servicios de 16 Ball Creations", catalog: "Lo que incluye"
     }
   },
   en: {
-    lang: "en", ogLocale: "en_US", base: "/en/", dir: "services", home: "en/index.html", data: SERVICES_EN, homeFaq: HOME_FAQ_EN,
-    mira: "/en/mira/", price: "US$200", minPrice: 200, currency: "USD",
+    lang: "en", ogLocale: "en_US", base: "/en/", dir: "services", home: "en/index.html", data: SERVICES_EN, homeFaq: HOME_FAQ_EN, lines: LINES_EN, plans: PLANS_EN, umbrella: UMBRELLA_EN,
+    mira: "/en/mira/", price: "US$150", minPrice: 150, currency: "USD",
     status: { "En línea":"Live", "Por estrenar":"Coming soon", "Continuo":"Ongoing", "En desarrollo":"In development" },
     t: {
       home: "Home", homeLabel: "16 Ball Creations, home", openMenu: "Open the menu", sections: "Sections",
       work: "Work", services: "Services", how: "How we work", studio: "Studio", contact: "Contact",
       miraBtn: "Start your MIRA", miraFree: "Start your free MIRA", write: "Write to us", seeWork: "See our work",
-      slogan: "If it doesn't exist, we create it.", mail: "Email", other: "Español", otherShort: "ES",
+      slogan: "If it doesn't exist, we create it.", mail: "Email", privacy: "Privacy", privacyHref: "/en/privacy/", other: "Español", otherShort: "ES",
       forWhom: "Who it's for", includes: "What's included", howK: "How we do it", stepsH: "Step by <em>step</em>",
       stepsLead: "Always in the same order: first we understand your brand, then we build. No step gets skipped.",
       workH: "We've <em>done it</em>",
@@ -86,13 +94,18 @@ const LOCALES = {
       ctaP: price => `Five questions about your brand, about three minutes, and free. We use your answers to prepare a 30-minute call. If you want the full diagnosis in writing, the brand audit costs ${price}.`,
       others: "Other services", seeService: "See the service",
       desc: (s, price) => s.what + (s.price ? ` It costs ${price}.` : ""),
-      where: "Where", price: "Price", from: "From", reach: "Write to us",
+      where: "Where", price: "Price", reach: "Write to us",
       titleWhere: "from Medellín",
-      idxTitle: "Services: brand, websites and stores · 16 Ball Creations",
-      idxDesc: price => `Brand audit and identity, websites, online stores, business systems and image advisory, from Medellín. The brand audit costs ${price}.`,
-      idxH1: "Brand and website services, <em>in order</em>",
-      idxH2: "Six services, <em>one story</em>",
-      idxLine: price => `First we understand your brand: where it comes from, why it was born and where it's going. Then we give it shape and take it where it lives. The way in is the brand audit, ${price}.`,
+      idxTitle: "Services and prices: brand, websites and stores · 16 Ball Creations",
+      idxDesc: price => `Brand Ecosystem: brand audit and guidelines, websites in three plans, online stores and business systems, with fixed prices. The brand audit costs ${price}.`,
+      idxH1: "Your Brand Ecosystem, <em>in order</em>",
+      idxH2: "Two lines, <em>one story</em>",
+      idxLine: price => `First your essence: who you are, where your brand comes from and where it's going. Then your ecosystem: where people find you. Everything with a fixed price; the way in is the brand audit, ${price}.`,
+      pricesK: "Prices", pricesH: "What it costs, <em>no fine print</em>",
+      pricesLead: "Fixed prices in US dollars. You pay half to start and half on delivery; the audit, upfront.",
+      plansH: "Your website plans", plansLead: "All three include the brand audit and are ready in one week.",
+      extrasK: "Add-ons", agree: "Priced per shoot", lineK: "Line", seePrices: "See prices", planCta: "Start with my MIRA",
+      usdNote: "",
       listName: "16 Ball Creations services", catalog: "What's included"
     }
   }
@@ -149,7 +162,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=16">
-<link rel="stylesheet" href="/assets/css/v4.css?v=16">
+<link rel="stylesheet" href="/assets/css/v4.css?v=17">
 </head>`;
 }
 
@@ -190,6 +203,7 @@ function footer(L){
         <a href="mailto:${MAIL}">${t.mail}</a>
         <a href="https://www.instagram.com/16ballcreations" rel="noopener noreferrer">Instagram</a>
         <a href="https://github.com/16ballcreations" rel="noopener noreferrer">GitHub</a>
+        <a href="${t.privacyHref}">${t.privacy}</a>
       </div>
     </div>
   </div>
@@ -280,6 +294,64 @@ const WA = { label: "+57 310 494 9979", href: "https://wa.me/573104949979" };
 const AREAS = [{ "@type": "City", name: "Medellín" }, { "@type": "AdministrativeArea", name: "Antioquia" }, "Worldwide"];
 /* a price in the page's currency: $1.500.000 COP or US$750 */
 const money = (L, n) => L.currency === "COP" ? `$${n.toLocaleString("es-CO")} COP` : `US$${n.toLocaleString("en-US")}`;
+/* the short form, for tiles and lists: $500.000 or US$150 */
+const cash = (L, n) => L.currency === "COP" ? `$${n.toLocaleString("es-CO")}` : `US$${n.toLocaleString("en-US")}`;
+const lineOf = (L, s) => L.lines[s.group];
+/* every price of a service, as name + amount (the plans for websites) */
+const priceRows = (L, s) => s.plans ? L.plans.map(p => ({ n: p.n, v: p.v })) : (s.prices || []);
+/* "Express $1.300.000 · Completo $3.000.000"; a price named like its service shows the amount alone */
+const shortName = (L, s, n) => {
+  if(n === s.name){ return ""; }
+  const m = n.match(/^Manual de marca (\w+)$/i) || n.match(/^(\w+) brand guidelines$/i);
+  const w = m ? m[1] : n;
+  return w.charAt(0).toUpperCase() + w.slice(1) + " ";
+};
+const priceSummary = (L, s) => priceRows(L, s).map(p => `${shortName(L, s, p.n)}${p.v ? cash(L, p.v) : L.t.agree}`).join(" · ");
+/* a list of priced items: the service's own prices, or its add-ons */
+function priceList(L, items, cls = ""){
+  return `<ul class="prices${cls}">${items.map(p => `
+          <li class="reveal"><div><h3>${esc(p.n)}</h3>${p.d ? `<p>${esc(p.d)}</p>` : ""}</div><p class="amount">${p.v ? money(L, p.v) : esc(L.t.agree)}</p></li>`).join("")}
+        </ul>`;
+}
+/* the three website plans, by name, side by side */
+function plansGrid(L, h = "h3"){
+  return `<ol class="plans">${L.plans.map((p, i) => `
+          <li class="plan glass reveal">
+            <${h}>${esc(p.n)}</${h}>
+            <p class="plan-tag">${esc(p.tag)}</p>
+            <p class="plan-price">${money(L, p.v)}</p>
+            <p class="plan-time mono">${esc(p.time)}</p>
+            <ul class="inc">${p.items.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+            <a class="btn${i === L.plans.length - 1 ? " btn-primary" : ""}" href="${L.mira}">${L.t.planCta}</a>
+          </li>`).join("")}
+        </ol>`;
+}
+/* schema.org offers: one per closed price */
+const offersOf = (L, s) => priceRows(L, s).filter(p => p.v).map(p => ({ "@type": "Offer", name: p.n, price: String(p.v), priceCurrency: L.currency }));
+/* the overview of every price: Esencia first, then the plans and the rest of Ecosistema */
+function pricesOverview(L, base){
+  const t = L.t, by = g => L.data.filter(s => s.group === g);
+  const esencia = by("esencia"), eco = by("ecosistema");
+  const items = list => list.flatMap(s => (s.prices || []).map(p => ({ ...p, n: p.n })));
+  const extras = list => list.flatMap(s => s.extras || []);
+  return `<div class="price-lines">
+        <div class="price-line" id="precios-${L.lines.esencia.id}">
+          <p class="kicker">${esc(L.lines.esencia.name)} · ${esc(L.lines.esencia.em)}</p>
+          ${priceList(L, items(esencia))}
+          <p class="kicker extras-k">${t.extrasK}</p>
+          ${priceList(L, extras(esencia), " prices-sm")}
+        </div>
+        <div class="price-line" id="precios-${L.lines.ecosistema.id}">
+          <p class="kicker">${esc(L.lines.ecosistema.name)} · ${esc(L.lines.ecosistema.em)}</p>
+          <h3 class="plans-h">${t.plansH}</h3>
+          <p class="plans-lead">${t.plansLead}</p>
+          ${plansGrid(L, "h4")}
+          ${priceList(L, items(eco))}
+          <p class="kicker extras-k">${t.extrasK}</p>
+          ${priceList(L, extras(eco), " prices-sm")}
+        </div>
+      </div>`;
+}
 
 function servicePage(L, s){
   const t = L.t;
@@ -300,8 +372,7 @@ function servicePage(L, s){
         areaServed: AREAS,
         availableLanguage: ["es", "en"],
         url: abs(L, path),
-        ...(s.price ? { offers: { "@type": "Offer", price: String(s.price), priceCurrency: L.currency } } : {}),
-        ...(s.from ? { offers: { "@type": "Offer", priceSpecification: { "@type": "PriceSpecification", minPrice: s.from, priceCurrency: L.currency } } } : {}),
+        ...(offersOf(L, s).length ? { offers: offersOf(L, s) } : {}),
         hasOfferCatalog: {
           "@type": "OfferCatalog",
           name: t.catalog,
@@ -318,7 +389,8 @@ function servicePage(L, s){
         itemListElement: [
           { "@type": "ListItem", position: 1, name: t.home, item: abs(L, "") },
           { "@type": "ListItem", position: 2, name: t.services, item: abs(L, L.dir + "/") },
-          { "@type": "ListItem", position: 3, name: s.name, item: abs(L, path) }
+          { "@type": "ListItem", position: 3, name: lineOf(L, s).name, item: abs(L, L.dir + "/#" + lineOf(L, s).id) },
+          { "@type": "ListItem", position: 4, name: s.name, item: abs(L, path) }
         ]
       }
     ]
@@ -334,9 +406,11 @@ ${header(L, s.key)}
       <ol class="crumbs">
         <li><a href="${L.base}">${t.home}</a></li>
         <li><a href="${L.base}${L.dir}/">${t.services}</a></li>
+        <li><a href="${L.base}${L.dir}/#${lineOf(L, s).id}">${esc(lineOf(L, s).name)}</a></li>
         <li aria-current="page">${esc(s.name)}</li>
       </ol>
       ${ball(s.ball)}
+      <p class="kicker svc-line-k">${esc(L.umbrella.name)} · ${esc(lineOf(L, s).name)}</p>
       <h1>${esc(s.title)}, <em>${esc(s.em)}</em></h1>
       <p class="line">${esc(s.what)}</p>
       <div class="actions">
@@ -344,8 +418,7 @@ ${header(L, s.key)}
         <a class="btn" href="${L.base}#contacto">${t.write}</a>
       </div>
       <dl class="svc-facts">
-        ${s.price ? `<div><dt>${t.price}</dt><dd>${L.price}</dd></div>` : ""}
-        ${s.from ? `<div><dt>${esc(s.fromLabel || t.from)}</dt><dd>${money(L, s.from)}${s.fromNote ? " · " + esc(s.fromNote) : ""}</dd></div>` : ""}
+        <div><dt>${t.price}</dt><dd><a href="#precios">${esc(priceSummary(L, s))}</a></dd></div>
         <div><dt>${t.where}</dt><dd>${ZONE[L.lang]}</dd></div>
         <div><dt>${t.reach}</dt><dd><a href="${WA.href}" rel="noopener">WhatsApp ${WA.label}</a> · <a href="mailto:${MAIL}">${MAIL}</a></dd></div>
       </dl>
@@ -364,6 +437,21 @@ ${header(L, s.key)}
 ${s.includes.map(i => `          <li>${esc(i)}</li>`).join("\n")}
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section class="sec" id="precios">
+    <div class="wrap">
+      <div class="sec-head row-head">
+        <div>
+          <p class="kicker">${t.pricesK}</p>
+          <h2 class="big">${t.pricesH}</h2>
+        </div>
+        <p class="lead">${t.pricesLead}</p>
+      </div>
+      ${s.plans ? plansGrid(L) : priceList(L, s.prices || [])}
+      ${s.extras ? `<p class="kicker extras-k">${t.extrasK}</p>
+      ${priceList(L, s.extras, " prices-sm")}` : ""}
     </div>
   </section>
 
@@ -456,16 +544,30 @@ ${footer(L)}`;
 /* a service as a list item: shared by the overview pages and the home pages */
 /* on /servicios/ each one is an h2 with who it's for; on the home page, an h3 under the section's h2 */
 function serviceItem(L, s, base, index = false){
-  const h = index ? "h2" : "h3";
-  return `<li class="tile reveal" style="--c:${HEX[s.ball]}">
+  const h = "h3";
+  return `<li class="tile reveal" data-g="${s.group}" style="--c:${HEX[s.ball]}">
           ${ball(s.ball)}
           <${h}><a href="${base}${svcPath(L, s)}">${esc(s.name)}</a></${h}>
           ${index && s.who ? `<p class="who">${esc(s.who)}</p>` : ""}
           <p>${esc(s.line)}</p>
+          <p class="svc-price mono">${esc(priceSummary(L, s))}</p>
           <p class="inc-label">${L.t.includes}</p>
           <ul class="inc">${s.includes.slice(0, 4).map(i => `<li>${esc(i)}</li>`).join("")}</ul>
           <a class="more" href="${base}${svcPath(L, s)}">${L.t.seeService} <span aria-hidden="true">&rarr;</span></a>
         </li>`;
+}
+
+/* the two lines, each a header followed by its services */
+function lineHeader(L, g, hTag){
+  const l = L.lines[g];
+  return `<li class="svc-line" id="${l.id}">
+          <p class="kicker">${esc(L.umbrella.name)}</p>
+          <${hTag}>${esc(l.name)}, <em>${esc(l.em)}</em></${hTag}>
+          <p>${esc(l.line)}</p>
+        </li>`;
+}
+function groupedItems(L, base, hTag, index){
+  return ["esencia", "ecosistema"].map(g => [lineHeader(L, g, hTag), ...L.data.filter(s => s.group === g).map(s => serviceItem(L, s, base, index))].join("\n        ")).join("\n        ");
 }
 
 function indexPage(L){
@@ -510,10 +612,23 @@ ${header(L, null)}
 
   <section class="sec">
     <div class="wrap">
-      <div class="sec-head"><h2 class="big">${t.idxH2}</h2></div>
+      <div class="sec-head"><h2 class="big">${t.idxH2}</h2><p class="lead">${esc(L.umbrella.line)}</p></div>
       <ul class="svc svc-all">
-        ${L.data.map(s => serviceItem(L, s, L.base, true)).join("\n        ")}
+        ${groupedItems(L, L.base, "h2", true)}
       </ul>
+    </div>
+  </section>
+
+  <section class="sec" id="precios">
+    <div class="wrap">
+      <div class="sec-head row-head">
+        <div>
+          <p class="kicker">${t.pricesK}</p>
+          <h2 class="big">${t.pricesH}</h2>
+        </div>
+        <p class="lead">${t.pricesLead}</p>
+      </div>
+      ${pricesOverview(L, L.base)}
     </div>
   </section>
 </main>
@@ -549,7 +664,10 @@ for(const L of Object.values(LOCALES)){
   }
   const homePath = join(root, L.home);
   let home = await readFile(homePath, "utf8");
-  home = fill(home, "servicios", L.data.map(s => serviceItem(L, s, "")).join("\n        "), "        ");
+  home = fill(home, "servicios", groupedItems(L, "", "h3", false), "        ");
+  if(home.includes("<!-- precios:inicio")){
+    home = fill(home, "precios", pricesOverview(L, ""), "      ");
+  }
   home = fill(home, "servicios-pie", footerServices(L, ""), "    ");
   /* the project cards, in the same order v4.js draws them (it redraws them
      with the filters and the invitation card): the odd one out spans the row */

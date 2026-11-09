@@ -12,8 +12,11 @@
    examples  Opcional: ejemplos por industria y una demo (sistemas)
    em        La parte del título que va en cursiva y en el color de la bola
    line      Una frase: qué es (la tarjeta de la portada)
-   from      El precio de partida (tarifario v5); fromLabel y fromNote si no es
-             «desde» (sistemas: el diagnóstico)
+   group     La línea del Ecosistema de Marca: "esencia" o "ecosistema" (LINES)
+   prices    Sus precios cerrados (tarifario v7, sin «desde»): { n, v, d };
+             sin v es «a convenir»
+   extras    Los adicionales, con la misma forma
+   plans     true en páginas web: muestra los planes (PLANS)
    what      La primera oración de su página: qué, para quién y dónde, en
              tercera persona para que Google y la IA la puedan citar tal cual
    intro     Un párrafo: para quién es y qué cambia
@@ -35,7 +38,7 @@ const LIVE_STEP = {
 
 const FAQ_PRICE = {
   q: "¿Cuánto cuesta?",
-  a: "Depende de lo que necesites; después de la llamada te enviamos una propuesta por escrito, sin compromiso. La MIRA y la primera llamada no cuestan nada, y si quieres el diagnóstico completo por escrito, la auditoría de marca cuesta $700.000 COP."
+  a: "Cada cosa tiene su precio cerrado, a la vista en cada servicio: la auditoría de marca cuesta $500.000 COP, el manual de marca va de $1.300.000 a $3.000.000 y las páginas, en tres planes, de $3.200.000 a $8.500.000. La MIRA y la primera llamada no cuestan nada."
 };
 const FAQ_WHERE = {
   q: "¿Trabajan solo en Medellín?",
@@ -54,7 +57,7 @@ export const FAQ_BRAND_GOOGLE = {
 };
 export const FAQ_MONTHLY = {
   q: "¿Ustedes cobran SEO cada mes?",
-  a: "No. Cada proyecto tiene un precio cerrado. Si después quieres que sigamos cuidándolo, hay un plan de cuidado opcional."
+  a: "No. Cada proyecto tiene un precio cerrado. Si después quieres que sigamos cuidándolo, hay un mantenimiento opcional de $350.000 al mes, sin permanencia."
 };
 /* our sell point: the client stays in control (Renne, 22 Oct) */
 export const FAQ_INDEPENDENCE = {
@@ -63,7 +66,7 @@ export const FAQ_INDEPENDENCE = {
 };
 export const FAQ_WEB_PRICE = {
   q: "¿Cuánto cuesta una página web en Medellín?",
-  a: "Depende de lo que necesites. En el mercado hay páginas de plantilla por unos cientos de miles de pesos y páginas diseñadas a la medida que cuestan varias veces más. Las nuestras son a la medida, hechas desde tu marca. Después de tu MIRA y la llamada te enviamos el precio exacto por escrito, sin compromiso."
+  a: "En el mercado hay páginas de plantilla por unos cientos de miles de pesos y páginas a la medida que cuestan varias veces más. Las nuestras son a la medida, hechas desde tu marca, en tres planes con precio cerrado: Esencial, $3.200.000; Profesional, $4.500.000, e Integral, $8.500.000 COP. Todos incluyen la auditoría de marca y tu dominio por un año, y quedan listos en una semana."
 };
 /* the questions on the home page, with their FAQPage data */
 export const HOME_FAQ = [FAQ_AI, FAQ_BRAND_GOOGLE, FAQ_MONTHLY, FAQ_INDEPENDENCE, FAQ_WEB_PRICE];
@@ -73,6 +76,40 @@ const FAQ_START = {
   a: "Por tu MIRA: cinco preguntas sobre tu marca. Con tus respuestas preparamos la llamada, y en menos de 24 horas te escribimos para agendarla."
 };
 
+/* El Ecosistema de Marca: la suma de dos líneas (tarifario v7, 9 nov 2026) */
+export const LINES = {
+  esencia: { id: "esencia-de-marca", name: "Esencia de marca", em: "quién eres", line: "Que tu marca se sienta tuya y diga lo mismo en todas partes: la auditoría y el manual de marca." },
+  ecosistema: { id: "ecosistema-digital", name: "Ecosistema digital", em: "dónde te encuentran", line: "El lugar donde tu marca atiende, vende y se organiza: tu página, tu tienda o tu sistema." }
+};
+export const UMBRELLA = {
+  name: "Ecosistema de Marca",
+  line: "Tu esencia de marca y tu ecosistema digital, contando la misma historia."
+};
+/* the website plans, by name and with their price (Ecosistema digital) */
+export const PLANS = [
+  { n: "Esencial", tag: "Que te encuentren y te entiendan", time: "Lista en 1 semana", v: 3200000, items: [
+    "La auditoría de marca y tu MIRA",
+    "Tus canales alineados: Instagram, Facebook, LinkedIn, WhatsApp Business y Google",
+    "Tu perfil de Google completo",
+    "Una página informativa con galería de hasta 6 trabajos",
+    "Contacto por WhatsApp, formulario y mapa",
+    "Dominio, alojamiento y un correo con tu dominio por un año"
+  ] },
+  { n: "Profesional", tag: "Que te elijan", time: "Lista en 1 semana", v: 4500000, items: [
+    "Todo lo de Esencial",
+    "Tu manual de marca express",
+    "Una página para cada proyecto o trabajo, hasta 8",
+    "Lista para que los buscadores con IA la entiendan"
+  ] },
+  { n: "Integral", tag: "Tu ecosistema completo", time: "Lista en 1 semana", v: 8500000, items: [
+    "Todo lo de Profesional",
+    "Tu manual de marca completo",
+    "Una página para cada proyecto, hasta 12",
+    "Un asistente para que edites tu página tú mismo, con una sesión de 45 minutos",
+    "3 meses de mantenimiento"
+  ] }
+];
+
 export const SERVICES = [
   /* the entrance tier (rate card v5, 21 Oct): the full MIRA sold on its own,
      with no corrections; it has a public price */
@@ -80,12 +117,13 @@ export const SERVICES = [
     key: "auditoria",
     slug: "auditoria-de-marca",
     ball: 1,
-    price: 700000,
+    group: "esencia",
+    prices: [{ n: "Auditoría de marca", v: 500000, d: "De contado. Lista en 2 días, con la reunión de entrega." }],
     name: "Auditoría de marca",
     title: "Auditoría de marca",
     seo: "Auditoría de marca: web, Google y redes",
     who: "Para negocios que ya tienen página y redes, y sienten que algo no cuadra.",
-    desc: "Auditoría de marca desde Medellín: revisamos tu web, tu ficha de Google y tus redes, y te entregamos por escrito qué corregir. $700.000 COP.",
+    desc: "Auditoría de marca desde Medellín: revisamos tu web, tu ficha de Google y tus redes, y te entregamos por escrito qué corregir. $500.000 COP.",
     em: "canal por canal",
     line: "Revisamos tu marca en cada lugar donde aparece y te entregamos, por escrito, qué está fallando y cómo corregirlo.",
     what: "16 Ball Creations revisa la marca de negocios y marcas personales en cada lugar donde aparece y entrega por escrito qué corregir, desde Medellín.",
@@ -96,7 +134,7 @@ export const SERVICES = [
       "Cada hallazgo con su prioridad y la forma de corregirlo",
       "Un documento por escrito, tuyo para siempre",
       "Una reunión de entrega de 45 minutos por videollamada",
-      "Si en 30 días haces las correcciones con nosotros, lo que pagaste se abona"
+      "Si en 30 días contratas un manual de marca o un plan, lo que pagaste se abona"
     ],
     steps: [
       MIRA_STEP,
@@ -105,15 +143,23 @@ export const SERVICES = [
       { t: "La entrega", d: "Lo repasamos contigo en 45 minutos por videollamada y respondemos tus dudas." }
     ],
     faq: [
-      { q: "¿Cuánto cuesta la auditoría?", a: "$700.000 COP, de contado. Si en los 30 días siguientes decides que hagamos las correcciones y tu página, lo que pagaste se abona al proyecto." },
-      { q: "¿La auditoría incluye las correcciones?", a: "No. Te entregamos qué corregir y cómo, para que lo hagas tú o tu equipo. Si prefieres que lo hagamos nosotros, lo cotizamos aparte y la auditoría se abona." },
+      { q: "¿Cuánto cuesta la auditoría?", a: "$500.000 COP, de contado. Si en los 30 días siguientes contratas un manual de marca o uno de los planes de página, lo que pagaste se abona." },
+      { q: "¿La auditoría incluye las correcciones?", a: "No. Te entregamos qué corregir y cómo, para que lo hagas tú o tu equipo. Si prefieres que lo hagamos nosotros, eso va en los planes de página, que ya incluyen la auditoría, y lo que pagaste se abona." },
       { q: "¿En qué se diferencia de la MIRA?", a: "La MIRA es gratis: cinco preguntas sobre tu marca, una llamada y un primer vistazo. La auditoría es el detalle completo, por escrito: qué falla, en qué canal y cómo corregirlo." },
       FAQ_AI
     ]
   },
   {
     key: "marca",
-    from: 1500000,
+    group: "esencia",
+    prices: [
+      { n: "Manual de marca express", v: 1300000, d: "Lo esencial de tu identidad por escrito: tu logo, colores, tipografía y tono." },
+      { n: "Manual de marca completo", v: 3000000, d: "Tu identidad completa: esencia, voz, logo y sus usos, colores, tipografías, fotografía y aplicaciones." }
+    ],
+    extras: [
+      { n: "Logo nuevo", v: 1500000, d: "Si tu logo necesita un rediseño: tres propuestas y la versión final, dentro de tu manual." },
+      { n: "Fotografía profesional", d: "A convenir. Solo en Medellín, con nuestros fotógrafos aliados." }
+    ],
     slug: "identidad-de-marca",
     ball: 2,
     name: "Identidad de marca",
@@ -121,33 +167,40 @@ export const SERVICES = [
     seo: "Diseño de identidad de marca y logo",
     who: "Para marcas que nacen, o que crecieron sin una identidad que las cuente.",
     em: "que se reconoce",
-    line: "Logo, colores, tipografía y una voz propia, construidos desde la historia de tu marca.",
-    what: "16 Ball Creations crea la identidad de negocios y marcas personales, logo, colores, tipografía y voz, a partir de su historia, desde Medellín.",
+    line: "Tu logo, tus colores, tu tipografía y tu voz, ordenados en un manual de marca que cuenta tu historia.",
+    what: "16 Ball Creations ordena la identidad de negocios y marcas personales, logo, colores, tipografía y voz, en un manual de marca hecho desde su historia, desde Medellín.",
     intro: "Una marca no empieza en el logo: empieza en por qué existe. Partimos de tu historia, de a quién le hablas y de lo que quieres que sientan, y desde ahí le damos forma a todo lo que se ve. El resultado es una marca que se reconoce en cada pieza, del letrero a la última publicación.",
     includes: [
       "Tu historia escrita: origen, propósito y a quién le hablas",
-      "Logo y sus variantes (horizontal, vertical, ícono)",
+      "Tu logo ordenado, con sus versiones y sus usos",
       "Colores y tipografías",
-      "Manual de marca: cómo usarla bien",
       "Voz de marca: cómo habla y cómo no",
-      "Piezas básicas: tarjetas, plantillas para redes, papelería"
+      "El manual de marca: cómo usarla bien, para que cualquiera la aplique sin desdibujarla",
+      "Si tu logo necesita un rediseño, lo hacemos aparte con nuestro diseñador aliado"
     ],
     steps: [
       MIRA_STEP,
       { t: "Tu historia", d: "Escribimos juntos de dónde viene la marca y qué quiere que sientan quienes la conocen. Esa historia guía cada decisión." },
-      { t: "Tu identidad", d: "Proponemos el logo, los colores y la voz, y los ajustamos contigo hasta que se sientan tuyos." },
+      { t: "Tu identidad", d: "Ordenamos tu logo, los colores y la voz, y los ajustamos contigo hasta que se sientan tuyos." },
       { t: "Tu manual", d: "Te entregamos los archivos y el manual de marca, para que cualquiera pueda usarla sin desdibujarla." }
     ],
     faq: [
       { q: "Ya tengo logo, ¿tengo que cambiarlo?", a: "No necesariamente. Muchas veces el logo está bien y lo que falta es orden: colores que no se repiten, redes que cuentan otra historia. La MIRA nos dice si conviene actualizarlo o solo ordenarlo." },
-      { q: "¿Qué recibo al final?", a: "Los archivos del logo en todos sus formatos, la paleta de colores, las tipografías, el manual de marca y las piezas acordadas, listas para usar." },
+      { q: "¿Qué recibo al final?", a: "Tu manual de marca, express o completo, con los archivos del logo en todos sus formatos, la paleta de colores, las tipografías y la voz, listos para usar." },
+      { q: "¿Sirve para una marca personal?", a: "Sí. Lo hemos hecho con artistas y con proyectos de divulgación: ordenar la imagen y la voz para que la persona y la marca cuenten lo mismo." },
       FAQ_PRICE,
       FAQ_START
     ]
   },
   {
     key: "web",
-    from: 2500000,
+    group: "ecosistema",
+    plans: true,
+    extras: [
+      { n: "Mantenimiento mensual", v: 350000, d: "Al mes, sin permanencia: 2 cambios al mes y la revisión técnica y de tu perfil de Google." },
+      { n: "Página de proyecto adicional", v: 250000, d: "Con el mismo diseño de las demás." },
+      { n: "Validación SEO y para buscadores con IA", v: 1500000, d: "Para una página que no hicimos nosotros, con el informe completo." }
+    ],
     slug: "paginas-web",
     ball: 3,
     name: "Páginas web",
@@ -164,7 +217,7 @@ export const SERVICES = [
       "Se ve bien en celular, tableta y computador",
       "Formulario de contacto y botón de WhatsApp",
       "Preparada para que Google y la IA la entiendan: tu nombre, tu ubicación y tus servicios dichos igual que en tu ficha de Google y tus redes",
-      "Tu dominio configurado (el correo con tu dominio va aparte)",
+      "Tu dominio, alojamiento y un correo con tu dominio para recibir, por un año",
       "Te enseñamos a actualizar lo que cambia seguido"
     ],
     steps: [
@@ -185,7 +238,8 @@ export const SERVICES = [
   },
   {
     key: "tienda",
-    from: 5500000,
+    group: "ecosistema",
+    prices: [{ n: "La Tienda", v: 5500000, d: "Tu catálogo en línea, con pedidos por la página o por WhatsApp, pagos y envíos." }],
     slug: "tiendas-en-linea",
     ball: 4,
     name: "Tiendas en línea",
@@ -219,7 +273,8 @@ export const SERVICES = [
   },
   {
     key: "sistemas",
-    from: 1500000, fromLabel: "Diagnóstico", fromNote: "el sistema se cotiza a la medida",
+    group: "ecosistema",
+    prices: [{ n: "Diagnóstico", v: 1500000, d: "Recorremos cómo funciona tu negocio y te entregamos el sistema que necesita, con su precio cerrado. Si sigues con nosotros en 60 días, se abona." }],
     slug: "sistemas-para-tu-negocio",
     ball: 5,
     name: "Sistemas para tu negocio",
@@ -277,38 +332,6 @@ export const SERVICES = [
       { q: "¿Necesito saber de tecnología?", a: "No. El sistema usa las palabras de tu negocio y te enseñamos a usarlo a ti y a tu equipo." },
       FAQ_PRICE,
       FAQ_START
-    ]
-  },
-  {
-    key: "asesoria",
-    slug: "asesoria-de-imagen-y-redes",
-    ball: 6,
-    name: "Asesoría de imagen y redes",
-    title: "Asesoría de imagen y redes",
-    seo: "Asesoría de imagen y redes sociales",
-    who: "Para marcas que ya existen y quieren que todo cuente la misma historia.",
-    em: "para que todo cuente lo mismo",
-    line: "Revisamos tus perfiles, tu imagen y tus piezas para que todo cuente la misma historia.",
-    what: "16 Ball Creations revisa los perfiles, la imagen y las piezas de negocios y marcas personales para que todo cuente la misma historia, desde Medellín.",
-    intro: "A veces no hace falta construir nada nuevo: hace falta ordenar. Revisamos cómo se ve y cómo habla tu marca en cada lugar donde aparece, y te decimos qué cambiar para que todo se sienta como una sola marca. Sirve para negocios y para marcas personales.",
-    includes: [
-      "Revisión de tus perfiles: foto, nombre, descripción, destacados",
-      "Qué cuenta tu marca hoy y qué debería contar",
-      "Guía de imagen: colores, fotos y estilo para tus publicaciones",
-      "Recomendaciones de imagen personal, si eres tú la marca",
-      "Un plan por escrito con lo que conviene cambiar primero"
-    ],
-    steps: [
-      MIRA_STEP,
-      { t: "La revisión", d: "Recorremos tus redes, tu página y tus piezas, y anotamos dónde la historia se rompe." },
-      { t: "Tu plan", d: "Te entregamos por escrito qué cambiar, en qué orden y cómo, con ejemplos." },
-      { t: "Acompañamiento", d: "Si quieres, lo aplicamos contigo o lo hacemos por ti. Siempre te enseñamos cómo, para que el control quede en tus manos." }
-    ],
-    faq: [
-      { q: "¿En qué se diferencia de la MIRA?", a: "La MIRA es el primer vistazo, gratis, para saber por dónde empezar. La asesoría es el trabajo completo: revisión a fondo, plan por escrito y acompañamiento." },
-      { q: "¿Sirve para una marca personal?", a: "Sí. Lo hemos hecho con artistas y con proyectos de divulgación: ordenar perfiles, imagen y voz para que la persona y la marca cuenten lo mismo." },
-      FAQ_PRICE,
-      FAQ_WHERE
     ]
   }
 ];

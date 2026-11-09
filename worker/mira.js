@@ -234,10 +234,10 @@ export const QUALIFY = {
     coherencia:["Que su marca se sienta como una sola", 25], identidad:["Renovar su logo e identidad", 25], web:["Tener una página web", 25],
     tienda:["Tener una tienda en línea", 25], redes:["Ordenar sus redes", 25], sistema:["Organizar su negocio", 25], nose:["Todavía no lo sabe", 10] } },
   inversion: { label:"Piensa invertir", opts:{
-    r0:[{ es:"Menos de $700.000", en:"Menos de US$200" }, 0],
-    r1:[{ es:"$700.000 a $3.000.000", en:"US$200 a US$800" }, 30],
-    r2:[{ es:"$3.000.000 a $6.000.000", en:"US$800 a US$1.600" }, 30],
-    r3:[{ es:"Más de $6.000.000", en:"Más de US$1.600" }, 30],
+    r0:[{ es:"Menos de $500.000", en:"Menos de US$150" }, 0],
+    r1:[{ es:"$500.000 a $3.000.000", en:"US$150 a US$900" }, 30],
+    r2:[{ es:"$3.000.000 a $6.000.000", en:"US$900 a US$1.800" }, 30],
+    r3:[{ es:"Más de $6.000.000", en:"Más de US$1.800" }, 30],
     hablar:["Prefiere hablarlo en la llamada", 15] } },
   decide: { label:"Decide", opts:{ yo:["Solo", 20], socio:["Con su socio o pareja", 12], equipo:["Un equipo o junta", 8] } },
   cuando: { label:"Quiere empezar", opts:{ ya:["Este mes", 25], pronto:["En 1 a 3 meses", 15], despues:["Más adelante: está explorando", 0] } }

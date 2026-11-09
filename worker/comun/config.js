@@ -22,7 +22,10 @@ export const MOVED_HOSTS = ["page.16ballcreations.workers.dev", "www.16ballcreat
 /* retired pages and where they now lead (Video para redes left the offer on 22 Oct) */
 export const RETIRED = {
   "/servicios/video-para-redes": "/servicios/",
-  "/en/services/social-video": "/en/services/"
+  "/en/services/social-video": "/en/services/",
+  /* the image and social advisory became part of the brand guidelines (rate card v7, 9 Nov 2026) */
+  "/servicios/asesoria-de-imagen-y-redes": "/servicios/identidad-de-marca/",
+  "/en/services/image-and-social-advisory": "/en/services/brand-identity/"
 };
 /* Where Email Routing delivers the studio's mail (a verified destination) */
 export const INBOX = "16ballcreations@gmail.com";
