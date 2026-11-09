@@ -400,17 +400,30 @@ export const CASES = [
 export const EXAMPLE_WORDS = {
   es: {
     kicker:"Sitios de ejemplo", h:"Para ver antes de <em>imaginar el tuyo</em>",
-    lead:"Sitios completos hechos por nosotros para marcas inventadas, con fotos de stock. Recórrelos como si fueran de verdad: así se vería el de tu negocio.",
+    lead:"Sitios completos hechos por nosotros para marcas inventadas, con fotos de stock o escenas en 3D. Recórrelos como si fueran de verdad: así se vería el de tu negocio.",
     see:"Ver el ejemplo", status:"Ejemplo · marca ficticia", home:"Ver sitios de ejemplo"
   },
   en: {
     kicker:"Example sites", h:"See one before <em>you picture yours</em>",
-    lead:"Complete websites we built for made-up brands, with stock photos. Browse them as if they were real: this is how yours could look.",
+    lead:"Complete websites we built for made-up brands, with stock photos or 3D scenes. Browse them as if they were real: this is how yours could look.",
     see:"See the example", status:"Example · fictional brand", home:"See example sites"
   }
 };
 
 export const EXAMPLES = [
+  {
+    slug:"proyecto-inmobiliario-3d", title:"Arrayán · Residencias en la montaña", services:["web"],
+    es: {
+      rubro:"Constructora · lanzamiento de un proyecto",
+      short:"La torre se construye mientras bajas, del lote vacío a las luces de la noche, y al final entras al penthouse en 3D: lo caminas, ves cada ambiente y cambias los acabados.",
+      alt:"Portada del ejemplo Arrayán: una torre de 24 pisos con las ventanas encendidas al anochecer, sobre la ciudad iluminada"
+    },
+    en: {
+      rubro:"Developer · project launch",
+      short:"The tower rises as you scroll, from an empty lot to the city lights at night, and at the end you step into the 3D penthouse: walk it, visit each room and switch the finishes.",
+      alt:"Home page of the Arrayán example: a 24-storey tower with its windows lit at dusk, above the city lights"
+    }
+  },
   {
     slug:"arquitectura-interiorismo", title:"Lumbre", services:["marca", "web"],
     es: {
