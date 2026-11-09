@@ -387,3 +387,81 @@ export const CASES = [
     }
   }
 ];
+
+/* Los sitios de ejemplo: propuestas que convertimos en piezas de muestra, con
+   marca inventada y fotos de stock (cada repo lleva sus créditos). No son
+   casos de clientes: salen en su propia sección de /proyectos/, con la
+   etiqueta "Ejemplo · marca ficticia", y no cuentan en la portada.
+
+   slug   El repo en github.io/16ballcreations (ejemplo-<slug>) y la imagen de
+          la tarjeta, assets/img/ejemplos/<slug>.jpg (captura de 1200x750)
+   title  El nombre de la marca ficticia
+   es/en  rubro (para quién sirve de muestra), short (la tarjeta), alt */
+export const EXAMPLE_WORDS = {
+  es: {
+    kicker:"Sitios de ejemplo", h:"Para ver antes de <em>imaginar el tuyo</em>",
+    lead:"Sitios completos hechos por nosotros para marcas inventadas, con fotos de stock. Recórrelos como si fueran de verdad: así se vería el de tu negocio.",
+    see:"Ver el ejemplo", status:"Ejemplo · marca ficticia", home:"Ver sitios de ejemplo"
+  },
+  en: {
+    kicker:"Example sites", h:"See one before <em>you picture yours</em>",
+    lead:"Complete websites we built for made-up brands, with stock photos. Browse them as if they were real: this is how yours could look.",
+    see:"See the example", status:"Example · fictional brand", home:"See example sites"
+  }
+};
+
+export const EXAMPLES = [
+  {
+    slug:"arquitectura-interiorismo", title:"Lumbre", services:["marca", "web"],
+    es: {
+      rubro:"Estudio de arquitectura e interiorismo",
+      short:"Un estudio que diseña, construye y amuebla casas. La portada se enciende como una casa al caer la tarde, con recorrido por los proyectos, showroom y cita en línea.",
+      alt:"Portada del ejemplo Lumbre: una casa de tres pisos al atardecer bajo el nombre del estudio"
+    },
+    en: {
+      rubro:"Architecture and interior design studio",
+      short:"A studio that designs, builds and furnishes homes. The home page lights up like a house at dusk, with a walk through the projects, a showroom and online booking.",
+      alt:"Home page of the Lumbre example: a three-storey house at dusk below the studio's name"
+    }
+  },
+  {
+    slug:"constructora-remodelacion", title:"Plomada Remodelaciones", services:["marca", "web"],
+    es: {
+      rubro:"Constructora de remodelaciones",
+      short:"Remodelación de apartamentos y casas contada de la obra a la entrega: paquetes claros, proyectos con su antes y después, y WhatsApp a un toque.",
+      alt:"Portada del ejemplo Plomada Remodelaciones: una cocina abierta con barra recién remodelada"
+    },
+    en: {
+      rubro:"Renovation contractor",
+      short:"Apartment and home renovations told from the work site to the handover: clear packages, projects with their before and after, and WhatsApp one tap away.",
+      alt:"Home page of the Plomada Remodelaciones example: a newly renovated open kitchen with a bar"
+    }
+  },
+  {
+    slug:"interiorismo-renders", title:"Vano Estudio", services:["marca", "web"],
+    es: {
+      rubro:"Estudio de interiorismo y render",
+      short:"Primero lo ves, después lo construimos: un estudio que vende con renders, con comparador de boceto a render, proyectos, ideas y su propio manual de marca.",
+      alt:"Portada del ejemplo Vano Estudio: el nombre en serif sobre el render de una sala en tonos de lino"
+    },
+    en: {
+      rubro:"Interior design and rendering studio",
+      short:"First you see it, then we build it: a studio that sells with renders, with a sketch-to-render slider, projects, ideas and its own brand guide.",
+      alt:"Home page of the Vano Estudio example: the name in serif over a render of a linen-toned living room"
+    }
+  },
+  {
+    slug:"ingenieria-estructural", title:"Dovela Ingeniería Estructural", services:["marca", "web"],
+    es: {
+      rubro:"Firma de ingeniería estructural",
+      short:"Lo que calculamos se queda en pie: puentes, edificios y contención dibujados a escala, con las cifras calculadas de los datos de cada obra.",
+      alt:"Portada del ejemplo Dovela: el titular «Lo que calculamos se queda en pie» junto al dibujo de un puente de 180 m"
+    },
+    en: {
+      rubro:"Structural engineering firm",
+      short:"What we calculate stays standing: bridges, buildings and retaining works drawn to scale, with figures worked out from each project's data.",
+      alt:"Home page of the Dovela example: the headline «What we calculate stays standing» next to a drawing of a 180 m bridge"
+    }
+  }
+];
+export const exampleUrl = slug => `https://16ballcreations.github.io/ejemplo-${slug}/`;

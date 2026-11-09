@@ -22,7 +22,7 @@ import { dirname, join } from "node:path";
 import vm from "node:vm";
 import { SERVICES, HOME_FAQ, LINES, PLANS, UMBRELLA } from "./servicios-data.mjs";
 import { SERVICES_EN, HOME_FAQ as HOME_FAQ_EN, LINES_EN, PLANS_EN, UMBRELLA_EN } from "./services-en-data.mjs";
-import { CASES, CASE_WORDS } from "./proyectos-data.mjs";
+import { CASES, CASE_WORDS, EXAMPLES, EXAMPLE_WORDS, exampleUrl } from "./proyectos-data.mjs";
 
 const PREVIEW = false;
 const ORIGIN = "https://16ballcreations.com";
@@ -162,7 +162,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=16">
-<link rel="stylesheet" href="/assets/css/v4.css?v=17">
+<link rel="stylesheet" href="/assets/css/v4.css?v=18">
 </head>`;
 }
 
@@ -742,9 +742,33 @@ ${header(L, null, otherCaseUrl(L))}
       </ol>
     </div>
   </section>
+  ${examplesSection(L)}
 </main>
 
 ${footer(L)}`;
+}
+
+/* the example sites: made-up brands, apart from the clients' cases */
+function examplesSection(L){
+  const X = EXAMPLE_WORDS[L.lang];
+  const cards = EXAMPLES.map((e, i) => card(L, {
+    title:e.title, short:e[L.lang].short, services:e.services, status:X.status, year:e[L.lang].rubro,
+    image:`assets/img/ejemplos/${e.slug}.jpg`, alt:e[L.lang].alt, links:[{ label:X.see, url:exampleUrl(e.slug) }]
+  }, i));
+  return `<section class="sec" id="${L.lang === "es" ? "ejemplos" : "examples"}">
+    <div class="wrap">
+      <div class="sec-head row-head">
+        <div>
+          <p class="kicker">${X.kicker}</p>
+          <h2 class="big">${X.h}</h2>
+        </div>
+        <p class="lead">${esc(X.lead)}</p>
+      </div>
+      <ol class="work">
+        ${cards.join("\n        ")}
+      </ol>
+    </div>
+  </section>`;
 }
 
 function casePage(L, c){

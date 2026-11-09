@@ -324,3 +324,5 @@
 .case-facts dd{margin:4px 0 0;color:var(--bone)}
 .page-case .svc-hero .kicker{margin:18px 0 0}
 @media (max-width:760px){ .case-two,.case-why{grid-template-columns:1fr} }
+/* the link to the example sites, under the project cards */
+.work-more{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 16px;margin:32px auto 0;max-width:62ch;text-align:center;color:var(--ash)}
