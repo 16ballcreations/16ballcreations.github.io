@@ -3,6 +3,7 @@
 import { COPY_SCRIPT, adminPage, sectionHead } from "./comun/pagina.js";
 import { esc, list, markdown, plain, row, whenInBogota } from "./comun/util.js";
 import { card } from "./mira.js";
+import { stageTag } from "./ventas/modelo.js";
 
 /* ---------- proposals: the client sites published on GitHub ----------
    Each proposal is a public repository of the 16ballcreations organisation
@@ -18,6 +19,29 @@ import { card } from "./mira.js";
 export const GH_ORG = "16ballcreations";
 export const PROPOSALS_KEY = "propuestas:cache";
 export const PROPOSALS_FRESH = 10 * 60 * 1000;
+
+/* the repository behind a proposal's published address, e.g.
+   https://16ballcreations.github.io/cielo/ → cielo */
+export function proposalRepo(site){
+  const m = String(site || "").match(/^https?:\/\/16ballcreations\.github\.io\/([^/?#]+)/i);
+  return m ? decodeURIComponent(m[1]) : "";
+}
+
+/* the prospect each proposal belongs to: its file keeps the published
+   address in data.propuesta, so the link holds whatever the repo is called */
+async function prospectsByRepo(env){
+  const { results } = await env.DB.prepare(
+    "SELECT id, negocio, etapa, json_extract(data, '$.propuesta') AS propuesta FROM prospects WHERE json_extract(data, '$.propuesta') IS NOT NULL"
+  ).all();
+  const out = {};
+  for(const r of results){ const repo = proposalRepo(r.propuesta); if(repo){ (out[repo] = out[repo] || []).push(r); } }
+  return out;
+}
+function prospectLine(ps){
+  return ps && ps.length
+    ? `<p class="prop-who">Prospecto: ${ps.map(x => `<a href="/admin/prospecto?id=${encodeURIComponent(x.id)}#propuesta">${esc(x.negocio)}</a> ${stageTag(x.etapa)}`).join(" · ")}</p>`
+    : `<p class="prop-who"><span class="tag t-wait">Sin prospecto</span></p>`;
+}
 
 export function ghHeaders(env, raw){
   const h = { "User-Agent":"16bc-panel", "Accept":raw ? "application/vnd.github.raw" : "application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" };
@@ -78,7 +102,7 @@ export async function getProposals(env, force){
 
 export async function proposalsPage(env, url){
   const force = url.searchParams.has("refrescar");
-  const { at, items, error } = await getProposals(env, force);
+  const [{ at, items, error }, owners] = await Promise.all([getProposals(env, force), prospectsByRepo(env)]);
   const list = items.slice().sort((a, b) => String(b.pushed).localeCompare(String(a.pushed)));
   const card = p => `
       <article class="sub prop">
@@ -91,6 +115,7 @@ export async function proposalsPage(env, url){
           <span class="when mono">Último cambio: ${esc(p.pushed ? whenInBogota(p.pushed.replace("T", " ").replace("Z", "")) : "—")}</span>
         </header>
         <p class="prop-sum">${esc(p.summary || p.description)}</p>
+        ${prospectLine(owners[p.repo])}
         <div class="linkrow">
           <a class="pill go-chat" href="${esc(p.site)}" target="_blank" rel="noopener">Abrir propuesta</a>
           <button type="button" data-copy="${esc(p.site)}" data-label="Copiar enlace">Copiar enlace</button>
@@ -107,7 +132,7 @@ export async function proposalsPage(env, url){
 }
 
 export async function proposalPage(env, url){
-  const { items } = await getProposals(env, false);
+  const [{ items }, owners] = await Promise.all([getProposals(env, false), prospectsByRepo(env)]);
   const p = items.find(x => x.repo === url.searchParams.get("repo"));
   if(!p){ return Response.redirect(url.origin + "/admin/propuestas", 303); }
   /* relative images and links in the README point into the repository */
@@ -117,6 +142,7 @@ export async function proposalPage(env, url){
     .replace(/((?:^|[^!])\[[^\]]*\]\()(?!https?:|#|mailto:)([^)\s]+)/g, "$1" + p.repoUrl + "/blob/HEAD/$2");
   return adminPage(env, "propuestas", p.title || p.repo, `
     <p class="kicker"><a href="/admin/propuestas">← Propuestas</a> · ${esc(p.repo)}${p.estado ? " · " + esc(p.estado) : ""}</p>
+    ${prospectLine(owners[p.repo])}
     <div class="linkrow" style="margin-bottom:20px">
       <a class="pill go-chat" href="${esc(p.site)}" target="_blank" rel="noopener">Abrir propuesta</a>
       <button type="button" data-copy="${esc(p.site)}" data-label="Copiar enlace">Copiar enlace</button>

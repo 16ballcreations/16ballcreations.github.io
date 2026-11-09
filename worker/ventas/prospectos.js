@@ -6,6 +6,7 @@ import { esc, plusDays, plusWorkdays, slug, todayIso, whenInBogota } from "../co
 import { igHandles, linkMira, miraAnswers, miraTokenFor, qualifyLabel } from "../mira.js";
 import { ATTENDED, MEDIOS, OUTCOME, PACKAGES, TEMPERATURE, callBlock, callWhen, lastCall } from "./llamada.js";
 import { GEO, LEAFLET, MINI_MAP_SCRIPT } from "./mapa.js";
+import { proposalRepo } from "../propuestas.js";
 import { BALLS, BALL_SQL, BEFORE_CALL, EVENTS, NETWORK, OLD_PRIORITY, STAGES, ballOf, ballTag, campaignParts, campaignPicker, channelOptions, originOfChannel, stageTag } from "./modelo.js";
 
 export async function prospectsPage(env, url){
@@ -152,6 +153,7 @@ export async function prospectPage(env, url){
         <p><b>Redes y web</b>${[link(r.instagram), link(r.facebook), link(r.tiktok)].filter(Boolean).join("<br>") || "Ninguna verificada"}${r.web && /^(https?:\/\/|www\.)/.test(r.web) ? "<br>" + link(r.web.startsWith("http") ? r.web : "https://" + r.web) : ""}</p>
         ${d.telefono ? `<p><b>Teléfono</b>${esc(d.telefono)}</p>` : ""}
         ${d.correo ? `<p><b>Correo</b>${esc(d.correo).replace(/[^\s,;<>"]+@[^\s,;<>"]+/g, m => `<a href="mailto:${m}">${m}</a>`)}${d.correo_fuente ? `<br><span class="mono">${esc(d.correo_fuente)}</span>` : ""}</p>` : d.correo_fuente ? `<p><b>Correo</b><span class="mono">${esc(d.correo_fuente)}</span></p>` : ""}
+        ${d.propuesta ? `<p id="propuesta"><b>Su propuesta</b>${link(d.propuesta, "Abrir la propuesta")}${proposalRepo(d.propuesta) ? ` · <a href="/admin/propuesta?repo=${encodeURIComponent(proposalRepo(d.propuesta))}">verla en Propuestas</a>` : ""}${d.caso ? `<br>${link(d.caso, "Su caso publicado")}` : ""}</p>` : ""}
         <details id="contacto"><summary>Editar el contacto${r.contacto_editado ? " · editado a mano" : ""}</summary>
           <form class="pform" method="post" action="/admin/prospecto">
             <input type="hidden" name="id" value="${esc(r.id)}"><input type="hidden" name="accion" value="contacto">

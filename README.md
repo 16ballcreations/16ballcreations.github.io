@@ -184,6 +184,11 @@ Todo vive en un Worker de Cloudflare llamado `page`
      «Por contactar» (Guardar cambios, Copiar mensaje, Ya lo envié). Al marcarlo
      como enviado queda fijo y su texto pasa al historial. Un mensaje editado se
      marca (`mensaje_editado`) y recargar la campaña ya no lo reemplaza.
+  7. **La propuesta de cada prospecto.** Su dirección publicada
+     (`https://16ballcreations.github.io/<repo>/`) va en `data.propuesta` de la ficha,
+     con `data.repo` y, si ya es caso, `data.caso`. La ficha muestra «Su propuesta» y
+     `/admin/propuestas` pone en cada tarjeta su prospecto con la etapa, o «Sin
+     prospecto» si falta crearlo. Recargar la campaña conserva estos tres datos.
 - **La MIRA y los prospectos.** La MIRA es el primer filtro, antes de la llamada:
   1. Cada prospecto tiene un **enlace personal** en su ficha (Copiar enlace de
      MIRA): `/mira/?t=<código>&marca=…&o=ig`. El código (`prospects.mira_token`, 6

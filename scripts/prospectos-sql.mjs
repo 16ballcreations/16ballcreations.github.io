@@ -39,7 +39,13 @@ const BY_HAND = {
 };
 function keep(f){
   /* the phone and the email live in data: the new research, with what was typed by hand */
-  if(f === "data"){ return "data = CASE WHEN contacto_editado = 1 THEN json_set(excluded.data, '$.telefono', json_extract(data, '$.telefono'), '$.correo', json_extract(data, '$.correo'), '$.correo_fuente', json_extract(data, '$.correo_fuente')) ELSE excluded.data END"; }
+  if(f === "data"){
+    const research = "CASE WHEN contacto_editado = 1 THEN json_set(excluded.data, '$.telefono', json_extract(data, '$.telefono'), '$.correo', json_extract(data, '$.correo'), '$.correo_fuente', json_extract(data, '$.correo_fuente')) ELSE excluded.data END";
+    /* the proposal made for the prospect (its published address, repo and case)
+       is panel tracking, not research: it stays unless the research brings one */
+    return "data = CASE WHEN json_extract(data, '$.propuesta') IS NOT NULL AND json_extract(excluded.data, '$.propuesta') IS NULL " +
+      `THEN json_set(${research}, '$.propuesta', json_extract(data, '$.propuesta'), '$.repo', json_extract(data, '$.repo'), '$.caso', json_extract(data, '$.caso')) ELSE ${research} END`;
+  }
   return BY_HAND[f] ? `${f} = CASE WHEN ${BY_HAND[f]} = 1 THEN ${f} ELSE excluded.${f} END` : `${f} = excluded.${f}`;
 }
 
