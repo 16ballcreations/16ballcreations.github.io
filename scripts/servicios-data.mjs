@@ -153,7 +153,7 @@ export const SERVICES = [
     key: "marca",
     group: "esencia",
     prices: [
-      { n: "Manual de marca express", v: 1300000, d: "Lo esencial de tu identidad por escrito: tu logo, colores, tipografía y tono." },
+      { n: "Manual de marca express", v: 1300000, d: "Lo esencial de tu identidad por escrito: tu logo, colores, tipografía y tono. Si en 30 días pasas al completo o a un plan, se abona." },
       { n: "Manual de marca completo", v: 3000000, d: "Tu identidad completa: esencia, voz, logo y sus usos, colores, tipografías, fotografía y aplicaciones." }
     ],
     extras: [
@@ -239,7 +239,7 @@ export const SERVICES = [
   {
     key: "tienda",
     group: "ecosistema",
-    prices: [{ n: "La Tienda", v: 5500000, d: "Tu catálogo en línea, con pedidos por la página o por WhatsApp, pagos y envíos." }],
+    prices: [{ n: "La Tienda", v: 5500000, d: "Tu catálogo en línea con hasta 25 productos, pedidos por la página o por WhatsApp, pagos y envíos." }],
     slug: "tiendas-en-linea",
     ball: 4,
     name: "Tiendas en línea",
@@ -266,7 +266,7 @@ export const SERVICES = [
     ],
     faq: [
       { q: "¿Puedo recibir los pedidos por WhatsApp?", a: "Sí. Es la forma más común en nuestros proyectos: el cliente arma su pedido en la tienda y te llega listo a tu WhatsApp." },
-      { q: "¿Quién sube los productos?", a: "Dejamos cargado el catálogo inicial y te enseñamos a agregar, cambiar y quitar productos." },
+      { q: "¿Quién sube los productos?", a: "Dejamos cargado tu catálogo inicial, de hasta 25 productos, y te enseñamos a agregar, cambiar y quitar productos." },
       FAQ_PRICE,
       FAQ_WHERE
     ]

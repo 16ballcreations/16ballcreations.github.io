@@ -125,7 +125,7 @@ export const SERVICES_EN = [
     key: "marca",
     group: "esencia",
     prices: [
-      { n: "Express brand guidelines", v: 390, d: "The essentials of your identity in writing: your logo, colors, typography and tone." },
+      { n: "Express brand guidelines", v: 390, d: "The essentials of your identity in writing: your logo, colors, typography and tone. If you move up to complete guidelines or a plan within 30 days, it's credited." },
       { n: "Complete brand guidelines", v: 910, d: "Your whole identity: essence, voice, logo and its uses, colors, typefaces, photography and applications." }
     ],
     extras: [
@@ -211,7 +211,7 @@ export const SERVICES_EN = [
   {
     key: "tienda",
     group: "ecosistema",
-    prices: [{ n: "The Store", v: 1670, d: "Your catalog online, with orders through the site or WhatsApp, payments and shipping." }],
+    prices: [{ n: "The Store", v: 1670, d: "Your catalog online with up to 25 products, orders through the site or WhatsApp, payments and shipping." }],
     slug: "online-stores",
     ball: 4,
     name: "Online stores",
@@ -238,7 +238,7 @@ export const SERVICES_EN = [
     ],
     faq: [
       { q: "Can I receive orders through WhatsApp?", a: "Yes. It's the most common setup in our projects: customers put together their order in the store and it reaches your WhatsApp ready to go." },
-      { q: "Who uploads the products?", a: "We load the initial catalog and show you how to add, change and remove products." },
+      { q: "Who uploads the products?", a: "We load your initial catalog, up to 25 products, and show you how to add, change and remove products." },
       FAQ_PRICE,
       FAQ_WHERE
     ]
