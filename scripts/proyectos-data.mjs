@@ -400,17 +400,30 @@ export const CASES = [
 export const EXAMPLE_WORDS = {
   es: {
     kicker:"Sitios de ejemplo", h:"Para ver antes de <em>imaginar el tuyo</em>",
-    lead:"Sitios completos hechos por nosotros para marcas inventadas, con fotos de stock o escenas en 3D. Recórrelos como si fueran de verdad: así se vería el de tu negocio.",
+    lead:"Sitios completos hechos por nosotros para marcas inventadas, o como concepto para una marca real, con fotos de stock, escenas en 3D o video. Recórrelos como si fueran de verdad: así se vería el de tu negocio.",
     see:"Ver el ejemplo", status:"Ejemplo · marca ficticia", home:"Ver sitios de ejemplo"
   },
   en: {
     kicker:"Example sites", h:"See one before <em>you picture yours</em>",
-    lead:"Complete websites we built for made-up brands, with stock photos or 3D scenes. Browse them as if they were real: this is how yours could look.",
+    lead:"Complete websites we built for made-up brands, or as a concept for a real one, with stock photos, 3D scenes or video. Browse them as if they were real: this is how yours could look.",
     see:"See the example", status:"Example · fictional brand", home:"See example sites"
   }
 };
 
 export const EXAMPLES = [
+  {
+    slug:"concesionario-virtual-motos", title:"KOVE · Concesionario virtual", services:["web"],
+    es: {
+      status:"Concepto · no oficial", rubro:"Motos · venta en línea",
+      short:"Entras a la tienda bajando, recorres el salón y giras la 450RR en 360° con sus piezas a la vista. Trae el plano técnico, las sedes en el mapa, el equipo de carrera y un asesor a un toque.",
+      alt:"Salón del concesionario virtual: cuatro motos KOVE sobre pedestales con luz teal y el titular «Elige la tuya»"
+    },
+    en: {
+      status:"Concept · unofficial", rubro:"Motorcycles · online sales",
+      short:"You walk into the store as you scroll, browse the showroom and spin the 450RR in 360° with its parts on show. It has the blueprint, the dealers on a map, the racing team and an advisor one tap away.",
+      alt:"Showroom of the virtual dealership: four KOVE motorcycles on pedestals lit in teal, under the headline «Elige la tuya»"
+    }
+  },
   {
     slug:"proyecto-inmobiliario-3d", title:"Arrayán · Residencias en la montaña", services:["web"],
     es: {

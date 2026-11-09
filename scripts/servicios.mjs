@@ -752,7 +752,7 @@ ${footer(L)}`;
 function examplesSection(L){
   const X = EXAMPLE_WORDS[L.lang];
   const cards = EXAMPLES.map((e, i) => card(L, {
-    title:e.title, short:e[L.lang].short, services:e.services, status:X.status, year:e[L.lang].rubro,
+    title:e.title, short:e[L.lang].short, services:e.services, status:e[L.lang].status || X.status, year:e[L.lang].rubro,
     image:`assets/img/ejemplos/${e.slug}.jpg`, alt:e[L.lang].alt, links:[{ label:X.see, url:exampleUrl(e.slug) }]
   }, i));
   return `<section class="sec" id="${L.lang === "es" ? "ejemplos" : "examples"}">
