@@ -6,8 +6,8 @@ import { writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { SERVICES } from "./servicios-data.mjs";
-import { SERVICES_EN } from "./services-en-data.mjs";
+import { SERVICES, LINES } from "./servicios-data.mjs";
+import { SERVICES_EN, LINES_EN } from "./services-en-data.mjs";
 import { CASES } from "./proyectos-data.mjs";
 
 const ORIGIN = "https://16ballcreations.com";
@@ -27,6 +27,8 @@ function lastmod(loc){
 const PAIRS = [
   ["/", "/en/", "1.0", "weekly"],
   ["/servicios/", "/en/services/", "0.9", "monthly"],
+  ...Object.keys(LINES).map(g => [`/servicios/${LINES[g].id}/`, `/en/services/${LINES_EN[g].id}/`, "0.9", "monthly"]),
+  ["/estudio/", "/en/studio/", "0.6", "yearly"],
   ...SERVICES.map(s => [`/servicios/${s.slug}/`, `/en/services/${SERVICES_EN.find(e => e.key === s.key).slug}/`, "0.8", "monthly"]),
   ["/mira/", "/en/mira/", "0.8", "monthly"],
   ["/proyectos/", "/en/projects/", "0.7", "monthly"],

@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://16ballcreations.com/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/"/>
@@ -12,7 +12,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/"/>
@@ -22,7 +22,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/servicios/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/"/>
@@ -31,7 +31,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/services/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/"/>
@@ -39,8 +39,62 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/"/>
   </url>
   <url>
+    <loc>https://16ballcreations.com/servicios/esencia-de-marca/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/esencia-de-marca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/brand-essence/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/esencia-de-marca/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/services/brand-essence/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/esencia-de-marca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/brand-essence/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/esencia-de-marca/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/servicios/ecosistema-digital/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/ecosistema-digital/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/digital-ecosystem/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/ecosistema-digital/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/services/digital-ecosystem/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/ecosistema-digital/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/services/digital-ecosystem/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/servicios/ecosistema-digital/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/estudio/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/estudio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/studio/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/estudio/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/studio/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/estudio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/studio/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/estudio/"/>
+  </url>
+  <url>
     <loc>https://16ballcreations.com/servicios/auditoria-de-marca/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/auditoria-de-marca/"/>
@@ -49,7 +103,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/services/brand-audit/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/auditoria-de-marca/"/>
@@ -58,7 +112,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/servicios/identidad-de-marca/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/identidad-de-marca/"/>
@@ -67,7 +121,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/services/brand-identity/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/identidad-de-marca/"/>
@@ -76,7 +130,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/servicios/paginas-web/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/paginas-web/"/>
@@ -85,7 +139,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/services/websites/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/paginas-web/"/>
@@ -94,7 +148,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/servicios/tiendas-en-linea/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/tiendas-en-linea/"/>
@@ -103,7 +157,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/services/online-stores/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/tiendas-en-linea/"/>
@@ -112,7 +166,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/servicios/sistemas-para-tu-negocio/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/sistemas-para-tu-negocio/"/>
@@ -121,7 +175,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/services/business-systems/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/servicios/sistemas-para-tu-negocio/"/>

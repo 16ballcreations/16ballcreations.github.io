@@ -5,10 +5,13 @@
      /en/services/ y /en/services/<slug>/      desde scripts/services-en-data.mjs
      assets/js/servicios.js                    lo mínimo para las portadas
    y escribe la lista de servicios en index.html y en/index.html, entre los
-   marcadores servicios:inicio, precios:inicio y servicios-pie:inicio.
-   Los servicios se agrupan en las dos líneas del Ecosistema de Marca
-   (LINES: Esencia de marca y Ecosistema digital), con sus precios cerrados
-   y los planes de página por nombre (tarifario v7).
+   marcadores servicios:inicio y servicios-pie:inicio.
+     /servicios/<línea>/ y /en/services/<line>/ las dos líneas, con sus planes
+     /estudio/ y /en/studio/                  desde scripts/estudio-data.mjs
+   La portada y /servicios/ muestran solo las dos líneas del Ecosistema de
+   Marca (LINES); los planes, precios y adicionales viven en la página de
+   cada línea y en la de cada servicio (tarifario v7). Sin precios en la
+   portada ni en sistemas.
    Los proyectos de cada página salen de assets/js/projects.js (su campo en
    para el inglés). Cada página enlaza a su par en el otro idioma.
 
@@ -23,6 +26,7 @@ import vm from "node:vm";
 import { SERVICES, HOME_FAQ, LINES, PLANS, UMBRELLA } from "./servicios-data.mjs";
 import { SERVICES_EN, HOME_FAQ as HOME_FAQ_EN, LINES_EN, PLANS_EN, UMBRELLA_EN } from "./services-en-data.mjs";
 import { CASES, CASE_WORDS, EXAMPLES, EXAMPLE_WORDS, exampleUrl } from "./proyectos-data.mjs";
+import { STUDIO } from "./estudio-data.mjs";
 
 const PREVIEW = false;
 const ORIGIN = "https://16ballcreations.com";
@@ -66,12 +70,13 @@ const LOCALES = {
       idxDesc: price => `Ecosistema de Marca: auditoría y manual de marca, páginas web en tres planes, tiendas en línea y sistemas, con precios cerrados. La auditoría cuesta ${price}.`,
       idxH1: "Tu Ecosistema de Marca, <em>en orden</em>",
       idxH2: "Dos líneas, <em>una sola historia</em>",
-      idxLine: price => `Primero tu esencia: quién eres, de dónde viene tu marca y a dónde va. Después tu ecosistema: el lugar donde te encuentran. Cada cosa con su precio cerrado; la puerta de entrada es la auditoría de marca, ${price}.`,
+      idxLine: price => `Primero tu esencia: quién eres, de dónde viene tu marca y a dónde va. Después tu ecosistema: el lugar donde te encuentran. Cada línea tiene su página, con sus planes y sus precios.`,
       pricesK: "Precios", pricesH: "Lo que cuesta, <em>sin letra pequeña</em>",
       pricesLead: "Precios cerrados, con IVA incluido. Pagas la mitad al empezar y la otra mitad al recibir; la auditoría, de contado. Si después subes a algo más completo, lo que ya pagaste se abona.",
       plansH: "Los planes de tu página", plansLead: "Los tres incluyen la auditoría de marca y quedan listos en una semana.",
       extrasK: "Adicionales", agree: "A convenir", lineK: "Línea", seePrices: "Ver precios", planCta: "Empezar por mi MIRA",
-      usdNote: "Fuera de Colombia, en dólares: lo verás en la versión en inglés.",
+      seePlans: "Ver planes y precios", inLine: "En esta línea", lineServicesH: "Los servicios de <em>esta línea</em>", lineK: "Línea",
+      studioMore: "Conoce el estudio",
       listName: "Servicios de 16 Ball Creations", catalog: "Lo que incluye"
     }
   },
@@ -100,12 +105,13 @@ const LOCALES = {
       idxDesc: price => `Brand Ecosystem: brand audit and guidelines, websites in three plans, online stores and business systems, with fixed prices. The brand audit costs ${price}.`,
       idxH1: "Your Brand Ecosystem, <em>in order</em>",
       idxH2: "Two lines, <em>one story</em>",
-      idxLine: price => `First your essence: who you are, where your brand comes from and where it's going. Then your ecosystem: where people find you. Everything with a fixed price; the way in is the brand audit, ${price}.`,
+      idxLine: price => `First your essence: who you are, where your brand comes from and where it's going. Then your ecosystem: where people find you. Each line has its own page, with its plans and prices.`,
       pricesK: "Prices", pricesH: "What it costs, <em>no fine print</em>",
       pricesLead: "Fixed prices in US dollars. You pay half to start and half on delivery; the audit, upfront. If you later move up to something more complete, what you already paid is credited.",
       plansH: "Your website plans", plansLead: "All three include the brand audit and are ready in one week.",
       extrasK: "Add-ons", agree: "Priced per shoot", lineK: "Line", seePrices: "See prices", planCta: "Start with my MIRA",
-      usdNote: "",
+      seePlans: "See plans and prices", inLine: "In this line", lineServicesH: "The services in <em>this line</em>", lineK: "Line",
+      studioMore: "Meet the studio",
       listName: "16 Ball Creations services", catalog: "What's included"
     }
   }
@@ -162,7 +168,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=16">
-<link rel="stylesheet" href="/assets/css/v4.css?v=18">
+<link rel="stylesheet" href="/assets/css/v4.css?v=19">
 </head>`;
 }
 
@@ -314,44 +320,23 @@ function priceList(L, items, cls = ""){
         </ul>`;
 }
 /* the three website plans, by name, side by side */
-function plansGrid(L, h = "h3"){
-  return `<ol class="plans">${L.plans.map((p, i) => `
+function plansGrid(L, list = L.plans, h = "h3"){
+  return `<ol class="plans">${list.map((p, i) => `
           <li class="plan glass reveal">
             <${h}>${esc(p.n)}</${h}>
             <p class="plan-tag">${esc(p.tag)}</p>
             <p class="plan-price">${money(L, p.v)}</p>
-            <p class="plan-time mono">${esc(p.time)}</p>
+            ${p.time ? `<p class="plan-time mono">${esc(p.time)}</p>` : ""}
             <ul class="inc">${p.items.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-            <a class="btn${i === L.plans.length - 1 ? " btn-primary" : ""}" href="${L.mira}">${L.t.planCta}</a>
+            <a class="btn${i === list.length - 1 ? " btn-primary" : ""}" href="${L.mira}">${L.t.planCta}</a>
           </li>`).join("")}
         </ol>`;
 }
 /* schema.org offers: one per closed price */
 const offersOf = (L, s) => priceRows(L, s).filter(p => p.v).map(p => ({ "@type": "Offer", name: p.n, price: String(p.v), priceCurrency: L.currency }));
-/* the overview of every price: Esencia first, then the plans and the rest of Ecosistema */
-function pricesOverview(L, base){
-  const t = L.t, by = g => L.data.filter(s => s.group === g);
-  const esencia = by("esencia"), eco = by("ecosistema");
-  const items = list => list.flatMap(s => (s.prices || []).map(p => ({ ...p, n: p.n })));
-  const extras = list => list.flatMap(s => s.extras || []);
-  return `<div class="price-lines">
-        <div class="price-line" id="precios-${L.lines.esencia.id}">
-          <p class="kicker">${esc(L.lines.esencia.name)} · ${esc(L.lines.esencia.em)}</p>
-          ${priceList(L, items(esencia))}
-          <p class="kicker extras-k">${t.extrasK}</p>
-          ${priceList(L, extras(esencia), " prices-sm")}
-        </div>
-        <div class="price-line" id="precios-${L.lines.ecosistema.id}">
-          <p class="kicker">${esc(L.lines.ecosistema.name)} · ${esc(L.lines.ecosistema.em)}</p>
-          <h3 class="plans-h">${t.plansH}</h3>
-          <p class="plans-lead">${t.plansLead}</p>
-          ${plansGrid(L, "h4")}
-          ${priceList(L, items(eco))}
-          <p class="kicker extras-k">${t.extrasK}</p>
-          ${priceList(L, extras(eco), " prices-sm")}
-        </div>
-      </div>`;
-}
+/* a line's own page: /servicios/esencia-de-marca/ */
+const lineUrl = (L, g) => L.base + L.dir + "/" + L.lines[g].id + "/";
+const otherLineUrl = (L, g) => { const O = LOCALES[OTHER[L.lang]]; return lineUrl(O, g); };
 
 function servicePage(L, s){
   const t = L.t;
@@ -389,7 +374,7 @@ function servicePage(L, s){
         itemListElement: [
           { "@type": "ListItem", position: 1, name: t.home, item: abs(L, "") },
           { "@type": "ListItem", position: 2, name: t.services, item: abs(L, L.dir + "/") },
-          { "@type": "ListItem", position: 3, name: lineOf(L, s).name, item: abs(L, L.dir + "/#" + lineOf(L, s).id) },
+          { "@type": "ListItem", position: 3, name: lineOf(L, s).name, item: abs(L, L.dir + "/" + lineOf(L, s).id + "/") },
           { "@type": "ListItem", position: 4, name: s.name, item: abs(L, path) }
         ]
       }
@@ -406,7 +391,7 @@ ${header(L, s.key)}
       <ol class="crumbs">
         <li><a href="${L.base}">${t.home}</a></li>
         <li><a href="${L.base}${L.dir}/">${t.services}</a></li>
-        <li><a href="${L.base}${L.dir}/#${lineOf(L, s).id}">${esc(lineOf(L, s).name)}</a></li>
+        <li><a href="${lineUrl(L, s.group)}">${esc(lineOf(L, s).name)}</a></li>
         <li aria-current="page">${esc(s.name)}</li>
       </ol>
       ${ball(s.ball)}
@@ -418,7 +403,7 @@ ${header(L, s.key)}
         <a class="btn" href="${L.base}#contacto">${t.write}</a>
       </div>
       <dl class="svc-facts">
-        <div><dt>${t.price}</dt><dd><a href="#precios">${esc(priceSummary(L, s))}</a></dd></div>
+        ${priceRows(L, s).length ? `<div><dt>${t.price}</dt><dd><a href="#precios">${esc(priceSummary(L, s))}</a></dd></div>` : ""}
         <div><dt>${t.where}</dt><dd>${ZONE[L.lang]}</dd></div>
         <div><dt>${t.reach}</dt><dd><a href="${WA.href}" rel="noopener">WhatsApp ${WA.label}</a> · <a href="mailto:${MAIL}">${MAIL}</a></dd></div>
       </dl>
@@ -440,7 +425,7 @@ ${s.includes.map(i => `          <li>${esc(i)}</li>`).join("\n")}
     </div>
   </section>
 
-  <section class="sec" id="precios">
+${priceRows(L, s).length ? `  <section class="sec" id="precios">
     <div class="wrap">
       <div class="sec-head row-head">
         <div>
@@ -454,7 +439,7 @@ ${s.includes.map(i => `          <li>${esc(i)}</li>`).join("\n")}
       ${priceList(L, s.extras, " prices-sm")}` : ""}
     </div>
   </section>
-
+` : ""}
 ${s.examples ? `
   <section class="sec" id="ejemplos">
     <div class="wrap">
@@ -550,7 +535,6 @@ function serviceItem(L, s, base, index = false){
           <${h}><a href="${base}${svcPath(L, s)}">${esc(s.name)}</a></${h}>
           ${index && s.who ? `<p class="who">${esc(s.who)}</p>` : ""}
           <p>${esc(s.line)}</p>
-          <p class="svc-price mono">${esc(priceSummary(L, s))}</p>
           <p class="inc-label">${L.t.includes}</p>
           <ul class="inc">${s.includes.slice(0, 4).map(i => `<li>${esc(i)}</li>`).join("")}</ul>
           <a class="more" href="${base}${svcPath(L, s)}">${L.t.seeService} <span aria-hidden="true">&rarr;</span></a>
@@ -562,9 +546,196 @@ function lineHeader(L, g, hTag){
   const l = L.lines[g];
   return `<li class="svc-line" id="${l.id}">
           <p class="kicker">${esc(L.umbrella.name)}</p>
-          <${hTag}>${esc(l.name)}, <em>${esc(l.em)}</em></${hTag}>
+          <${hTag}><a href="${lineUrl(L, g)}">${esc(l.name)}</a>, <em>${esc(l.em)}</em></${hTag}>
           <p>${esc(l.line)}</p>
         </li>`;
+}
+/* the two cards of the home page and /servicios/: a line, what it holds, and the way to its page */
+function lineCard(L, g, hTag){
+  const l = L.lines[g];
+  return `<li class="tile line-card reveal" data-line="${g}">
+          <p class="kicker">${esc(L.umbrella.name)}</p>
+          <${hTag}><a href="${lineUrl(L, g)}">${esc(l.name)}</a>, <em>${esc(l.em)}</em></${hTag}>
+          <p>${esc(l.line)}</p>
+          <ul class="inc">${l.has.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+          <a class="more" href="${lineUrl(L, g)}">${L.t.seePlans} <span aria-hidden="true">&rarr;</span></a>
+        </li>`;
+}
+const lineCards = (L, hTag) => ["esencia", "ecosistema"].map(g => lineCard(L, g, hTag)).join("\n        ");
+
+/* a line's page: its plans with their prices, its add-ons and its services */
+function linePage(L, g){
+  const t = L.t, l = L.lines[g], path = L.dir + "/" + l.id + "/";
+  const services = L.data.filter(s => s.group === g);
+  const offers = g === "ecosistema" ? L.plans : l.offers;
+  const others = services.flatMap(s => s.plans ? [] : (s.prices || [])).filter(p => !(l.offers || []).some(o => o.n === p.n));
+  const extras = services.flatMap(s => s.extras || []);
+  const jsonld = { "@context": "https://schema.org", "@graph": [
+    { "@type": "Service", "@id": abs(L, path) + "#linea", name: l.name, serviceType: l.name, description: l.intro, provider: PROVIDER, areaServed: AREAS, url: abs(L, path),
+      hasOfferCatalog: { "@type": "OfferCatalog", name: l.name, itemListElement: [...offers, ...others, ...extras].filter(p => p.v).map(p => ({ "@type": "Offer", name: p.n, price: String(p.v), priceCurrency: L.currency })) } },
+    { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: t.home, item: abs(L, "") },
+      { "@type": "ListItem", position: 2, name: t.services, item: abs(L, L.dir + "/") },
+      { "@type": "ListItem", position: 3, name: l.name, item: abs(L, path) } ] }
+  ] };
+  return `${head(L, { title: `${l.seo} · 16 Ball Creations`, description: l.desc, path, jsonld, other: otherLineUrl(L, g) })}
+<body class="page-svc page-line">
+${header(L, null, otherLineUrl(L, g))}
+
+<main id="top">
+  <section class="svc-hero">
+    <div class="wrap">
+      <ol class="crumbs">
+        <li><a href="${L.base}">${t.home}</a></li>
+        <li><a href="${L.base}${L.dir}/">${t.services}</a></li>
+        <li aria-current="page">${esc(l.name)}</li>
+      </ol>
+      <p class="kicker svc-line-k">${esc(L.umbrella.name)}</p>
+      <h1>${esc(l.name)}, <em>${esc(l.em)}</em></h1>
+      <p class="line">${esc(l.intro)}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="${L.mira}">${t.miraFree}</a>
+        <a class="btn" href="${L.base}#contacto">${t.write}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="precios">
+    <div class="wrap">
+      <div class="sec-head row-head">
+        <div>
+          <p class="kicker">${t.pricesK}</p>
+          <h2 class="big">${g === "ecosistema" ? t.plansH : t.pricesH}</h2>
+        </div>
+        <p class="lead">${t.pricesLead}</p>
+      </div>
+      ${plansGrid(L, offers)}
+      ${others.length ? priceList(L, others) : ""}
+      ${l.note ? `<p class="line-note mono">${esc(l.note)}</p>` : ""}
+      ${extras.length ? `<p class="kicker extras-k">${t.extrasK}</p>
+      ${priceList(L, extras, " prices-sm")}` : ""}
+    </div>
+  </section>
+
+  <section class="sec" id="servicios">
+    <div class="wrap">
+      <div class="sec-head"><p class="kicker">${t.inLine}</p><h2 class="big">${t.lineServicesH}</h2></div>
+      <ul class="svc svc-all">
+        ${services.map(s => serviceItem(L, s, L.base, true)).join("\n        ")}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band glass">
+        <div>
+          <h2>${t.ctaH}</h2>
+          <p>${esc(t.ctaP(L.price))}</p>
+        </div>
+        <a class="btn btn-primary" href="${L.mira}">${t.miraFree} <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+${footer(L)}`;
+}
+
+/* the studio page: who, what, how and why pool (out of the home page) */
+function studioPage(L){
+  const t = L.t, W = STUDIO[L.lang], O = STUDIO[OTHER[L.lang]], path = W.dir + "/";
+  const other = LOCALES[OTHER[L.lang]].base + O.dir + "/";
+  const colors = ["var(--b1)", "var(--b6)", "var(--b2)"];
+  const jsonld = { "@context": "https://schema.org", "@graph": [
+    { "@type": "AboutPage", "@id": abs(L, path) + "#pagina", name: W.title, url: abs(L, path), inLanguage: L.lang, about: { "@id": ORIGIN + "/#estudio" } },
+    { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: t.home, item: abs(L, "") },
+      { "@type": "ListItem", position: 2, name: W.crumb, item: abs(L, path) } ] }
+  ] };
+  return `${head(L, { title: W.title + " · 16 Ball Creations", description: W.desc, path, jsonld, other })}
+<body class="page-svc page-studio">
+${header(L, null, other)}
+
+<main id="top">
+  <section class="svc-hero">
+    <div class="wrap">
+      <ol class="crumbs">
+        <li><a href="${L.base}">${t.home}</a></li>
+        <li aria-current="page">${esc(W.crumb)}</li>
+      </ol>
+      <p class="kicker svc-line-k">${esc(W.kicker)}</p>
+      <h1>${W.h1}</h1>
+      <p class="line">${esc(W.lead)}</p>
+    </div>
+  </section>
+
+  <section class="sec manifesto">
+    <div class="wrap">
+      <p class="manifesto-text">${esc(W.manifesto)}</p>
+    </div>
+  </section>
+
+  <section class="sec" id="estudio">
+    <div class="wrap">
+      <div class="tri">
+${W.tri.map(([h, p], i) => `        <div class="reveal" style="--c:${colors[i]}">
+          <span class="n mono">0${i + 1}</span>
+          <h2 class="tri-h">${esc(h)}</h2>
+          <p>${esc(p)}</p>
+        </div>`).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="por-que">
+    <div class="wrap">
+      <div class="sec-head row-head">
+        <div>
+          <p class="kicker">${esc(W.poolK)}</p>
+          <h2 class="big">${W.poolH}</h2>
+        </div>
+        <p class="lead">${esc(W.poolLead)}</p>
+      </div>
+      <div class="rules">
+${W.rules.map(([h, p], i) => `        <article class="rule reveal">
+          <span class="ball rule-ball" data-n="${i + 1}" aria-hidden="true"></span>
+          <h3>${esc(h)}</h3>
+          <p>${esc(p)}</p>
+        </article>`).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="kicker">${esc(W.workK)}</p>
+      <div class="studio-foot">
+        <dl class="deflist">
+${W.deflist.map(([dt, dd]) => `          <div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join("\n")}
+        </dl>
+        <div class="actions">
+          <a class="btn" href="${L.base}#proyectos">${esc(W.seeWork)}</a>
+          <a class="btn" href="https://xan217.github.io/portfolio/" rel="noopener noreferrer">${esc(W.portfolio)} <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band glass">
+        <div>
+          <h2>${t.ctaH}</h2>
+          <p>${esc(t.ctaP(L.price))}</p>
+        </div>
+        <a class="btn btn-primary" href="${L.mira}">${t.miraFree} <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+${footer(L)}`;
 }
 function groupedItems(L, base, hTag, index){
   return ["esencia", "ecosistema"].map(g => [lineHeader(L, g, hTag), ...L.data.filter(s => s.group === g).map(s => serviceItem(L, s, base, index))].join("\n        ")).join("\n        ");
@@ -613,22 +784,17 @@ ${header(L, null)}
   <section class="sec">
     <div class="wrap">
       <div class="sec-head"><h2 class="big">${t.idxH2}</h2><p class="lead">${esc(L.umbrella.line)}</p></div>
-      <ul class="svc svc-all">
-        ${groupedItems(L, L.base, "h2", true)}
+      <ul class="svc">
+        ${lineCards(L, "h2")}
       </ul>
     </div>
   </section>
 
-  <section class="sec" id="precios">
+  <section class="sec">
     <div class="wrap">
-      <div class="sec-head row-head">
-        <div>
-          <p class="kicker">${t.pricesK}</p>
-          <h2 class="big">${t.pricesH}</h2>
-        </div>
-        <p class="lead">${t.pricesLead}</p>
-      </div>
-      ${pricesOverview(L, L.base)}
+      <ul class="svc svc-all">
+        ${groupedItems(L, L.base, "h2", true)}
+      </ul>
     </div>
   </section>
 </main>
@@ -662,12 +828,16 @@ for(const L of Object.values(LOCALES)){
     await mkdir(join(outDir, s.slug), { recursive: true });
     await writeFile(join(outDir, s.slug, "index.html"), servicePage(L, s));
   }
+  for(const g of Object.keys(L.lines)){
+    await mkdir(join(outDir, L.lines[g].id), { recursive: true });
+    await writeFile(join(outDir, L.lines[g].id, "index.html"), linePage(L, g));
+  }
+  const studioDir = join(root, L.base.replace(/^\/|\/$/g, ""), STUDIO[L.lang].dir);
+  await mkdir(studioDir, { recursive: true });
+  await writeFile(join(studioDir, "index.html"), studioPage(L));
   const homePath = join(root, L.home);
   let home = await readFile(homePath, "utf8");
-  home = fill(home, "servicios", groupedItems(L, "", "h3", false), "        ");
-  if(home.includes("<!-- precios:inicio")){
-    home = fill(home, "precios", pricesOverview(L, ""), "      ");
-  }
+  home = fill(home, "servicios", lineCards(L, "h3"), "        ");
   home = fill(home, "servicios-pie", footerServices(L, ""), "    ");
   /* the project cards, in the same order v4.js draws them (it redraws them
      with the filters and the invitation card): the odd one out spans the row */

@@ -53,8 +53,47 @@ const FAQ_START = {
 
 /* The Brand Ecosystem: the sum of two lines (rate card v7, 9 Nov 2026) */
 export const LINES_EN = {
-  esencia: { id: "brand-essence", name: "Brand Essence", em: "who you are", line: "Your brand feeling like yours and saying the same thing everywhere: the brand audit and your brand guidelines." },
-  ecosistema: { id: "digital-ecosystem", name: "Digital Ecosystem", em: "where people find you", line: "Where your brand serves, sells and keeps itself organized: your website, your store or your system." }
+  esencia: {
+    id: "brand-essence", name: "Brand Essence", em: "who you are",
+    line: "Your brand feeling like yours and saying the same thing everywhere: the brand audit and your brand guidelines.",
+    seo: "Brand Essence: brand audit and brand guidelines",
+    desc: "Brand Essence: the brand audit (US$150) and your brand guidelines, express (US$390) or complete (US$910). Fixed prices, from Medellín.",
+    intro: "Before any website, your brand needs to know who it is. We review how it looks today everywhere it shows up and put it in order in brand guidelines, so everything you do afterwards tells the same story.",
+    has: ["Brand audit", "Express brand guidelines", "Complete brand guidelines"],
+    offers: [
+      { n: "Brand audit", tag: "What's failing and how to fix it", time: "Ready in 2 days", v: 150, items: [
+        "Your website, Google profile, social media and contact details, reviewed one by one",
+        "What ChatGPT and Gemini answer when people ask about your business",
+        "Every finding with its priority and how to fix it, in writing",
+        "A 45-minute walkthrough call",
+        "Paid upfront"
+      ] },
+      { n: "Express brand guidelines", tag: "The essentials of your identity, in writing", v: 390, items: [
+        "Your current logo, with its versions and uses",
+        "Your colors and typography",
+        "Your tone: how your brand speaks",
+        "A clear document for your team and suppliers"
+      ] },
+      { n: "Complete brand guidelines", tag: "Your whole identity, so nobody blurs it", v: 910, items: [
+        "Everything in the express guidelines",
+        "Your essence: story, purpose and who you speak to",
+        "Brand voice: how it speaks, and how it doesn't",
+        "Photography: the style of your images",
+        "Applications: social media, stationery and spaces",
+        "The files, ready to use"
+      ] }
+    ],
+    note: "If within 30 days you move up to something more complete (from the audit to guidelines, from express to complete or to a website plan), what you paid is credited."
+  },
+  ecosistema: {
+    id: "digital-ecosystem", name: "Digital Ecosystem", em: "where people find you",
+    line: "Where your brand serves, sells and keeps itself organized: your website, your store or your system.",
+    seo: "Digital Ecosystem: your website in three plans and your online store",
+    desc: "Digital Ecosystem: your website in three plans, Essential (US$970), Professional (US$1,360) and Complete (US$2,580), and The Store (US$1,670). Fixed prices.",
+    intro: "Your ecosystem is where people find you: your website, your channels and, if you sell products, your store. Every plan is built on your essence: they all include the brand audit and are ready in one week.",
+    has: ["Websites in three plans", "The Store", "Systems, with Modularity"],
+    note: "If you move up a plan within 30 days of delivery, what you paid is credited."
+  }
 };
 export const UMBRELLA_EN = {
   name: "Brand Ecosystem",
@@ -246,7 +285,6 @@ export const SERVICES_EN = [
   {
     key: "sistemas",
     group: "ecosistema",
-    prices: [{ n: "Diagnosis", v: 450, d: "We walk through how your business works and hand you the system it needs, with a fixed price. If you go ahead within 60 days, it's credited." }],
     slug: "business-systems",
     ball: 5,
     name: "Business systems",
@@ -302,7 +340,7 @@ export const SERVICES_EN = [
     faq: [
       { q: "What is Modularity?", a: "It's our own product for running a business, currently in development. You can explore the demo with sample data; if it fits your business, it can be a faster starting point than a system built from scratch." },
       { q: "Do I need to know about technology?", a: "No. The system uses your business's own words, and we teach you and your team how to use it." },
-      FAQ_PRICE,
+      { q: "How much does a system cost?", a: "It has no public price yet: Modularity, our system, is in development and we are not selling it yet. If you are interested for your business, write to us and we will talk it through; meanwhile you can explore the demo." },
       FAQ_START
     ]
   }

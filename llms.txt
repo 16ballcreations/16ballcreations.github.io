@@ -15,7 +15,7 @@ Datos de la empresa:
 - Instagram: https://www.instagram.com/16ballcreations
 - Proyectos hechos en Colombia, Venezuela y Costa Rica
 - Oferta: el Ecosistema de Marca, en dos líneas. Esencia de marca (quién eres): auditoría y manual de marca. Ecosistema digital (dónde te encuentran): páginas web en tres planes, tiendas en línea y sistemas
-- Precios cerrados, con IVA incluido (en dólares fuera de Colombia): la MIRA es gratis; auditoría de marca $500.000 COP (US$150); manual de marca express $1.300.000 (US$390) y completo $3.000.000 (US$910); logo nuevo $1.500.000 (US$450); páginas web en planes Esencial $3.200.000 (US$970), Profesional $4.500.000 (US$1.360) e Integral $8.500.000 (US$2.580), listos en una semana; La Tienda $5.500.000 (US$1.670); sistemas con un diagnóstico de $1.500.000 (US$450); mantenimiento $350.000 al mes (US$100). Precios completos: https://16ballcreations.com/servicios/#precios
+- Precios cerrados, con IVA incluido (en dólares fuera de Colombia): la MIRA es gratis; auditoría de marca $500.000 COP (US$150); manual de marca express $1.300.000 (US$390) y completo $3.000.000 (US$910); logo nuevo $1.500.000 (US$450); páginas web en planes Esencial $3.200.000 (US$970), Profesional $4.500.000 (US$1.360) e Integral $8.500.000 (US$2.580), listos en una semana; La Tienda $5.500.000 (US$1.670); mantenimiento $350.000 al mes (US$100). Los planes y precios de cada línea: https://16ballcreations.com/servicios/esencia-de-marca/ y https://16ballcreations.com/servicios/ecosistema-digital/. Los sistemas (Modularity) aún no se comercializan y no tienen precio público
 - No ofrece apps móviles, video, manejo de redes, pauta publicitaria ni contenido mensual de SEO
 
 ## Cómo empieza todo
@@ -24,16 +24,16 @@ Datos de la empresa:
 
 ## Servicios
 
-### Esencia de marca
+### [Esencia de marca](https://16ballcreations.com/servicios/esencia-de-marca/)
 
 - [Auditoría de marca](https://16ballcreations.com/servicios/auditoria-de-marca/): la MIRA completa por escrito: cada hallazgo canal por canal (página, ficha de Google, redes, datos de contacto y lo que responde la IA), su prioridad y cómo corregirlo, con una reunión de entrega de 45 minutos. $500.000 COP; no incluye las correcciones. En inglés: [Brand audit](https://16ballcreations.com/en/services/brand-audit/)
 - [Identidad de marca](https://16ballcreations.com/servicios/identidad-de-marca/): el manual de marca, express ($1.300.000) o completo ($3.000.000): logo, colores, tipografía y voz, ordenados desde la historia del negocio. El rediseño del logo va aparte
 
-### Ecosistema digital
+### [Ecosistema digital](https://16ballcreations.com/servicios/ecosistema-digital/)
 
 - [Páginas web](https://16ballcreations.com/servicios/paginas-web/): sitios a la medida, sin plantillas, preparados para que Google y la IA los entiendan; en tres planes (Esencial, Profesional e Integral) que incluyen la auditoría de marca
 - [Tiendas en línea](https://16ballcreations.com/servicios/tiendas-en-linea/): catálogo de hasta 25 productos con pedidos por la página o por WhatsApp, $5.500.000
-- [Sistemas para tu negocio](https://16ballcreations.com/servicios/sistemas-para-tu-negocio/): pedidos, inventario, citas y facturas en un solo lugar; incluye Modularity, el producto propio, en desarrollo
+- [Sistemas para tu negocio](https://16ballcreations.com/servicios/sistemas-para-tu-negocio/): pedidos, inventario, citas y facturas en un solo lugar; incluye Modularity, el producto propio, en desarrollo y todavía sin precio público
 - [Todos los servicios](https://16ballcreations.com/servicios/) · [In English](https://16ballcreations.com/en/services/)
 
 ## Proyectos
@@ -45,6 +45,7 @@ Datos de la empresa:
 
 ## Páginas
 
-- [Inicio](https://16ballcreations.com/): el estudio, los proyectos, los servicios y cómo trabajamos
+- [Inicio](https://16ballcreations.com/): los proyectos, los servicios y cómo trabajamos
+- [Estudio](https://16ballcreations.com/estudio/): quién está detrás, cómo trabaja y por qué el pool
 - [Home, in English](https://16ballcreations.com/en/)
 - [Guía gratuita: tu perfil de empresa en Google (PDF)](https://16ballcreations.com/assets/guias/perfil-de-empresa-google.pdf) · [In English (PDF)](https://16ballcreations.com/assets/guias/google-business-profile.pdf)

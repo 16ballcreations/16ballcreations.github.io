@@ -76,10 +76,54 @@ const FAQ_START = {
   a: "Por tu MIRA: cinco preguntas sobre tu marca. Con tus respuestas preparamos la llamada, y en menos de 24 horas te escribimos para agendarla."
 };
 
-/* El Ecosistema de Marca: la suma de dos líneas (tarifario v7, 9 nov 2026) */
+/* El Ecosistema de Marca: la suma de dos líneas (tarifario v7, 9 nov 2026).
+   Cada línea tiene su página (/servicios/<id>/) con sus planes, precios y
+   adicionales; la portada y /servicios/ solo muestran las dos tarjetas.
+   offers: los planes de la línea (en ecosistema, PLANS). has: lo que se
+   nombra en la tarjeta. Los sistemas no llevan precio: Modularity aún no se
+   comercializa (Renne, 9 nov). */
 export const LINES = {
-  esencia: { id: "esencia-de-marca", name: "Esencia de marca", em: "quién eres", line: "Que tu marca se sienta tuya y diga lo mismo en todas partes: la auditoría y el manual de marca." },
-  ecosistema: { id: "ecosistema-digital", name: "Ecosistema digital", em: "dónde te encuentran", line: "El lugar donde tu marca atiende, vende y se organiza: tu página, tu tienda o tu sistema." }
+  esencia: {
+    id: "esencia-de-marca", name: "Esencia de marca", em: "quién eres",
+    line: "Que tu marca se sienta tuya y diga lo mismo en todas partes: la auditoría y el manual de marca.",
+    seo: "Esencia de marca: auditoría y manual de marca",
+    desc: "Esencia de marca: la auditoría de marca ($500.000) y el manual de marca, express ($1.300.000) o completo ($3.000.000). Precios cerrados, desde Medellín.",
+    intro: "Antes de cualquier página, tu marca tiene que saber quién es. Revisamos cómo se ve hoy en cada lugar donde aparece y la ordenamos en un manual, para que todo lo que hagas después cuente la misma historia.",
+    has: ["Auditoría de marca", "Manual de marca express", "Manual de marca completo"],
+    offers: [
+      { n: "Auditoría de marca", tag: "Qué está fallando y cómo arreglarlo", time: "Lista en 2 días", v: 500000, items: [
+        "Tu página, tu perfil de Google, tus redes y tus datos de contacto, revisados uno por uno",
+        "Lo que responden ChatGPT y Gemini cuando preguntan por tu negocio",
+        "Cada hallazgo con su prioridad y cómo corregirlo, por escrito",
+        "Una reunión de entrega de 45 minutos",
+        "De contado"
+      ] },
+      { n: "Manual de marca express", tag: "Lo esencial de tu identidad, por escrito", v: 1300000, items: [
+        "Tu logo actual, con sus versiones y sus usos",
+        "Tus colores y tu tipografía",
+        "Tu tono: cómo habla tu marca",
+        "Un documento claro para tu equipo y tus proveedores"
+      ] },
+      { n: "Manual de marca completo", tag: "Tu identidad completa, para que nadie la desdibuje", v: 3000000, items: [
+        "Todo lo del manual express",
+        "Tu esencia: historia, propósito y a quién le hablas",
+        "Voz de marca: cómo habla y cómo no",
+        "Fotografía: el estilo de tus imágenes",
+        "Aplicaciones: redes, papelería y espacios",
+        "Los archivos listos para usar"
+      ] }
+    ],
+    note: "Si en los 30 días siguientes pasas a algo más completo (de la auditoría a un manual, del express al completo o a un plan de página), lo que pagaste se abona."
+  },
+  ecosistema: {
+    id: "ecosistema-digital", name: "Ecosistema digital", em: "dónde te encuentran",
+    line: "El lugar donde tu marca atiende, vende y se organiza: tu página, tu tienda o tu sistema.",
+    seo: "Ecosistema digital: tu página web en tres planes y tu tienda en línea",
+    desc: "Ecosistema digital: tu página web en tres planes, Esencial ($3.200.000), Profesional ($4.500.000) e Integral ($8.500.000), y La Tienda ($5.500.000). Precios cerrados.",
+    intro: "Tu ecosistema es el lugar donde te encuentran: tu página, tus canales y, si vendes productos, tu tienda. Cada plan se construye sobre tu esencia: todos traen la auditoría de marca y quedan listos en una semana.",
+    has: ["Páginas web en tres planes", "La Tienda", "Sistemas, con Modularity"],
+    note: "Si subes de plan dentro de los 30 días siguientes a la entrega, lo que pagaste se abona."
+  }
 };
 export const UMBRELLA = {
   name: "Ecosistema de Marca",
@@ -274,7 +318,6 @@ export const SERVICES = [
   {
     key: "sistemas",
     group: "ecosistema",
-    prices: [{ n: "Diagnóstico", v: 1500000, d: "Recorremos cómo funciona tu negocio y te entregamos el sistema que necesita, con su precio cerrado. Si sigues con nosotros en 60 días, se abona." }],
     slug: "sistemas-para-tu-negocio",
     ball: 5,
     name: "Sistemas para tu negocio",
@@ -330,7 +373,7 @@ export const SERVICES = [
     faq: [
       { q: "¿Qué es Modularity?", a: "Es nuestro producto propio para administrar negocios, hoy en desarrollo. Puedes probar la demo con datos de ejemplo; si se ajusta a tu negocio, puede ser un punto de partida más rápido que un sistema desde cero." },
       { q: "¿Necesito saber de tecnología?", a: "No. El sistema usa las palabras de tu negocio y te enseñamos a usarlo a ti y a tu equipo." },
-      FAQ_PRICE,
+      { q: "¿Cuánto cuesta un sistema?", a: "Todavía no tiene un precio público: Modularity, nuestro sistema, está en desarrollo y aún no lo comercializamos. Si te interesa para tu negocio, escríbenos y lo conversamos; mientras tanto puedes recorrer la demo." },
       FAQ_START
     ]
   }

@@ -234,6 +234,21 @@
 .svc .svc-line p:not(.kicker){color:var(--bone);font-size:1.0625rem;max-width:52ch}
 .svc .svc-price{margin:2px 0 0;font-size:.75rem;letter-spacing:.02em;color:var(--white)}
 .svc-hero .svc-line-k{margin:0 0 14px}
+/* the two lines on the home page and /servicios/: two cards, each to its page */
+.svc > li.line-card{grid-column:span 3;gap:14px;padding:34px 32px}
+.line-card h2,.line-card h3{font-size:clamp(2.2rem,3.6vw,3rem)}
+.line-card h2 em,.line-card h3 em{font-style:italic;color:var(--accent)}
+.line-card[data-line="esencia"]{--c:var(--b1)}
+.line-card[data-line="ecosistema"]{--c:var(--b3)}
+.svc > li.line-card{cursor:pointer}
+.svc > li.line-card h2 a::after,.svc > li.line-card h3 a::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit}
+.svc > li.line-card:hover h2 a,.svc > li.line-card:hover h3 a{color:var(--accent)}
+.svc > li.line-card:focus-within{outline:2px solid var(--accent);outline-offset:3px}
+.svc-line h2 a,.svc-line h3 a{color:inherit}
+.line-note{margin:18px 0 0;color:var(--ash);font-size:.8125rem}
+/* the studio page */
+.tri .tri-h{font-family:var(--font-display);font-weight:400;font-size:2.2rem;margin:0 0 14px;color:var(--white)}
+.page-studio .studio-foot{margin-top:18px}
 /* prices: a row per item, the amount to the right */
 .prices{list-style:none;margin:0;padding:0;border-top:1px solid var(--hairline)}
 .prices li{display:flex;justify-content:space-between;align-items:baseline;gap:12px 32px;padding:22px 0;border-bottom:1px solid var(--hairline)}
@@ -264,7 +279,7 @@
   .stats.stats-4 div:nth-child(2){border-right:0}
   .stats.stats-4 div:nth-child(3){padding-left:0}
   .svc,.svc.svc-all,.others{grid-template-columns:1fr 1fr}
-  .svc > li[data-g]{grid-column:auto}
+  .svc > li[data-g],.svc > li.line-card{grid-column:auto}
   .svc-line{grid-template-columns:1fr}
   .plans{grid-template-columns:1fr}
   .svc > li.svc-mira{grid-template-columns:1fr}
