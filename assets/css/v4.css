@@ -256,6 +256,7 @@
 .prices p{margin:6px 0 0;color:var(--ash);font-size:.9375rem;max-width:62ch}
 .prices .amount{margin:0;flex:none;font-family:var(--font-display);font-size:clamp(1.5rem,2.4vw,2rem);color:var(--white);white-space:nowrap}
 .prices-sm h3{font-size:1.3rem}
+.svc-links h3 a{color:inherit;text-decoration:none}.svc-links h3 a:hover{text-decoration:underline;text-underline-offset:4px}.svc-links .more{flex:none;white-space:nowrap}
 .prices-sm .amount{font-size:1.25rem;color:var(--bone)}
 .extras-k{margin:34px 0 10px}
 .price-lines{display:grid;gap:64px}

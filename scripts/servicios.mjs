@@ -75,7 +75,7 @@ const LOCALES = {
       pricesLead: "Precios cerrados, con IVA incluido. Pagas la mitad al empezar y la otra mitad al recibir; la auditoría, de contado. Si después subes a algo más completo, lo que ya pagaste se abona.",
       plansH: "Los planes de tu página", plansLead: "Los tres incluyen la auditoría de marca y quedan listos en una semana.",
       extrasK: "Adicionales", agree: "A convenir", lineK: "Línea", seePrices: "Ver precios", planCta: "Empezar por mi MIRA",
-      seePlans: "Ver planes y precios", inLine: "En esta línea", lineServicesH: "Los servicios de <em>esta línea</em>", lineK: "Línea",
+      seePlans: "Ver planes y precios", inLine: "En detalle", lineServicesH: "Cada servicio, <em>en su página</em>", lineK: "Línea",
       studioMore: "Conoce el estudio",
       listName: "Servicios de 16 Ball Creations", catalog: "Lo que incluye"
     }
@@ -110,7 +110,7 @@ const LOCALES = {
       pricesLead: "Fixed prices in US dollars. You pay half to start and half on delivery; the audit, upfront. If you later move up to something more complete, what you already paid is credited.",
       plansH: "Your website plans", plansLead: "All three include the brand audit and are ready in one week.",
       extrasK: "Add-ons", agree: "Priced per shoot", lineK: "Line", seePrices: "See prices", planCta: "Start with my MIRA",
-      seePlans: "See plans and prices", inLine: "In this line", lineServicesH: "The services in <em>this line</em>", lineK: "Line",
+      seePlans: "See plans and prices", inLine: "In detail", lineServicesH: "Each service, <em>on its own page</em>", lineK: "Line",
       studioMore: "Meet the studio",
       listName: "16 Ball Creations services", catalog: "What's included"
     }
@@ -168,7 +168,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=16">
-<link rel="stylesheet" href="/assets/css/v4.css?v=19">
+<link rel="stylesheet" href="/assets/css/v4.css?v=20">
 </head>`;
 }
 
@@ -620,9 +620,9 @@ ${header(L, null, otherLineUrl(L, g))}
   <section class="sec" id="servicios">
     <div class="wrap">
       <div class="sec-head"><p class="kicker">${t.inLine}</p><h2 class="big">${t.lineServicesH}</h2></div>
-      <ul class="svc svc-all">
-        ${services.map(s => serviceItem(L, s, L.base, true)).join("\n        ")}
-      </ul>
+      <ul class="prices prices-sm svc-links">${services.map(s => `
+          <li class="reveal"><div><h3><a href="${L.base}${svcPath(L, s)}">${esc(s.name)}</a></h3><p>${esc(s.line)}</p></div><a class="more" href="${L.base}${svcPath(L, s)}">${t.seeService} <span aria-hidden="true">&rarr;</span></a></li>`).join("")}
+        </ul>
     </div>
   </section>
 
