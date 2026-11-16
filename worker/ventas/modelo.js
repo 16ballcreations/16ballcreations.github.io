@@ -82,6 +82,102 @@ export function campaignParts(id){
   const month = MONTHS[+m[3] - 1] || m[3];
   return { zone, group:month[0].toUpperCase() + month.slice(1) + " " + m[2], order:m[2] + "-" + m[3] };
 }
+/* ---------- rubros: the lists are found by what the business does ----------
+   A campaign is one search (a zone, a month), so it mixes many kinds of
+   business (Belén and Laureles have restaurants, barbers, vets and gyms
+   together). Each prospect gets a rubro from its category; the dropdown lists
+   rubro first, then the campaigns that have it (Renne, 16 nov 2026). */
+export const RUBROS = {
+  comida:"Restaurantes y comida", cafes:"Cafés, panaderías y heladerías", bares:"Bares, eventos y planes",
+  belleza:"Belleza y barberías", salud:"Salud", mascotas:"Mascotas y veterinarias", deporte:"Gimnasios y academias",
+  educacion:"Educación", moda:"Ropa, regalos y tiendas", servicios:"Ferreterías y servicios técnicos", mercados:"Mercados de barrio",
+  talleres:"Talleres y motos", arquitectura:"Arquitectura e interiorismo", construccion:"Constructoras e inmobiliarias",
+  ingenieria:"Ingeniería", abogados:"Abogados", otros:"Otros"
+};
+/* campaigns of a single rubro: everything in them is that rubro */
+const CAMPAIGN_RUBRO = { talleres:"talleres", abogados:"abogados", ingenieria:"ingenieria", belleza:"belleza", cafes:"cafes" };
+/* campaigns of the building trade: split between studios and builders, else their own */
+const TRADE = { arquitectura:"arquitectura", construccion:"construccion" };
+const RULES = [
+  ["talleres", /taller|mecanic|\bmotos?\b|concesionario|automovil/],
+  ["belleza", /barber|peluquer|\bhair\b|\bunas\b|\bnail|estetic|\bspa\b|pestan|eyelash|beauty|belleza|tattoo|tatuaj/],
+  ["mascotas", /veterin|\bvet\b|\bpets?\b|mascota/],
+  ["salud", /odonto|dental|fisiotera|psicolog|optic|pharmacy|drogueri|farmac|medic|clinica|salud/],
+  ["cafes", /cafe|bakery|panader|pastr|bunuel|ice cream|helad|postre|dessert|waffle|brunch|cake/],
+  ["comida", /restaur|comida|food|pizz|burger|hamburg|chicken|pollo|arepa|asad|parrilla|grill|bbq|steak|salchi|corrientazo|langos|chuzo/],
+  ["bares", /\bbar\b|gastrobar|resto-?bar|evento|banquet|mirador|glamping|finca/],
+  ["deporte", /\bgym\b|gimnas|crossfit|pilates|dance|baile|music|karate|deportiv|academ/],
+  ["educacion", /jardin infantil|preescolar|colegio|educaci/],
+  ["moda", /ropa|cloth|boutique|calzado|shoe|tailor|sastr|perfum|regalo|flor|relojer|bicicleta|papeler|librer|swimwear|\bsuit/],
+  ["servicios", /hardware|ferreter|cerrajer|vidrier|tecnico|reparaci|computador|celular|electrodom|laundry|lavander|impresi|litograf|fotocop/],
+  ["mercados", /granero|supermercado|fruver|alimentos|tienda de barrio/],
+  ["construccion", /inmobiliari|constructora/],
+  ["arquitectura", /arquitect|interior|paisaj|carpinter|remodel/],
+  ["ingenieria", /ingenier|interventor|estructural/],
+  ["construccion", /constru|obra/],
+  ["abogados", /abogad|derecho|bufete|juridic/]
+];
+const plain = s => String(s || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const campaignKey = campaign => String(campaign).replace(/-\d{4}-\d{2}$/, "").split("-")[0];
+export function rubroOf(categoria, campaign){
+  const key = campaignKey(campaign);
+  if(CAMPAIGN_RUBRO[key]){ return CAMPAIGN_RUBRO[key]; }
+  const c = plain(categoria);
+  if(TRADE[key]){
+    if(/inmobiliari|constructora|obra/.test(c) && !/arquitect|interior/.test(c)){ return "construccion"; }
+    if(/arquitect|interior|paisaj|carpinter|remodel|ilumina|mobiliar/.test(c)){ return "arquitectura"; }
+    return TRADE[key];
+  }
+  for(const [r, re] of RULES){ if(re.test(c)){ return r; } }
+  return "otros";
+}
+/* gives a rubro to the prospects that still have none (new loads, new ones by hand) */
+export async function fillRubros(env){
+  const { results } = await env.DB.prepare("SELECT id, campaign, categoria FROM prospects WHERE rubro IS NULL LIMIT 1000").all();
+  if(!results.length){ return; }
+  const st = env.DB.prepare("UPDATE prospects SET rubro = ?1 WHERE id = ?2");
+  await env.DB.batch(results.map(r => st.bind(rubroOf(r.categoria, r.campaign), r.id)));
+}
+/* where a campaign was searched, said as a place (the old ids say the trade instead) */
+const PLACES = { "cafes-medellin":"Medellín", "abogados-medellin":"Medellín", arquitectura:"Medellín", construccion:"Medellín y el área", ingenieria:"Medellín",
+  talleres:"Medellín, el área y el Oriente", belleza:"Medellín", clientes:"Clientes", directos:"Contacto directo", entrantes:"Llegaron solos" };
+export function campaignPlace(campaign){
+  const p = campaignParts(campaign), m = String(campaign).match(/^(.*)-(\d{4})-(\d{2})$/);
+  const place = (m && PLACES[m[1]]) || p.zone;
+  return m ? `${place} · ${MONTHS[+m[3] - 1].slice(0, 3)} ${m[2]}` : place;
+}
+/* the dropdown of lists: rubro, then each campaign that has it; at the end, whole campaigns */
+export function listPicker(lists, campaign, rubro, base){
+  const by = new Map();
+  for(const l of lists){
+    const k = l.rubro || "otros";
+    if(!by.has(k)){ by.set(k, []); }
+    by.get(k).push(l);
+  }
+  const order = Object.keys(RUBROS).filter(k => by.has(k));
+  const groups = order.map(k => {
+    const items = by.get(k).sort((a, b) => b.campaign.localeCompare(a.campaign));
+    const total = items.reduce((s, l) => s + l.n, 0);
+    return `<optgroup label="${esc(RUBROS[k])} (${total})">${items.map(l => {
+      const v = l.campaign + "|" + k;
+      return `<option value="${esc(v)}"${l.campaign === campaign && k === rubro ? " selected" : ""}>${esc(campaignPlace(l.campaign))} (${l.n})</option>`;
+    }).join("")}</optgroup>`;
+  }).join("");
+  const whole = new Map();
+  for(const l of lists){ whole.set(l.campaign, (whole.get(l.campaign) || 0) + l.n); }
+  const all = `<optgroup label="Campañas completas, todos los rubros">${[...whole].sort((a, b) => b[0].localeCompare(a[0])).map(([c, n]) =>
+    `<option value="${esc(c)}|"${c === campaign && !rubro ? " selected" : ""}>${esc(campaignPlace(c))} (${n})</option>`).join("")}</optgroup>`;
+  return `<form class="campaign" method="get" action="${base}"><label><span>Lista</span>
+    <select name="l" onchange="this.form.submit()">${groups}${all}</select></label><noscript><button type="submit">Ver</button></noscript></form>`;
+}
+/* reads ?l=campaign|rubro (the dropdown) or ?c=&r= (links); unknown values fall back to the first list */
+export function pickList(lists, params){
+  let c = params.get("c") || "", r = params.get("r") || "";
+  if(params.get("l")){ [c, r = ""] = params.get("l").split("|"); }
+  if(lists.some(l => l.campaign === c) && (!r || lists.some(l => l.campaign === c && l.rubro === r))){ return { campaign:c, rubro:r }; }
+  const first = Object.keys(RUBROS).map(k => lists.filter(l => l.rubro === k).sort((a, b) => b.campaign.localeCompare(a.campaign))[0]).find(Boolean) || lists[0];
+  return { campaign:first.campaign, rubro:first.rubro || "" };
+}
 export function campaignPicker(campaigns, current, base){
   const groups = new Map();
   for(const c of campaigns.map(c => ({ ...c, ...campaignParts(c.campaign) })).sort((a, b) => b.order.localeCompare(a.order) || a.zone.localeCompare(b.zone, "es"))){

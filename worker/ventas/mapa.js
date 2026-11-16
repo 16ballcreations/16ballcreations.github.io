@@ -2,19 +2,20 @@
 
 import { adminPage } from "../comun/pagina.js";
 import { esc } from "../comun/util.js";
-import { BALLS, STAGES, ballOf, campaignPicker } from "./modelo.js";
+import { BALLS, RUBROS, STAGES, ballOf, fillRubros, listPicker, pickList } from "./modelo.js";
 
 /* ---------- the map: every prospect of a campaign, as its ball ---------- */
 export const GEO = { esquina:"En la esquina exacta", cuadra:"En su cuadra", cercana:"A una cuadra", barrio:"Aproximada, por barrio", manual:"Marcada a mano" };
 
 export async function mapPage(env, url){
-  const campaigns = (await env.DB.prepare("SELECT campaign, COUNT(*) AS n FROM prospects GROUP BY campaign ORDER BY campaign DESC").all()).results;
-  if(!campaigns.length){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
-  const campaign = campaigns.some(c => c.campaign === url.searchParams.get("c")) ? url.searchParams.get("c") : campaigns[0].campaign;
+  await fillRubros(env);
+  const lists = (await env.DB.prepare("SELECT campaign, rubro, COUNT(*) AS n FROM prospects GROUP BY campaign, rubro").all()).results;
+  if(!lists.length){ return Response.redirect(url.origin + "/admin/prospectos", 303); }
+  const { campaign, rubro } = pickList(lists, url.searchParams);
   const { results } = await env.DB.prepare(
     "SELECT id, code, rank, prioridad, score, bola, negocio, categoria, barrio, direccion, canal, enlace, etapa, proxima_accion, proxima_fecha, lat, lng, geo " +
-    "FROM prospects WHERE campaign = ?1 ORDER BY rank"
-  ).bind(campaign).all();
+    "FROM prospects WHERE campaign = ?1" + (rubro ? " AND rubro = ?2" : "") + " ORDER BY rank"
+  ).bind(...(rubro ? [campaign, rubro] : [campaign])).all();
   const originRow = await env.DB.prepare("SELECT value FROM settings WHERE key = ?1").bind("origen:" + campaign).first();
   let origin = null;
   try{ origin = originRow ? JSON.parse(originRow.value) : null; }catch(e){}
@@ -30,8 +31,8 @@ export async function mapPage(env, url){
 
   return adminPage(env, "mapa", "Mapa", `
     <header class="top">
-      <div><p class="kicker">Ventas · mapa</p><h1>Dónde <em>están</em></h1></div>
-      <div class="totals mono">${campaignPicker(campaigns, campaign, "/admin/mapa")}
+      <div><p class="kicker">Ventas · mapa</p><h1>${rubro ? `<em>${esc(RUBROS[rubro] || rubro)}</em>` : "Dónde <em>están</em>"}</h1></div>
+      <div class="totals mono">${listPicker(lists, campaign, rubro, "/admin/mapa")}
       <span class="pickline">${placed.length} en el mapa · ${missing.length} sin dirección</span></div>
     </header>
     <nav class="filters" id="mapBalls">

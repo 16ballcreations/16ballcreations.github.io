@@ -7,12 +7,11 @@ import { igHandles, linkMira, miraAnswers, miraTokenFor, qualifyLabel } from "..
 import { ATTENDED, MEDIOS, OUTCOME, PACKAGES, TEMPERATURE, callBlock, callWhen, lastCall } from "./llamada.js";
 import { GEO, LEAFLET, MINI_MAP_SCRIPT } from "./mapa.js";
 import { proposalRepo } from "../propuestas.js";
-import { BALLS, BALL_SQL, BEFORE_CALL, EVENTS, NETWORK, OLD_PRIORITY, STAGES, ballOf, ballTag, campaignParts, campaignPicker, channelOptions, originOfChannel, stageTag } from "./modelo.js";
+import { BALLS, BALL_SQL, BEFORE_CALL, EVENTS, NETWORK, OLD_PRIORITY, STAGES, ballOf, ballTag, campaignParts, channelOptions, fillRubros, listPicker, pickList, RUBROS, originOfChannel, stageTag } from "./modelo.js";
 
 export async function prospectsPage(env, url){
-  const campaigns = (await env.DB.prepare(
-    "SELECT campaign, COUNT(*) AS n FROM prospects GROUP BY campaign ORDER BY campaign DESC"
-  ).all()).results;
+  await fillRubros(env);
+  const lists = (await env.DB.prepare("SELECT campaign, rubro, COUNT(*) AS n FROM prospects GROUP BY campaign, rubro").all()).results;
   const head = (h1, extra = "") => `
     <header class="top">
       <div>
@@ -21,7 +20,7 @@ export async function prospectsPage(env, url){
       </div>
       ${extra}
     </header>`;
-  if(!campaigns.length){
+  if(!lists.length){
     return adminPage(env, "prospectos", "Prospectos", head("Todavía <em>no hay prospectos</em>") + `
       <p class="empty">Carga una campaña desde su carpeta privada:<br>
       <code>node scripts/prospectos-sql.mjs prospectos/&lt;campaña&gt;</code> y después
@@ -30,7 +29,7 @@ export async function prospectsPage(env, url){
   }
 
   const p = url.searchParams;
-  const campaign = campaigns.some(c => c.campaign === p.get("c")) ? p.get("c") : campaigns[0].campaign;
+  const { campaign, rubro } = pickList(lists, p);
   const bola = BALLS[p.get("bola")] ? p.get("bola") : (OLD_PRIORITY[p.get("prioridad")] || "");
   const etapa = STAGES[p.get("etapa")] ? p.get("etapa") : "";
   const hoy = p.get("ver") === "hoy";
@@ -38,25 +37,28 @@ export async function prospectsPage(env, url){
   const today = todayIso();
 
   const where = ["campaign = ?1"], binds = [campaign];
+  if(rubro){ binds.push(rubro); where.push("rubro = ?" + binds.length); }
+  const scope = "campaign = ?1" + (rubro ? " AND rubro = ?2" : ""), scopeBinds = rubro ? [campaign, rubro] : [campaign];
   if(bola){ where.push(BALL_SQL + " = " + Number(bola)); }
   if(etapa){ binds.push(etapa); where.push("etapa = ?" + binds.length); }
   if(hoy){ binds.push(today); where.push("proxima_fecha IS NOT NULL AND proxima_fecha <= ?" + binds.length + " AND etapa NOT IN ('cliente', 'descartado')"); }
   if(text){ binds.push("%" + text + "%"); const n = binds.length; where.push(`(negocio LIKE ?${n} OR barrio LIKE ?${n} OR categoria LIKE ?${n} OR code LIKE ?${n} OR canal LIKE ?${n} OR proxima_accion LIKE ?${n})`); }
   const { results } = await env.DB.prepare(
-    "SELECT id, code, rank, prioridad, score, bola, negocio, categoria, barrio, canal, enlace, etapa, proxima_accion, proxima_fecha FROM prospects WHERE " +
+    "SELECT id, code, rank, prioridad, score, bola, negocio, categoria, rubro, barrio, canal, enlace, etapa, proxima_accion, proxima_fecha FROM prospects WHERE " +
     where.join(" AND ") + " ORDER BY " + BALL_SQL + ", rank LIMIT 300"
   ).bind(...binds).all();
 
   const stages = (await env.DB.prepare(
-    "SELECT etapa, COUNT(*) AS n FROM prospects WHERE campaign = ?1 GROUP BY etapa"
-  ).bind(campaign).all()).results;
+    "SELECT etapa, COUNT(*) AS n FROM prospects WHERE " + scope + " GROUP BY etapa"
+  ).bind(...scopeBinds).all()).results;
   const sc = Object.fromEntries(stages.map(s => [s.etapa, s.n]));
   const due = await env.DB.prepare(
-    "SELECT COUNT(*) AS n FROM prospects WHERE campaign = ?1 AND proxima_fecha IS NOT NULL AND proxima_fecha <= ?2 AND etapa NOT IN ('cliente', 'descartado')"
-  ).bind(campaign, today).first();
+    "SELECT COUNT(*) AS n FROM prospects WHERE " + scope + " AND proxima_fecha IS NOT NULL AND proxima_fecha <= ?" + (scopeBinds.length + 1) + " AND etapa NOT IN ('cliente', 'descartado')"
+  ).bind(...scopeBinds, today).first();
 
   const href = changes => {
     const q = new URLSearchParams({ c:campaign });
+    if(rubro){ q.set("r", rubro); }
     const cur = { bola, etapa, q:text, ver:hoy ? "hoy" : "" };
     for(const [k, v] of Object.entries({ ...cur, ...changes })){ if(v){ q.set(k, v); } }
     return "/admin/prospectos?" + q;
@@ -67,16 +69,16 @@ export async function prospectsPage(env, url){
     <tr>
       <td class="mono">${r.rank ?? ""}</td>
       <td>${ballTag(r.prioridad, r.score, false, r.bola)}</td>
-      <td><a class="biz" href="/admin/prospecto?id=${encodeURIComponent(r.id)}">${esc(r.negocio)}</a><span class="mono sub2">${esc(r.code)} · ${esc(r.categoria || "")}</span></td>
+      <td><a class="biz" href="/admin/prospecto?id=${encodeURIComponent(r.id)}">${esc(r.negocio)}</a><span class="mono sub2">${esc(r.code)} · ${esc(r.categoria || "")}${rubro ? "" : " · " + esc(RUBROS[r.rubro] || "")}</span></td>
       <td>${esc(r.barrio || "")}</td>
       <td>${r.enlace ? `<a href="${esc(r.enlace)}" target="_blank" rel="noopener">${esc(r.canal)}</a>` : esc(r.canal || "")}</td>
       <td>${stageTag(r.etapa)}</td>
       <td class="mono${r.proxima_fecha && r.proxima_fecha <= today ? " due" : ""}">${esc(r.proxima_accion || "")}${r.proxima_fecha ? "<br>" + esc(r.proxima_fecha) : ""}</td>
     </tr>`).join("");
 
-  return adminPage(env, "prospectos", "Prospectos", head("Los <em>prospectos</em>", `
+  return adminPage(env, "prospectos", "Prospectos", head(rubro ? `<em>${esc(RUBROS[rubro] || rubro)}</em>` : "Los <em>prospectos</em>", `
       <a class="pill new addp" href="/admin/prospecto/nuevo?c=${encodeURIComponent(campaign)}">+ Nuevo prospecto</a>
-      <div class="totals mono">${campaignPicker(campaigns, campaign, "/admin/prospectos")}
+      <div class="totals mono">${listPicker(lists, campaign, rubro, "/admin/prospectos")}
       <a href="/admin/recursos">Recursos de las campañas →</a></div>`) + `
     <nav class="pipeline">
       ${Object.entries(STAGES).map(([k, label]) => `<a class="${etapa === k ? "on" : ""}" href="${href({ etapa:etapa === k ? "" : k })}"><b>${sc[k] || 0}</b>${label}</a>`).join("")}
@@ -87,6 +89,7 @@ export async function prospectsPage(env, url){
       ${Object.keys(BALLS).map(n => `<a class="pill ballpill${bola === n ? " on" : ""}" href="${href({ bola:n })}" title="${BALLS[n].label}"><i class="pb pb${n}"><b>${n}</b></i>${BALLS[n].label}</a>`).join("")}
       <form method="get" action="/admin/prospectos" class="search">
         <input type="hidden" name="c" value="${esc(campaign)}">
+        ${rubro ? `<input type="hidden" name="r" value="${esc(rubro)}">` : ""}
         ${bola ? `<input type="hidden" name="bola" value="${esc(bola)}">` : ""}
         ${etapa ? `<input type="hidden" name="etapa" value="${esc(etapa)}">` : ""}
         <input name="q" value="${esc(text)}" placeholder="Buscar negocio, barrio, categoría, canal o próximo paso">
@@ -119,7 +122,7 @@ export async function prospectPage(env, url){
   ).bind(r.campaign).first();
   const MINI = { lat:r.lat, lng:r.lng, ball:ballOf(r.prioridad, r.score, r.bola),
     centre:centre && centre.lat != null ? [centre.lat, centre.lng] : [6.2442, -75.5812] };
-  const back = "/admin/prospectos?c=" + encodeURIComponent(r.campaign);
+  const back = "/admin/prospectos?" + new URLSearchParams(r.rubro ? { c:r.campaign, r:r.rubro } : { c:r.campaign });
   /* the map point, when the research has one, is more exact than the address */
   const maps = typeof d.lat === "number" && typeof d.lon === "number"
     ? "https://www.google.com/maps/search/?api=1&query=" + d.lat + "," + d.lon
@@ -146,7 +149,7 @@ export async function prospectPage(env, url){
       <section class="sub">
         <h3>Dónde y cómo</h3>
         <p><b>Dirección</b>${esc(r.direccion || "Sin dato")}${r.dir_fuente ? ` <span class="mono">(${esc(r.dir_fuente)})</span>` : ""}${maps ? `<br>${link(maps, "Abrir en Google Maps")}` : ""}</p>
-        ${r.lat != null ? `<p><b>En el mapa</b><a href="/admin/mapa?c=${encodeURIComponent(r.campaign)}&amp;id=${encodeURIComponent(r.id)}">Ver dónde queda</a>${r.geo === "barrio" ? " · ubicación aproximada, por barrio" : ""}</p>` : ""}
+        ${r.lat != null ? `<p><b>En el mapa</b><a href="/admin/mapa?c=${encodeURIComponent(r.campaign)}${r.rubro ? "&amp;r=" + encodeURIComponent(r.rubro) : ""}&amp;id=${encodeURIComponent(r.id)}">Ver dónde queda</a>${r.geo === "barrio" ? " · ubicación aproximada, por barrio" : ""}</p>` : ""}
         <p><b>Barrio</b>${esc(r.barrio || "")}${r.distancia_km != null ? ` · ${r.distancia_km} km del punto de partida` : ""}</p>
         <p><b>Escribir por</b>${r.enlace ? `<a class="pill go-chat" href="${esc(r.enlace)}" target="_blank" rel="noopener">Abrir ${esc(r.canal)}</a>` : esc(r.canal || "")}</p>
         ${r.respaldo ? `<p><b>Respaldo</b>${esc(r.respaldo)}</p>` : ""}
