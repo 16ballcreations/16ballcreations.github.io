@@ -412,6 +412,19 @@ export const EXAMPLE_WORDS = {
 
 export const EXAMPLES = [
   {
+    slug:"taller-motos-lego", url:"https://16ballcreations.github.io/lego-motors/", title:"LEGO Motors · Taller de motos", services:["web", "sistemas"],
+    es: {
+      status:"Propuesta · no oficial", rubro:"Motos · taller y agenda",
+      short:"La R 1200 GS flota en 3D y se desarma pieza por pieza para contar qué se le hace en el taller. Trae agenda de revisiones en línea, motos usadas en venta, blog y un backoffice con las citas en calendario.",
+      alt:"Portada de la propuesta para LEGO Motors: una BMW R 1200 GS naranja flotando entre anillos de neón y tornillería, junto al titular «Cuidamos tu moto más allá de una revisión»"
+    },
+    en: {
+      status:"Proposal · unofficial", rubro:"Motorcycles · workshop",
+      short:"The R 1200 GS floats in 3D and comes apart piece by piece to show what the workshop does to each one. It has online service booking, used bikes for sale, a blog and a back office with appointments on a calendar.",
+      alt:"Home page of the LEGO Motors proposal: an orange BMW R 1200 GS floating among neon rings and loose bolts, next to the headline «Cuidamos tu moto más allá de una revisión»"
+    }
+  },
+  {
     slug:"concesionario-virtual-motos", title:"KOVE · Concesionario virtual", services:["web"],
     es: {
       status:"Concepto · no oficial", rubro:"Motos · venta en línea",
