@@ -256,7 +256,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/privacidad/</loc>
-    <lastmod>2026-11-20</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/privacidad/"/>
@@ -265,7 +265,7 @@
   </url>
   <url>
     <loc>https://16ballcreations.com/en/privacy/</loc>
-    <lastmod>2026-11-20</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/privacidad/"/>
@@ -361,5 +361,23 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/modularity/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/modularity/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/modularity/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/proyectos/city-roads-wear/</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/city-roads-wear/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/city-roads-wear/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/city-roads-wear/"/>
+  </url>
+  <url>
+    <loc>https://16ballcreations.com/en/projects/city-roads-wear/</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://16ballcreations.com/proyectos/city-roads-wear/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://16ballcreations.com/en/projects/city-roads-wear/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://16ballcreations.com/proyectos/city-roads-wear/"/>
   </url>
 </urlset>

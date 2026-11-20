@@ -31,6 +31,26 @@
 
 window.PROJECTS = [
   {
+    title: "City Roads Wear",
+    case: "city-roads-wear",
+    services: ["marca", "tienda", "video"],
+    status: "Por estrenar",
+    order: 6,
+    short: "Ropa con el plano de tu ciudad en la espalda: un estilo pegado en la calle, un video de lanzamiento y una tienda que se recorre como una pared.",
+    en: {
+      short: "Clothes with the map of your city on your back: a street-pasted style, a launch video and a store you browse like a wall.",
+      alt: "Home page of the City Roads Wear store: a model in a black hoodie leaning on a car over a yellow map of Medellín, with the words «Lleva tu ciudad dondequiera que vayas» in graffiti",
+      links: [{ label: "See the store", url: "https://city-roads-wear.16ballcreations.workers.dev/" }]
+    },
+    year: "2026",
+    types: ["Marca", "Web", "Audiovisual"],
+    summary: "Para el relanzamiento de City Roads Wear, una marca de Medellín que estampa el plano de tu ciudad en bussos y camisetas, creamos su estilo visual «Pegado en la calle», un kit de efectos dibujados a mano, el video MDE → BOG y una tienda web donde las prendas cuelgan de una pared. La compra va por Mercado Libre y el catálogo y los textos se cambian desde un panel propio.",
+    tags: ["Estilo visual", "Kit de efectos", "Video vertical", "Tienda web", "Panel de contenido"],
+    image: "assets/img/projects/city-roads-wear.jpg",
+    alt: "Portada de la tienda de City Roads Wear: una modelo con busso negro recostada en un carro sobre un mapa amarillo de Medellín, con la frase «Lleva tu ciudad dondequiera que vayas» en grafiti",
+    links: [{ label: "Ver la tienda", url: "https://city-roads-wear.16ballcreations.workers.dev/" }]
+  },
+  {
     title: "Rivas Seven",
     case: "rivas-seven",
     services: ["marca", "web"],

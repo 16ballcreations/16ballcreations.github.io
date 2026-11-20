@@ -19,7 +19,7 @@ export const CASE_WORDS = {
   es: {
     dir:"proyectos", crumb:"Proyectos", seeCase:"Ver el caso",
     indexTitle:"Proyectos: marcas, páginas web, tiendas y sistemas · 16 Ball Creations",
-    indexDesc:"Lo que hemos hecho y por qué: PsicoFormando, KaffeePlatz, Rivas Seven, Modularity y nuestra propia marca, contados desde su historia.",
+    indexDesc:"Lo que hemos hecho y por qué: PsicoFormando, KaffeePlatz, Rivas Seven, City Roads Wear, Modularity y nuestra propia marca, contados desde su historia.",
     indexH1:"Cada proyecto, <em>contado desde adentro</em>",
     indexLine:"No te mostramos solo cómo quedó. Te contamos de dónde venía cada marca, qué decidimos y por qué.",
     startK:"El punto de partida", startH:"De dónde <em>venía</em>",
@@ -32,7 +32,7 @@ export const CASE_WORDS = {
   en: {
     dir:"projects", crumb:"Work", seeCase:"See the case",
     indexTitle:"Work: brands, websites, online stores and systems · 16 Ball Creations",
-    indexDesc:"What we've built and why: PsicoFormando, KaffeePlatz, Rivas Seven, Modularity and our own brand, told from their story.",
+    indexDesc:"What we've built and why: PsicoFormando, KaffeePlatz, Rivas Seven, City Roads Wear, Modularity and our own brand, told from their story.",
     indexH1:"Every project, <em>told from the inside</em>",
     indexLine:"We don't just show you how it turned out. We tell you where each brand came from, what we decided and why.",
     startK:"Where it started", startH:"Where it <em>came from</em>",
@@ -384,6 +384,77 @@ export const CASES = [
         "It's also the base of our custom systems service: when a business needs its own system, we start from here."
       ],
       links:[{ label:"Discover Modularity", url:"https://modularity.16ballcreations.com/en/" }, { label:"Try the demo", url:"https://modularity.16ballcreations.workers.dev/?demo" }]
+    }
+  },
+  {
+    slug:"city-roads-wear", year:"2026", ball:3,
+    es: {
+      title:"City Roads Wear", em:"la ciudad en la espalda",
+      seoTitle:"City Roads Wear: estilo visual, video y tienda web para una marca de ropa",
+      desc:"Ropa con el plano de tu ciudad: le dimos a City Roads Wear un estilo pegado en la calle, un video de lanzamiento y una tienda que se recorre como una pared.",
+      kind:"Estilo visual, video y tienda web",
+      line:"Una marca de Medellín que estampa el plano de tu ciudad en bussos y camisetas, con un estilo, un video y una tienda que huelen a calle.",
+      client:"Una marca colombiana de ropa oversize con el plano de Medellín, Bogotá y Cali",
+      tech:"Astro, Cloudflare, catálogo y textos editables con nuestra plataforma, venta por Mercado Libre",
+      start:[
+        "City Roads Wear tenía algo que no se compra: una idea con raíz. Llevar las calles de tu ciudad en la espalda, para que donde vayas se note de dónde eres.",
+        "Las prendas ya existían, en algodón pesado y serigrafía. Para su relanzamiento necesitaba una forma de verse a la altura de lo que lleva puesto la gente, y una tienda propia donde mostrarlas."
+      ],
+      why:[
+        ["Pegado en la calle", "El estilo sale de un muro de la ciudad: un mapa enorme pegado y torcido, el nombre pintado en grafiti, recortes en fotocopia, papeles con cinta. Todo lo que se ve parece haber estado afuera."],
+        ["La ciudad la dicen los datos, no el color", "Cada ciudad se reconoce por su código y sus coordenadas, como en una placa. Así ningún color queda amarrado a una ciudad y cada colección puede usar los suyos."],
+        ["La persona entera, con eco", "Quien lleva la prenda aparece de cuerpo entero, con contornos que se dibujan solos y ecos de color detrás. La ropa se ve puesta, en movimiento, no colgada."],
+        ["Una pared en vez de un catálogo", "Con pocas piezas, una cuadrícula se ve vacía. Una pared con percha y nichos las muestra todas a la vez, como en una tienda de barrio, y se recorre deslizando en el celular."],
+        ["Una caja que viaja", "El video sigue una caja de Medellín a Bogotá: el viaje en blanco y negro, con trazos a mano, y el color vuelve cuando llega a las manos de quien la compró."],
+        ["La compra donde ya confían", "Se paga en Mercado Libre, que la gente ya conoce. La tienda se encarga de enamorar; el pago queda en un lugar seguro y familiar."]
+      ],
+      did:[
+        "Hoja de estilos «Pegado en la calle», con sus seis capas",
+        "Kit de efectos dibujados a mano, en siete colores, para sus videos y redes",
+        "Video vertical MDE → BOG para el lanzamiento",
+        "Plan de contenido para el relanzamiento",
+        "Tienda web con la pared, la ficha de cada prenda y la preventa por correo",
+        "Panel para cambiar productos, fotos y textos sin depender de nadie"
+      ],
+      result:[
+        "City Roads Wear se relanza en diciembre con una cara que se reconoce en la tienda, en el video y en cada publicación.",
+        "Lo más importante no cambió: la ciudad sigue en la espalda. Ahora la marca también se ve como se siente llevarla."
+      ],
+      links:[{ label:"Ver la tienda", url:"https://city-roads-wear.16ballcreations.workers.dev/" }]
+    },
+    en: {
+      title:"City Roads Wear", em:"the city on your back",
+      seoTitle:"City Roads Wear: visual style, video and online store for a clothing brand",
+      desc:"Clothes with the map of your city: we gave City Roads Wear a street-pasted style, a launch video and a store you browse like a wall.",
+      kind:"Visual style, video and online store",
+      line:"A Medellín brand that prints the map of your city on hoodies and T-shirts, with a style, a video and a store that feel like the street.",
+      client:"A Colombian oversize clothing brand with the maps of Medellín, Bogotá and Cali",
+      tech:"Astro, Cloudflare, catalog and text editable with our platform, sales through Mercado Libre",
+      start:[
+        "City Roads Wear had something you can't buy: an idea with roots. Wearing the streets of your city on your back, so wherever you go, people can tell where you're from.",
+        "The clothes already existed, in heavy cotton and screen print. For its relaunch it needed a look that lived up to what people wear, and a store of its own to show them in."
+      ],
+      why:[
+        ["Pasted on the street", "The style comes from a city wall: a huge map pasted at an angle, the name sprayed in graffiti, photocopied cutouts, taped-up paper. Everything you see looks like it's been outside."],
+        ["The data names the city, not the color", "Each city is recognized by its code and its coordinates, like a sign. That way no color gets tied to a city, and every collection can use its own."],
+        ["The whole person, with an echo", "Whoever wears the piece appears head to toe, with outlines that draw themselves and colored echoes behind. The clothes are seen worn and moving, not on a hanger."],
+        ["A wall instead of a catalog", "With only a few pieces, a grid looks empty. A wall with a rack and cubbies shows them all at once, like a neighborhood shop, and you swipe through it on your phone."],
+        ["A box that travels", "The video follows a box from Medellín to Bogotá: the trip in black and white with hand-drawn strokes, and the color comes back when it reaches the hands of whoever bought it."],
+        ["Paying where people already trust", "Payment happens on Mercado Libre, which people already know. The store does the falling in love; the payment stays somewhere safe and familiar."]
+      ],
+      did:[
+        "The «Pasted on the street» style sheet, with its six layers",
+        "A kit of hand-drawn effects, in seven colors, for its videos and social media",
+        "The vertical MDE → BOG video for the launch",
+        "A content plan for the relaunch",
+        "An online store with the wall, a page for every piece and a pre-sale sign-up",
+        "A panel to change products, photos and text without depending on anyone"
+      ],
+      result:[
+        "City Roads Wear relaunches in December with a face people recognize in the store, in the video and in every post.",
+        "The most important thing didn't change: the city is still on your back. Now the brand also looks the way it feels to wear it."
+      ],
+      links:[{ label:"See the store", url:"https://city-roads-wear.16ballcreations.workers.dev/" }]
     }
   }
 ];
