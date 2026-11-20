@@ -47,5 +47,6 @@ Datos de la empresa:
 
 - [Inicio](https://16ballcreations.com/): los proyectos, los servicios y cómo trabajamos
 - [Estudio](https://16ballcreations.com/estudio/): quién está detrás, cómo trabaja y por qué el pool
+- [Recursos gratis](https://16ballcreations.com/recursos/): lo que usamos en el estudio, gratis y sin registro. El primero es la [auditoría SEO y AEO](https://16ballcreations.com/recursos/auditoria-seo/), una skill para Claude con el checklist de 99 puntos, la guía y un ejemplo real (licencia CC BY 4.0)
 - [Home, in English](https://16ballcreations.com/en/)
 - [Guía gratuita: tu perfil de empresa en Google (PDF)](https://16ballcreations.com/assets/guias/perfil-de-empresa-google.pdf) · [In English (PDF)](https://16ballcreations.com/assets/guias/google-business-profile.pdf)

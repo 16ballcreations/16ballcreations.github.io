@@ -28,6 +28,8 @@ const SITE = [
   "servicios", "proyectos",
   /* who is behind the studio, and why pool (out of the home page) */
   "estudio",
+  /* free resources: the SEO audit skill and its files (scripts/recursos-data.mjs) */
+  "recursos",
   /* política de datos (Ley 1581) y aviso de medición */
   "privacidad",
   /* the English version: home, services and MIRA under /en/ */

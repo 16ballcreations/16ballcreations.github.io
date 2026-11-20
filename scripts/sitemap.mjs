@@ -29,6 +29,8 @@ const PAIRS = [
   ["/servicios/", "/en/services/", "0.9", "monthly"],
   ...Object.keys(LINES).map(g => [`/servicios/${LINES[g].id}/`, `/en/services/${LINES_EN[g].id}/`, "0.9", "monthly"]),
   ["/estudio/", "/en/studio/", "0.6", "yearly"],
+  ["/recursos/", "/en/resources/", "0.6", "monthly"],
+  ["/recursos/auditoria-seo/", "/en/resources/seo-audit/", "0.7", "monthly"],
   ...SERVICES.map(s => [`/servicios/${s.slug}/`, `/en/services/${SERVICES_EN.find(e => e.key === s.key).slug}/`, "0.8", "monthly"]),
   ["/mira/", "/en/mira/", "0.8", "monthly"],
   ["/proyectos/", "/en/projects/", "0.7", "monthly"],

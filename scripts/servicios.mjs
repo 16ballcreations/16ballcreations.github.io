@@ -8,6 +8,7 @@
    marcadores servicios:inicio y servicios-pie:inicio.
      /servicios/<línea>/ y /en/services/<line>/ las dos líneas, con sus planes
      /estudio/ y /en/studio/                  desde scripts/estudio-data.mjs
+     /recursos/ y /en/resources/ (y cada uno) desde scripts/recursos-data.mjs
    La portada y /servicios/ muestran solo las dos líneas del Ecosistema de
    Marca (LINES); los planes, precios y adicionales viven en la página de
    cada línea y en la de cada servicio (tarifario v7). Sin precios en la
@@ -27,6 +28,7 @@ import { SERVICES, HOME_FAQ, LINES, PLANS, UMBRELLA } from "./servicios-data.mjs
 import { SERVICES_EN, HOME_FAQ as HOME_FAQ_EN, LINES_EN, PLANS_EN, UMBRELLA_EN } from "./services-en-data.mjs";
 import { CASES, CASE_WORDS, EXAMPLES, EXAMPLE_WORDS, exampleUrl } from "./proyectos-data.mjs";
 import { STUDIO } from "./estudio-data.mjs";
+import { RESOURCES, SEO_FILES } from "./recursos-data.mjs";
 
 const PREVIEW = false;
 const ORIGIN = "https://16ballcreations.com";
@@ -53,7 +55,7 @@ const LOCALES = {
       home: "Inicio", homeLabel: "16 Ball Creations, inicio", openMenu: "Abrir el men&uacute;", sections: "Secciones",
       work: "Proyectos", services: "Servicios", how: "Cómo trabajamos", studio: "Estudio", contact: "Contacto",
       miraBtn: "Haz tu MIRA", miraFree: "Haz tu MIRA gratis", write: "Escríbenos", seeWork: "Ver proyectos",
-      slogan: "Si no existe, lo creamos.", mail: "Correo", privacy: "Privacidad", privacyHref: "/privacidad/", other: "English", otherShort: "EN",
+      slogan: "Si no existe, lo creamos.", mail: "Correo", freeRes: "Recursos gratis", privacy: "Privacidad", privacyHref: "/privacidad/", other: "English", otherShort: "EN",
       forWhom: "Para quién es", includes: "Lo que incluye", howK: "Cómo lo hacemos", stepsH: "Paso a <em>paso</em>",
       stepsLead: "Siempre en el mismo orden: primero entendemos tu marca, después construimos. Ningún paso se salta.",
       workH: "Lo hemos <em>hecho</em>",
@@ -88,7 +90,7 @@ const LOCALES = {
       home: "Home", homeLabel: "16 Ball Creations, home", openMenu: "Open the menu", sections: "Sections",
       work: "Work", services: "Services", how: "How we work", studio: "Studio", contact: "Contact",
       miraBtn: "Start your MIRA", miraFree: "Start your free MIRA", write: "Write to us", seeWork: "See our work",
-      slogan: "If it doesn't exist, we create it.", mail: "Email", privacy: "Privacy", privacyHref: "/en/privacy/", other: "Español", otherShort: "ES",
+      slogan: "If it doesn't exist, we create it.", mail: "Email", freeRes: "Free resources", privacy: "Privacy", privacyHref: "/en/privacy/", other: "Español", otherShort: "ES",
       forWhom: "Who it's for", includes: "What's included", howK: "How we do it", stepsH: "Step by <em>step</em>",
       stepsLead: "Always in the same order: first we understand your brand, then we build. No step gets skipped.",
       workH: "We've <em>done it</em>",
@@ -168,7 +170,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=16">
-<link rel="stylesheet" href="/assets/css/v4.css?v=20">
+<link rel="stylesheet" href="/assets/css/v4.css?v=21">
 </head>`;
 }
 
@@ -209,6 +211,7 @@ function footer(L){
         <a href="mailto:${MAIL}">${t.mail}</a>
         <a href="https://www.instagram.com/16ballcreations" rel="noopener noreferrer">Instagram</a>
         <a href="https://github.com/16ballcreations" rel="noopener noreferrer">GitHub</a>
+        <a href="${resUrl(L)}">${t.freeRes}</a>
         <a href="${t.privacyHref}">${t.privacy}</a>
       </div>
     </div>
@@ -737,6 +740,139 @@ ${W.deflist.map(([dt, dd]) => `          <div><dt>${esc(dt)}</dt><dd>${esc(dd)}<
 
 ${footer(L)}`;
 }
+/* ---------- free resources: /recursos/ and each resource (scripts/recursos-data.mjs) ---------- */
+const resUrl = (L, slug) => L.base + RESOURCES[L.lang].dir + "/" + (slug ? slug + "/" : "");
+const otherResUrl = (L, i) => { const O = LOCALES[OTHER[L.lang]]; return resUrl(O, i == null ? "" : RESOURCES[O.lang].items[i].slug); };
+function resourcesPage(L){
+  const t = L.t, R = RESOURCES[L.lang], path = R.dir + "/", other = otherResUrl(L);
+  const jsonld = { "@context": "https://schema.org", "@graph": [
+    { "@type": "CollectionPage", "@id": abs(L, path) + "#pagina", name: R.title, description: R.desc, url: abs(L, path), inLanguage: L.lang,
+      publisher: PROVIDER, hasPart: R.items.map(it => ({ "@type": "CreativeWork", name: it.name, url: abs(L, path + it.slug + "/"), isAccessibleForFree: true })) },
+    { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: t.home, item: abs(L, "") },
+      { "@type": "ListItem", position: 2, name: R.crumb, item: abs(L, path) } ] }
+  ] };
+  return `${head(L, { title: R.title + " · 16 Ball Creations", description: R.desc, path, jsonld, other })}
+<body class="page-svc page-res">
+${header(L, null, other)}
+
+<main id="top">
+  <section class="svc-hero">
+    <div class="wrap">
+      <ol class="crumbs">
+        <li><a href="${L.base}">${t.home}</a></li>
+        <li aria-current="page">${esc(R.crumb)}</li>
+      </ol>
+      <p class="kicker svc-line-k">${esc(R.kicker)}</p>
+      <h1>${R.h1}</h1>
+      <p class="line">${esc(R.lead)}</p>
+    </div>
+  </section>
+
+  <section class="sec" id="recursos">
+    <div class="wrap">
+      <p class="kicker">${esc(R.listK)}</p>
+      <ul class="prices svc-links res-list">${R.items.map(it => `
+          <li class="reveal"><div><p class="res-tag mono">${esc(it.tag)}</p><h2><a href="${resUrl(L, it.slug)}">${esc(it.name)}</a></h2><p>${esc(it.line)}</p></div><a class="more" href="${resUrl(L, it.slug)}">${esc(R.seeIt)} <span aria-hidden="true">&rarr;</span></a></li>`).join("")}
+        </ul>
+    </div>
+  </section>
+</main>
+
+${footer(L)}`;
+}
+function seoAuditPage(L){
+  const t = L.t, R = RESOURCES[L.lang], S = R.seo, F = SEO_FILES, it = R.items[0], path = R.dir + "/" + it.slug + "/", other = otherResUrl(L, 0);
+  const files = "/recursos/" + RESOURCES.es.items[0].slug + "/";
+  const colors = ["var(--b1)", "var(--b6)", "var(--b2)"];
+  const jsonld = { "@context": "https://schema.org", "@graph": [
+    { "@type": "CreativeWork", "@id": abs(L, path) + "#recurso", name: S.crumb, description: S.desc, url: abs(L, path), inLanguage: "es", version: F.version,
+      isAccessibleForFree: true, license: "https://creativecommons.org/licenses/by/4.0/", author: PROVIDER, publisher: PROVIDER,
+      encoding: { "@type": "MediaObject", contentUrl: ORIGIN + files + F.zip, encodingFormat: "application/zip" } },
+    { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: t.home, item: abs(L, "") },
+      { "@type": "ListItem", position: 2, name: R.crumb, item: abs(L, R.dir + "/") },
+      { "@type": "ListItem", position: 3, name: S.crumb, item: abs(L, path) } ] }
+  ] };
+  return `${head(L, { title: S.title, description: S.desc, path, jsonld, other })}
+<body class="page-svc page-res">
+${header(L, null, other)}
+
+<main id="top">
+  <section class="svc-hero">
+    <div class="wrap">
+      <ol class="crumbs">
+        <li><a href="${L.base}">${t.home}</a></li>
+        <li><a href="${resUrl(L)}">${esc(R.crumb)}</a></li>
+        <li aria-current="page">${esc(S.crumb)}</li>
+      </ol>
+      <p class="kicker svc-line-k">${esc(S.kicker)}</p>
+      <h1>${S.h1}</h1>
+      <p class="line">${esc(S.lead)}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="${files}${F.zip}" download>${esc(S.download)} <span aria-hidden="true">&darr;</span></a>
+        <a class="btn" href="${files}${F.guide}">${esc(S.readGuide)}</a>
+      </div>
+      <p class="res-meta mono">${esc(S.meta(F.version, F.date[L.lang], F.kb))}</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head"><p class="kicker">${esc(S.whatK)}</p><h2 class="big">${S.whatH}</h2></div>
+      <div class="tri">
+${S.what.map(([h, p], i) => `        <div class="reveal" style="--c:${colors[i]}">
+          <span class="n mono">0${i + 1}</span>
+          <h3 class="tri-h">${esc(h)}</h3>
+          <p>${esc(p)}</p>
+        </div>`).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="kicker">${esc(S.insideK)}</p>
+      <dl class="deflist res-inside">
+${S.inside.map(([dt, dd]) => `        <div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join("\n")}
+      </dl>
+      <p class="res-files mono"><a href="${files}${F.checklist}">${esc(L.lang === "es" ? "El checklist en Markdown" : "The checklist, in Markdown")}</a> · <a href="${files}${F.guide}">${esc(L.lang === "es" ? "La guía en Markdown" : "The guide, in Markdown")}</a></p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="kicker">${esc(S.howK)}</p>
+      <ol class="res-steps">
+${S.how.map(([h, p], i) => `        <li class="reveal"><span class="n mono">0${i + 1}</span><h3>${esc(h)}</h3><p>${esc(p)}</p></li>`).join("\n")}
+      </ol>
+      <p class="line-note mono">${esc(S.howNote)}</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap res-honest">
+      <h2>${esc(S.honestH)}</h2>
+      <p>${esc(S.honest)}</p>
+      <p class="res-license mono">${esc(S.license)} <a href="https://creativecommons.org/licenses/by/4.0/deed.${L.lang}" rel="license noopener noreferrer">CC BY 4.0</a></p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band glass">
+        <div>
+          <h2>${esc(S.ctaH)}</h2>
+          <p>${esc(S.ctaP)}</p>
+        </div>
+        <a class="btn btn-primary" href="${lineUrl(L, "ecosistema")}">${esc(S.ctaBtn)} <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+${footer(L)}`;
+}
 function groupedItems(L, base, hTag, index){
   return ["esencia", "ecosistema"].map(g => [lineHeader(L, g, hTag), ...L.data.filter(s => s.group === g).map(s => serviceItem(L, s, base, index))].join("\n        ")).join("\n        ");
 }
@@ -835,6 +971,10 @@ for(const L of Object.values(LOCALES)){
   const studioDir = join(root, L.base.replace(/^\/|\/$/g, ""), STUDIO[L.lang].dir);
   await mkdir(studioDir, { recursive: true });
   await writeFile(join(studioDir, "index.html"), studioPage(L));
+  const resDir = join(root, L.base.replace(/^\/|\/$/g, ""), RESOURCES[L.lang].dir);
+  await mkdir(join(resDir, RESOURCES[L.lang].items[0].slug), { recursive: true });
+  await writeFile(join(resDir, "index.html"), resourcesPage(L));
+  await writeFile(join(resDir, RESOURCES[L.lang].items[0].slug, "index.html"), seoAuditPage(L));
   const homePath = join(root, L.home);
   let home = await readFile(homePath, "utf8");
   home = fill(home, "servicios", lineCards(L, "h3"), "        ");

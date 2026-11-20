@@ -342,3 +342,19 @@
 @media (max-width:760px){ .case-two,.case-why{grid-template-columns:1fr} }
 /* the link to the example sites, under the project cards */
 .work-more{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 16px;margin:32px auto 0;max-width:62ch;text-align:center;color:var(--ash)}
+
+/* recursos gratis */
+.res-list h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(1.8rem,3vw,2.4rem);line-height:1.1}
+.res-list h2 a{color:var(--white);text-decoration:none}.res-list h2 a:hover{text-decoration:underline;text-underline-offset:5px}
+.res-tag{margin:0 0 8px!important;font-size:.75rem!important;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)!important}
+.res-meta{margin:18px 0 0;font-size:.8rem;color:var(--ash)}
+.res-inside{border-top:1px solid var(--hairline)}
+.res-files{margin:22px 0 0;font-size:.85rem;color:var(--ash)}.res-files a{color:var(--bone)}
+.res-steps{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.res-steps li{border-top:1px solid var(--hairline);padding-top:18px}
+.res-steps h3{margin:10px 0 8px;font-family:var(--font-display);font-weight:400;font-size:1.6rem;color:var(--white)}
+.res-steps p{margin:0;color:var(--ash)}
+.res-honest{max-width:62rem}.res-honest h2{font-family:var(--font-display);font-weight:400;font-size:clamp(2rem,4vw,3rem);margin:0 0 14px;color:var(--white)}
+.res-honest p{color:var(--bone);font-size:1.1rem;max-width:62ch}
+.res-license{font-size:.85rem!important;color:var(--ash)!important}.res-license a{color:var(--accent)}
+@media (max-width:760px){.res-steps{grid-template-columns:1fr}}
