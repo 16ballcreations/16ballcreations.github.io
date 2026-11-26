@@ -358,3 +358,42 @@
 .res-honest p{color:var(--bone);font-size:1.1rem;max-width:62ch}
 .res-license{font-size:.85rem!important;color:var(--ash)!important}.res-license a{color:var(--accent)}
 @media (max-width:760px){.res-steps{grid-template-columns:1fr}}
+
+/* Proyectos: MIRA, cómo abordamos cada marca (the four letters and the five shots) */
+.method-h{font-size:clamp(2.6rem,5.4vw,5rem)}
+.mira-four{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--hairline)}
+.mira-four li{position:relative;padding:36px 28px 12px 0;border-right:1px solid var(--hairline)}
+.mira-four li + li{padding-left:28px}
+.mira-four li:last-child{border-right:0}
+.mira-four li::before{content:"";position:absolute;top:-1px;left:0;width:56px;height:3px;background:var(--c)}
+.mira-four li + li::before{left:28px}
+.mf-letter{display:block;font-family:var(--font-display);font-weight:400;font-size:4.5rem;line-height:1;color:var(--c);margin-bottom:10px}
+.mira-four h3{font-family:var(--font-display);font-weight:400;font-size:1.9rem;margin:0 0 10px}
+.mira-four p{margin:0 0 14px;color:var(--ash);font-size:.9375rem}
+.method-steps{margin-top:88px}
+.ms-head{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:end;margin-bottom:36px}
+.ms-title{font-family:var(--font-display);font-weight:400;font-size:clamp(2.2rem,4vw,3.4rem);line-height:1;margin:0}
+.ms-title em{font-style:italic;color:var(--accent)}
+.ms-head p{margin:0;color:var(--ash)}
+.ms-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:24px;counter-reset:none}
+.ms-list li{border-top:1px solid var(--hairline);padding-top:18px}
+.ms-list .n{display:block;margin-bottom:12px;color:var(--accent)}
+.ms-list h4{font-family:var(--font-display);font-weight:400;font-size:1.6rem;margin:0 0 8px}
+.ms-list p{margin:0;font-size:.875rem;color:var(--ash)}
+.method-cta{margin-top:56px}
+@media (max-width:1000px){
+  .mira-four{grid-template-columns:repeat(2,1fr)}
+  .mira-four li,.mira-four li + li{padding:32px 24px 12px 0;border-right:0;border-bottom:1px solid var(--hairline)}
+  .mira-four li:nth-child(even){padding-left:24px;border-left:1px solid var(--hairline)}
+  .mira-four li::before,.mira-four li + li::before{left:0}
+  .mira-four li:nth-child(even)::before{left:24px}
+  .ms-list{grid-template-columns:repeat(2,1fr);gap:28px}
+}
+@media (max-width:720px){
+  .mira-four{grid-template-columns:1fr}
+  .mira-four li:nth-child(even){padding-left:0;border-left:0}
+  .mira-four li:nth-child(even)::before{left:0}
+  .ms-head{grid-template-columns:1fr;gap:12px}
+  .ms-list{grid-template-columns:1fr}
+  .method-steps{margin-top:64px}
+}

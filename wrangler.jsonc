@@ -21,6 +21,11 @@
       "migrations_dir": "migrations"
     }
   ],
+  /* Moody sends each visitor who asks for it a copy of their MIRA
+     (Cloudflare Email Sending; ia.16ballcreations.com is onboarded) */
+  "send_email": [
+    { "name": "EMAIL", "allowed_sender_addresses": ["moody@ia.16ballcreations.com"] }
+  ],
   "workers_dev": true,
   "routes": [
     { "pattern": "16ballcreations.com", "custom_domain": true },

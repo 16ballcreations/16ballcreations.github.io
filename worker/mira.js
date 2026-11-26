@@ -4,6 +4,7 @@ import { clean, json } from "./comun/api.js";
 import { MAX_BODY, SITE } from "./comun/config.js";
 import { COPY_SCRIPT, adminPage, pendingPills, sectionHead } from "./comun/pagina.js";
 import { esc, list, plain, row, todayIso } from "./comun/util.js";
+import { isEmail, sendCopy } from "./mira-copia.js";
 import { BEFORE_CALL, STAGES, ballTag, stageTag } from "./ventas/modelo.js";
 
 export async function receive(request, env, url, kind){
@@ -40,6 +41,8 @@ export async function receive(request, env, url, kind){
   const origen = kind === "mira" && ORIGINS[data.origen] ? data.origen : null;
   delete data.token; delete data.origen;
   if(kind === "mira"){ data.semaforo = qualify(data.proyecto); }
+  /* the copy goes only to an email address they gave and asked to use */
+  const wantsCopy = kind === "mira" && data.copia === true && isEmail(contact);
 
   const saved = await env.DB.prepare(
     "INSERT INTO submissions (kind, name, brand, contact, data, origen) VALUES (?1, ?2, ?3, ?4, ?5, ?6) RETURNING id"
@@ -53,7 +56,13 @@ export async function receive(request, env, url, kind){
     if(p){ await env.DB.batch(linkMira(env, saved.id, p, "enlace", origen)); }
   }
 
-  return json({ ok:true }, 201, request, url);
+  let copia = false;
+  if(wantsCopy && saved){
+    copia = await sendCopy(env, data);
+    await env.DB.prepare("UPDATE submissions SET data = json_set(data, '$.copiaEnviada', json(?1)) WHERE id = ?2").bind(copia ? "true" : "false", saved.id).run();
+  }
+
+  return json(kind === "mira" ? { ok:true, copia } : { ok:true }, 201, request, url);
 }
 
 /* ---------- a MIRA and its prospect ---------- */
@@ -278,6 +287,16 @@ export function qualifyLabel(key, code, lang){
   if(!o){ return code || ""; }
   return typeof o[0] === "object" ? o[0][lang === "en" ? "en" : "es"] : o[0];
 }
+/* bola 8: whether they want us to reach out or only came to look (since 26 nov 2026) */
+export function intentTag(d){
+  return d.intencion === "asesoria" ? ` <span class="tag t-verde">Quiere asesoría</span>`
+    : d.intencion === "curiosidad" ? ` <span class="tag t-none">Pasó por curiosidad</span>` : "";
+}
+/* whether Moody sent them a copy of their answers */
+export function copyLine(d){
+  return d.copia ? ` · ${d.copiaEnviada ? "Moody le envió la copia" : "pidió copia (no se pudo enviar)"}` : "";
+}
+
 export function lightTag(d){
   const l = d.semaforo && LIGHTS[d.semaforo.color];
   return l ? `<span class="tag t-${d.semaforo.color}" title="${l.what}">${l.label} · ${d.semaforo.puntos}</span>` : "";
@@ -347,7 +366,7 @@ export function miraRow(r, here){
     <details class="mrow${r.reviewed ? " done" : ""}" id="m${r.id}">
       <summary>
         <span class="mr-light">${lightTag(d) || '<span class="tag t-none">Sin semáforo</span>'}</span>
-        <span class="mr-name"><b>${esc(r.brand || d.marca || r.name)}</b><span class="mono">${esc(d.nombre || r.name)}${d.idioma === "en" ? " · en inglés" : ""}</span></span>
+        <span class="mr-name"><b>${esc(r.brand || d.marca || r.name)}</b><span class="mono">${esc(d.nombre || r.name)}${d.idioma === "en" ? " · en inglés" : ""}</span>${intentTag(d)}</span>
         <span class="mr-owner">${owner}</span>
         <span class="mr-when mono">${esc(when)}</span>
         <span class="mr-state mono">${r.reviewed ? "Revisada ✓" : '<i class="dot"></i>Sin revisar'}</span>
@@ -356,7 +375,7 @@ export function miraRow(r, here){
         ${miraLinkLine(r)}
         ${miraAnswers(d, r.id)}
         <div class="mrow-foot">
-          <p class="who mono">Respondió ${esc(d.nombre)} · ${esc(d.contacto)}</p>
+          <p class="who mono">Respondió ${esc(d.nombre)} · ${esc(d.contacto)}${copyLine(d)}${intentTag(d)}</p>
           <form method="post" action="/admin/revisado">
             <input type="hidden" name="id" value="${r.id}">
             <input type="hidden" name="revisado" value="${r.reviewed ? "0" : "1"}">
@@ -386,7 +405,7 @@ export function card(r, here){
   let body;
   if(r.kind === "mira"){
     body = `${miraLinkLine(r)}${miraAnswers(d)}
-      <p class="who mono">Respondió ${esc(d.nombre)} · ${esc(d.contacto)}</p>`;
+      <p class="who mono">Respondió ${esc(d.nombre)} · ${esc(d.contacto)}${copyLine(d)}${intentTag(d)}</p>`;
   } else {
     body = `
       <div class="contacto">

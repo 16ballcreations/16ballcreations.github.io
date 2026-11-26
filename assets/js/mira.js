@@ -89,7 +89,7 @@
       objetivos: picked("objetivos"), porQueImporta: val("qWhy"),
       tiene: picked("tiene"), enlaces: val("qLinks"),
       proyecto: { resolver: one("resolver"), presupuesto: one("presupuesto"), cuando: one("cuando") },
-      nombre: val("qPerson"), contacto: val("qReach"),
+      nombre: val("qPerson"), contacto: val("qReach"), intencion: one("intencion"), copia: !!(document.getElementById("qCopy") || {}).checked,
       token: ref.token, origen: ref.origen
     };
     /* the panel shows it as English, so the reply goes out in English */
@@ -122,6 +122,13 @@
       case 6:
         if(!a.nombre){ return bad("qPerson", T("¿Cómo te llamas?", "What's your name?")); }
         if(a.contacto.length < 6){ return bad("qReach", T("Déjanos un correo o un WhatsApp para escribirte.", "Leave us an email or a WhatsApp number so we can write to you.")); }
+        if(a.copia && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(a.contacto)){ return bad("qReach", T("Para enviarte tu MIRA necesitamos un correo.", "We need an email to send you your MIRA.")); }
+        if(!a.intencion){
+          var opt = form.querySelector('.chips-pick[data-name="intencion"] input');
+          if(opt){ opt.focus({ preventScroll:true }); }
+          say(T("Elige una de las dos opciones.", "Pick one of the two options."), true);
+          return false;
+        }
         return true;
     }
     return true;
@@ -195,6 +202,8 @@
       $$("input", box).forEach(function(i){ i.checked = (a[name] || []).indexOf(i.value) !== -1; });
       if(box._sync){ box._sync(); }
     });
+    var cp = document.getElementById("qCopy"); if(cp){ cp.checked = !!a.copia; }
+    $$('.chips-pick[data-name="intencion"] input', form).forEach(function(i){ i.checked = !!a.intencion && i.value === a.intencion; });
     PROJECT.forEach(function(name){
       var v = (a.proyecto || {})[name];
       $('.chips-pick[data-name="' + name + '"] input', form).forEach(function(i){ i.checked = !!v && i.value === v; });
@@ -261,6 +270,7 @@
     lines.push(T("CONTACTO", "CONTACT"));
     lines.push(T("Nombre: ", "Name: ") + a.nombre);
     lines.push(T("Correo o WhatsApp: ", "Email or WhatsApp: ") + a.contacto);
+    if(a.intencion){ lines.push(chosen("intencion")); }
     return lines.join("\n");
   }
 
@@ -278,8 +288,13 @@
       body:JSON.stringify({ data:a, website:(form.querySelector(".hp") || {}).value || "" })
     }).then(function(r){
       if(!r.ok){ throw new Error("HTTP " + r.status); }
+      return r.json().catch(function(){ return {}; });
+    }).then(function(res){
       sendBtn.innerHTML = T("Enviada ✓", "Sent ✓");
-      done.textContent = T("¡Recibida, " + a.nombre + "! Te escribimos en menos de 24 horas para agendar la llamada.", "Got it, " + a.nombre + "! We'll write back within 24 hours to schedule the call.");
+      done.textContent = a.intencion === "curiosidad"
+        ? T("¡Recibida, " + a.nombre + "! Gracias por darte el rato. Si algún día quieres hablarlo, aquí estamos.", "Got it, " + a.nombre + "! Thanks for taking the time. If you ever want to talk it over, we're here.")
+        : T("¡Recibida, " + a.nombre + "! Te escribimos en menos de 24 horas para agendar la llamada.", "Got it, " + a.nombre + "! We'll write back within 24 hours to schedule the call.");
+      if(a.copia){ done.textContent += " " + (res && res.copia ? T("Moody te envió una copia a tu correo.", "Moody sent a copy to your email.") : T("No pudimos enviarte la copia; usa «Copiar respuestas».", "We couldn't send you the copy; use \u201cCopy answers\u201d.")); }
       done.classList.add("is-ok");
       try{ localStorage.removeItem(STORE); localStorage.removeItem(STORE + ":ref"); }catch(e){}
     }).catch(function(){

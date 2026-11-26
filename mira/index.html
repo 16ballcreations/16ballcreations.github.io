@@ -179,6 +179,14 @@
           <input class="mfield" id="qPerson" name="nombre" autocomplete="name" placeholder="Tu nombre" required>
           <label class="field-label" for="qReach">Correo o WhatsApp</label>
           <input class="mfield" id="qReach" name="contacto" autocomplete="email" placeholder="tu@correo.com o +57 300 000 0000" required>
+          <p class="field-label">¿Qué te gustaría ahora?</p>
+          <div class="chips-pick" data-name="intencion" role="radiogroup" aria-label="¿Qué te gustaría ahora?">
+            <label><input type="radio" name="intencion" value="asesoria"><span>Me gustaría que me contacten para una asesoría personalizada</span></label>
+            <label><input type="radio" name="intencion" value="curiosidad"><span>Solo pasé por curiosidad</span></label>
+          </div>
+          <div class="chips-pick" data-name="copia">
+            <label><input type="checkbox" value="si" id="qCopy"><span>Quiero recibir las respuestas de mi MIRA en mi correo</span></label>
+          </div>
         </fieldset>
 
         <!-- people never see this field; bots fill it in -->
@@ -214,7 +222,7 @@
 
 </main>
 
-<script src="../assets/js/mira.js?v=12" defer></script>
+<script src="../assets/js/mira.js?v=14" defer></script>
 <script src="../assets/js/orb.js?v=2" defer></script>
 </body>
 </html>

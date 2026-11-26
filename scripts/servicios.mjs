@@ -170,7 +170,7 @@ ${JSON.stringify(jsonld, null, 2)}
 <link rel="preload" href="/assets/fonts/recursive-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fuentes.css?v=2">
 <link rel="stylesheet" href="/assets/css/site.css?v=16">
-<link rel="stylesheet" href="/assets/css/v4.css?v=21">
+<link rel="stylesheet" href="/assets/css/v4.css?v=22">
 </head>`;
 }
 
@@ -1022,6 +1022,78 @@ for(const L of Object.values(LOCALES)){
 function caseUrl(L, slug){ return L.base + CASE_WORDS[L.lang].dir + "/" + slug + "/"; }
 function otherCaseUrl(L, slug){ const O = LOCALES[OTHER[L.lang]]; return O.base + CASE_WORDS[O.lang].dir + "/" + (slug ? slug + "/" : ""); }
 
+
+/* before the work, the way we get there: the MIRA's four letters and the
+   five shots, the same process the home page and /mira/ describe */
+function methodWords(){ return {
+  es: {
+    k:"Antes de cada tiro se lee la mesa",
+    h:"<em>MIRA</em> cómo abordamos cada marca, idea y proyecto",
+    lead:"Cada marca llega con una historia, aunque todavía no sepa contarla. Por eso no empezamos por el logo ni por la página: empezamos por mirarte. Da igual si traes una empresa con años encima o una idea que apenas tiene nombre; el camino es el mismo.",
+    letters:[
+      ["M", "Marca", "De dónde viene, por qué nació y a dónde quiere llegar. Es lo que hace que todo lo demás se sienta tuyo."],
+      ["I", "Imagen", "Cómo te ven hoy: logo, colores, fotos. Lo que ya te representa se queda; lo que no, lo hablamos."],
+      ["R", "Redes", "Cada perfil, tu página y tu ficha de Google, uno por uno, y cómo se conectan entre sí."],
+      ["A", "Alineación", "Que todo cuente la misma historia, y qué conviene hacer primero para que se note."]
+    ],
+    stepsH:"Y después, <em>cinco tiros</em>",
+    stepsLine:"Siempre en el mismo orden; ninguno se salta. Así llegaron a ser los proyectos de esta página.",
+    steps:[
+      ["Tu historia", "Respondes tu MIRA, unos cuatro minutos y sin costo, y hablamos 30 minutos. Te escuchamos antes de proponer nada."],
+      ["Tu identidad", "Con esa historia le damos forma: logo, colores, estilo y una voz que se reconoce. La ajustamos contigo hasta que se sienta tuya."],
+      ["Tus plataformas", "Construimos dónde vive tu marca: tu página, tu tienda, tus redes o el sistema que ordena tu negocio. Lo ves avanzar desde la primera semana."],
+      ["Todo probado", "Comprobamos que todo funcione antes de entregarlo, y otra vez cada vez que cambiamos algo."],
+      ["En marcha", "Lo ponemos en línea, te enseñamos a usarlo y seguimos a tu lado después."]
+    ],
+    cta:"Haz tu MIRA gratis", ctaUrl:"/mira/", see:"Ver los proyectos"
+  },
+  en: {
+    k:"Before every shot, read the table",
+    h:"<em>MIRA</em>: how we look at every brand, idea and project",
+    lead:"Every brand arrives with a story, even if it doesn't know how to tell it yet. That's why we don't start with the logo or the website: we start by looking at you. Whether you bring a company with years behind it or an idea that barely has a name, the path is the same.",
+    letters:[
+      ["M", "Marca · Brand", "Where it comes from, why it was born and where it wants to go. It's what makes everything else feel like yours."],
+      ["I", "Imagen · Image", "How people see you today: logo, colors, photos. What already represents you stays; what doesn't, we talk about."],
+      ["R", "Redes · Social media", "Every profile, your website and your Google listing, one by one, and how they connect."],
+      ["A", "Alineación · Alignment", "That everything tells the same story, and what to do first so it shows."]
+    ],
+    stepsH:"Then, <em>five shots</em>",
+    stepsLine:"Always in the same order; none gets skipped. That's how the projects on this page came to be.",
+    steps:[
+      ["Your story", "You answer your MIRA, about four minutes and free, and we talk for 30 minutes. We listen before proposing anything."],
+      ["Your identity", "With that story we give it shape: logo, colors, style and a voice people recognize. We refine it with you until it feels like yours."],
+      ["Your platforms", "We build where your brand lives: your website, your store, your social media or the system that runs your business. You watch it take shape from the first week."],
+      ["All tested", "We check that everything works before handing it over, and again every time we change something."],
+      ["Up and running", "We put it online, show you how to use it and stay by your side afterwards."]
+    ],
+    cta:"Do your free MIRA", ctaUrl:"/en/mira/", see:"See the work"
+  }
+}; }
+function methodSection(L){
+  const M = methodWords()[L.lang], LETTER_BALL = ["var(--b1)", "var(--b2)", "var(--b3)", "var(--b4)"];
+  return `<section class="sec method" id="${L.lang === "es" ? "como" : "how"}">
+    <div class="wrap">
+      <div class="sec-head row-head">
+        <div>
+          <p class="kicker">${esc(M.k)}</p>
+          <h2 class="big method-h">${M.h}</h2>
+        </div>
+        <p class="lead">${esc(M.lead)}</p>
+      </div>
+      <ol class="mira-four">
+        ${M.letters.map(([l, n, p], i) => `<li style="--c:${LETTER_BALL[i]}"><b class="mf-letter" aria-hidden="true">${l}</b><h3>${esc(n)}</h3><p>${esc(p)}</p></li>`).join("\n        ")}
+      </ol>
+      <div class="method-steps">
+        <div class="ms-head"><h3 class="ms-title">${M.stepsH}</h3><p>${esc(M.stepsLine)}</p></div>
+        <ol class="ms-list">
+          ${M.steps.map(([h, p], i) => `<li><span class="n mono">0${i + 1}</span><h4>${esc(h)}</h4><p>${esc(p)}</p></li>`).join("\n          ")}
+        </ol>
+      </div>
+      <div class="actions method-cta"><a class="btn btn-primary" href="${M.ctaUrl}">${esc(M.cta)} <span aria-hidden="true">&rarr;</span></a><a class="btn" href="#${L.lang === "es" ? "hechos" : "done"}">${esc(M.see)} <span aria-hidden="true">&darr;</span></a></div>
+    </div>
+  </section>`;
+}
+
 function casesIndexPage(L){
   const t = L.t, W = CASE_WORDS[L.lang];
   const path = W.dir + "/";
@@ -1045,7 +1117,8 @@ ${header(L, null, otherCaseUrl(L))}
       <p class="line">${esc(W.indexLine)}</p>
     </div>
   </section>
-  <section class="sec">
+  ${methodSection(L)}
+  <section class="sec" id="${L.lang === "es" ? "hechos" : "done"}">
     <div class="wrap">
       <ol class="work">
         ${list.map(({ p }, i) => card(L, p, i, p.wide ? " card-wide" : "")).join("\n        ")}
