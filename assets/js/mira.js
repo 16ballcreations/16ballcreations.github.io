@@ -75,7 +75,7 @@
     var box = form.querySelector('.chips-pick[data-name="' + name + '"]');
     return box ? $$("input:checked", box).map(function(i){ return i.value; }) : [];
   }
-  var PROJECT = ["resolver", "inversion", "decide", "cuando"];
+  var PROJECT = ["resolver", "presupuesto", "cuando"];
   function one(name){ return picked(name)[0] || ""; }
   /* the label the visitor saw for a choice, for the result and the e-mail */
   function chosen(name){
@@ -88,7 +88,7 @@
       publico: picked("publico"), publicoDetalle: val("qWho"),
       objetivos: picked("objetivos"), porQueImporta: val("qWhy"),
       tiene: picked("tiene"), enlaces: val("qLinks"),
-      proyecto: { resolver: one("resolver"), inversion: one("inversion"), decide: one("decide"), cuando: one("cuando") },
+      proyecto: { resolver: one("resolver"), presupuesto: one("presupuesto"), cuando: one("cuando") },
       nombre: val("qPerson"), contacto: val("qReach"),
       token: ref.token, origen: ref.origen
     };
@@ -222,7 +222,7 @@
       { letter:"I", title:T("Imagen", "Image"), rows:[[T("Ya cuenta con", "Already has"), split(a.tiene, IMAGEN) || T("Todavía sin logo ni colores definidos", "No logo or defined colors yet")]] },
       { letter:"R", title:T("Redes", "Social media"), rows:[[T("Ya cuenta con", "Already has"), split(a.tiene, REDES) || T("Todavía sin redes ni página", "No social media or website yet")], [T("Dónde encontrarla", "Where to find it"), a.enlaces]] },
       { letter:"A", title:T("Alineación", "Alignment"), rows:[[T("Le habla a", "Speaks to"), a.publico.concat(a.publicoDetalle ? [a.publicoDetalle] : []).join(", ")], [T("Quiere que sientan", "Wants people to feel"), a.objetivos.join(", ")], [T("Por qué le importa a su cliente", "Why its customers should care"), a.porQueImporta]] },
-      { letter:"6", title:T("Tu proyecto", "Your project"), rows:[[T("Resolver primero", "Solve first"), chosen("resolver")], [T("Inversión", "Investment"), chosen("inversion")], [T("Decide", "Decides"), chosen("decide")], [T("Empezar", "Start"), chosen("cuando")]] }
+      { letter:"6", title:T("Tu proyecto", "Your project"), rows:[[T("Resolver primero", "Solve first"), chosen("resolver")], [T("Presupuesto", "Budget"), chosen("presupuesto")], [T("Empezar", "Start"), chosen("cuando")]] }
     ];
   }
   function el(tag, cls, text){ var n = document.createElement(tag); if(cls){ n.className = cls; } if(text != null){ n.textContent = text; } return n; }

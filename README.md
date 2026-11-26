@@ -49,15 +49,12 @@ sitio: Boska para los títulos y Recursive para el texto, las etiquetas y los ac
   `facebook`, `visita`), y `?t=` es el código del **enlace personal** de un prospecto
   (ver "La MIRA y los prospectos" más abajo).
   **Tiro 6 · Tu proyecto y el semáforo:** después de las cinco preguntas de
-  marca vienen cuatro de una opción (qué resolver primero, cuánto piensa
-  invertir, quién decide, cuándo empezar). Llegan como códigos (`r0`…`r3`,
-  `hablar`, `yo`, `ya`…) y el Worker los convierte en puntos de 100 con la
+  marca vienen tres de una opción (qué resolver primero, si ya tiene
+  presupuesto, cuándo empezar). Llegan como códigos (`listo`, `consultar`,
+  `investigando`, `sin`, `ya`…) y el Worker los convierte en puntos de 100 con la
   tabla `QUALIFY` de `worker/mira.js`: verde desde 70 (llámalo hoy), amarillo
-  desde 40 (llamada y seguimiento), rojo debajo o con el rango más bajo y "más
-  adelante" (regálale algo útil: el panel ofrece la guía de Google en su idioma). **Si cambian los planes:** se cambian las
-  etiquetas de los rangos en `QUALIFY` y en las dos páginas (`mira/` y
-  `en/mira/`, en USD); los códigos se quedan, así las MIRA viejas siguen
-  leyéndose bien
+  desde 40 (llamada y seguimiento), rojo debajo o sin presupuesto y "más
+  adelante" (regálale algo útil: el panel ofrece la guía de Google en su idioma). Hasta el 26 nov 2026 preguntaba cuánto pensaba invertir y quién decidía: esas respuestas viejas se siguen leyendo con `OLD_QUALIFY`, y su semáforo quedó guardado con la MIRA
 - `testimonio/`: el formulario de testimonios, tres preguntas sobre la persona
   (qué cambió en ella, cómo se sintió, satisfacción de 1 a 5) y cómo quiere
   aparecer (con nombre, con iniciales o sin publicar). Se envía al cerrar un

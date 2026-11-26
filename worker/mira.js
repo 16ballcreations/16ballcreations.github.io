@@ -221,26 +221,36 @@ export async function unlinkMira(request, env, url){
 }
 
 /* ---------- the MIRA's traffic light ----------
-   Shot 6 of the MIRA ("Tu proyecto") asks four quick questions: what to solve
-   first, how much they plan to invest, who decides and when to start. The
+   Shot 6 of the MIRA ("Tu proyecto") asks three quick questions: what to
+   solve first, whether they have a budget and when to start (since 26 nov
+   2026; before that it asked how much they'd invest and who decides, which
+   OLD_QUALIFY still reads for the MIRAs that came in that way). The
    answers arrive as codes; this table gives each code its label and its
    points, so the ranges can change with the plan tiers without touching the
    pages' logic (change the labels here and in the two MIRA pages, mira/ and
    en/mira/). Out of 100: green from 70 (call today), yellow from 40 (call
    and follow up), red below (give them something useful). Under the entry
-   range and "later" is red whatever the rest says. */
+   budget and "later" is red whatever the rest says. */
 export const QUALIFY = {
   resolver: { label:"Quiere resolver primero", opts:{
     coherencia:["Que su marca se sienta como una sola", 25], identidad:["Renovar su logo e identidad", 25], web:["Tener una página web", 25],
     tienda:["Tener una tienda en línea", 25], redes:["Ordenar sus redes", 25], sistema:["Organizar su negocio", 25], nose:["Todavía no lo sabe", 10] } },
+  presupuesto: { label:"Presupuesto", opts:{
+    listo:["Tiene presupuesto listo para invertir en su marca", 50],
+    consultar:["Lo tiene que consultar con su equipo", 30],
+    investigando:["Está investigando cuánto puede valer", 20],
+    sin:["Aún no ha sacado un presupuesto", 5] } },
+  cuando: { label:"Quiere empezar", opts:{ ya:["Este mes", 25], pronto:["En 1 a 3 meses", 15], despues:["Más adelante: está explorando", 0] } }
+};
+/* the questions the MIRA asked until 26 nov 2026: only to read old answers */
+export const OLD_QUALIFY = {
   inversion: { label:"Piensa invertir", opts:{
     r0:[{ es:"Menos de $500.000", en:"Menos de US$150" }, 0],
     r1:[{ es:"$500.000 a $3.000.000", en:"US$150 a US$900" }, 30],
     r2:[{ es:"$3.000.000 a $6.000.000", en:"US$900 a US$1.800" }, 30],
     r3:[{ es:"Más de $6.000.000", en:"Más de US$1.800" }, 30],
     hablar:["Prefiere hablarlo en la llamada", 15] } },
-  decide: { label:"Decide", opts:{ yo:["Solo", 20], socio:["Con su socio o pareja", 12], equipo:["Un equipo o junta", 8] } },
-  cuando: { label:"Quiere empezar", opts:{ ya:["Este mes", 25], pronto:["En 1 a 3 meses", 15], despues:["Más adelante: está explorando", 0] } }
+  decide: { label:"Decide", opts:{ yo:["Solo", 20], socio:["Con su socio o pareja", 12], equipo:["Un equipo o junta", 8] } }
 };
 /* the gift for the reds: the Google Business Profile guide, in their language */
 export const GIFT = {
@@ -260,11 +270,11 @@ export function qualify(p){
     if(o){ puntos += o[1]; answered++; }
   }
   if(!answered){ return null; }
-  const color = (p.inversion === "r0" && p.cuando === "despues") || puntos < 40 ? "rojo" : puntos >= 70 ? "verde" : "amarillo";
+  const color = (p.presupuesto === "sin" && p.cuando === "despues") || puntos < 40 ? "rojo" : puntos >= 70 ? "verde" : "amarillo";
   return { puntos, color };
 }
 export function qualifyLabel(key, code, lang){
-  const o = QUALIFY[key] && QUALIFY[key].opts[code];
+  const q = QUALIFY[key] || OLD_QUALIFY[key], o = q && q.opts[code];
   if(!o){ return code || ""; }
   return typeof o[0] === "object" ? o[0][lang === "en" ? "en" : "es"] : o[0];
 }
@@ -283,8 +293,8 @@ export function miraAnswers(d, tabs){
         <section class="mira-proj"><h3><i>6</i> Su proyecto</h3>
           ${light ? `<p class="light l-${d.semaforo.color}"><b>Semáforo</b>${light.label} · ${d.semaforo.puntos} de 100 · ${light.what}${d.semaforo.color === "rojo" ? ": envíale la guía de su perfil de Google" : ""}</p>` : ""}
           ${d.semaforo && d.semaforo.color === "rojo" ? (g => `<div class="linkrow"><a class="pill go-chat" href="${g.url}" target="_blank" rel="noopener">${g.label}</a><button type="button" data-copy="${g.url}" data-label="Copiar enlace de la guía">Copiar enlace de la guía</button></div>`)(GIFT[d.idioma === "en" ? "en" : "es"]) : ""}
-          ${Object.entries(QUALIFY).map(([k, q]) => row(q.label, qualifyLabel(k, p[k], d.idioma))).join("")}
-          ${p.decide === "socio" ? `<p class="mono hintline">Decide con alguien más: invita a los dos a la llamada.</p>` : ""}
+          ${("inversion" in p ? ["resolver", "inversion", "decide", "cuando"] : Object.keys(QUALIFY)).map(k => row((QUALIFY[k] || OLD_QUALIFY[k]).label, qualifyLabel(k, p[k], d.idioma))).join("")}
+          ${p.decide === "socio" || p.presupuesto === "consultar" ? `<p class="mono hintline">Decide con alguien más: invita a quien decide a la llamada.</p>` : ""}
         </section>` : "";
   const parts = [
     ["m", "M", "Marca", `${row("Nombre", d.marca)}${row("Qué hace", d.queHace)}${row("Su historia", d.historia)}`],

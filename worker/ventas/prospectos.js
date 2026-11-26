@@ -470,7 +470,7 @@ export async function updateProspect(request, env, url){
 export async function funnelCsv(env){
   const [{ results:pros }, { results:miras }, { results:calls }] = await env.DB.batch([
     env.DB.prepare("SELECT id, campaign, code, negocio, etapa, prioridad, score, bola FROM prospects ORDER BY campaign, rank"),
-    env.DB.prepare("SELECT prospect_id, origen, created_at, json_extract(data, '$.semaforo.color') AS semaforo, json_extract(data, '$.semaforo.puntos') AS puntos, json_extract(data, '$.proyecto.inversion') AS inversion, json_extract(data, '$.idioma') AS idioma FROM submissions WHERE kind = 'mira' AND prospect_id IS NOT NULL ORDER BY created_at"),
+    env.DB.prepare("SELECT prospect_id, origen, created_at, json_extract(data, '$.semaforo.color') AS semaforo, json_extract(data, '$.semaforo.puntos') AS puntos, json_extract(data, '$.proyecto.inversion') AS inversion, json_extract(data, '$.proyecto.presupuesto') AS presupuesto, json_extract(data, '$.idioma') AS idioma FROM submissions WHERE kind = 'mira' AND prospect_id IS NOT NULL ORDER BY created_at"),
     env.DB.prepare("SELECT prospect_id, data FROM prospect_events WHERE tipo = 'reunion' AND data IS NOT NULL ORDER BY id")
   ]);
   const mira = new Map(), scheduled = new Map(), recorded = new Map();
@@ -481,11 +481,11 @@ export async function funnelCsv(env){
     if(d.estado === "agendada"){ scheduled.set(c.prospect_id, d); } else { recorded.set(c.prospect_id, d); }
   }
   const cell = v => { const t = v == null ? "" : String(v); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
-  const head = ["campana", "codigo", "negocio", "etapa", "bola", "mira_origen", "mira_fecha", "mira_semaforo", "mira_puntos", "mira_inversion", "llamada_agendada", "asistio", "temperatura", "resultado", "bola_candidata"];
+  const head = ["campana", "codigo", "negocio", "etapa", "bola", "mira_origen", "mira_fecha", "mira_semaforo", "mira_puntos", "mira_presupuesto", "llamada_agendada", "asistio", "temperatura", "resultado", "bola_candidata"];
   const rows = pros.map(p => {
     const m = mira.get(p.id), s = scheduled.get(p.id), c = recorded.get(p.id);
     return [p.campaign, p.code, p.negocio, p.etapa, ballOf(p.prioridad, p.score, p.bola), m ? m.origen || "" : "", m ? m.created_at.slice(0, 10) : "",
-      m ? m.semaforo || "" : "", m && m.puntos != null ? m.puntos : "", m && m.inversion ? qualifyLabel("inversion", m.inversion, m.idioma) : "",
+      m ? m.semaforo || "" : "", m && m.puntos != null ? m.puntos : "", m && m.presupuesto ? qualifyLabel("presupuesto", m.presupuesto, m.idioma) : m && m.inversion ? qualifyLabel("inversion", m.inversion, m.idioma) : "",
       s ? s.fecha : "", c ? c.asistio : "", c ? c.temperatura || "" : "", c ? c.resultado || "" : "", c && c.paquete ? c.paquete : ""].map(cell).join(",");
   });
   return new Response("\ufeff" + [head.join(","), ...rows].join("\r\n"), { headers:{
