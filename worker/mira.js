@@ -290,7 +290,7 @@ export function miraAnswers(d, tabs){
     ["m", "M", "Marca", `${row("Nombre", d.marca)}${row("Qué hace", d.queHace)}${row("Su historia", d.historia)}`],
     ["i", "I", "Imagen", row("Ya cuenta con", list(d.tiene))],
     ["r", "R", "Redes", row("Dónde encontrarla", d.enlaces)],
-    ["a", "A", "Alineación", `${row("Le habla a", [list(d.publico), d.publicoDetalle].filter(Boolean).join(", "))}${row("Quiere que sientan", list(d.objetivos))}`]
+    ["a", "A", "Alineación", `${row("Le habla a", [list(d.publico), d.publicoDetalle].filter(Boolean).join(", "))}${row("Quiere que sientan", list(d.objetivos))}${row("Por qué le importa a su cliente", d.porQueImporta)}`]
   ];
   if(!tabs){
     return `

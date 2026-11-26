@@ -86,7 +86,7 @@
     var a = {
       marca: val("qName"), queHace: val("qWhat"), historia: val("qStory"),
       publico: picked("publico"), publicoDetalle: val("qWho"),
-      objetivos: picked("objetivos"),
+      objetivos: picked("objetivos"), porQueImporta: val("qWhy"),
       tiene: picked("tiene"), enlaces: val("qLinks"),
       proyecto: { resolver: one("resolver"), inversion: one("inversion"), decide: one("decide"), cuando: one("cuando") },
       nombre: val("qPerson"), contacto: val("qReach"),
@@ -186,7 +186,7 @@
     try{ data = JSON.parse(localStorage.getItem(STORE) || "null"); }catch(e){}
     if(!data || !data.a){ return; }
     var a = data.a;
-    [["qName","marca"],["qWhat","queHace"],["qStory","historia"],["qWho","publicoDetalle"],["qLinks","enlaces"],["qPerson","nombre"],["qReach","contacto"]].forEach(function(p){
+    [["qName","marca"],["qWhat","queHace"],["qStory","historia"],["qWho","publicoDetalle"],["qWhy","porQueImporta"],["qLinks","enlaces"],["qPerson","nombre"],["qReach","contacto"]].forEach(function(p){
       var el = document.getElementById(p[0]); if(el && a[p[1]]){ el.value = a[p[1]]; }
     });
     ["publico","objetivos","tiene"].forEach(function(name){
@@ -221,7 +221,7 @@
       { letter:"M", title:T("Marca", "Brand"), rows:[[T("Nombre", "Name"), a.marca], [T("Qué hace", "What it does"), a.queHace], [T("Su historia", "Its story"), a.historia]] },
       { letter:"I", title:T("Imagen", "Image"), rows:[[T("Ya cuenta con", "Already has"), split(a.tiene, IMAGEN) || T("Todavía sin logo ni colores definidos", "No logo or defined colors yet")]] },
       { letter:"R", title:T("Redes", "Social media"), rows:[[T("Ya cuenta con", "Already has"), split(a.tiene, REDES) || T("Todavía sin redes ni página", "No social media or website yet")], [T("Dónde encontrarla", "Where to find it"), a.enlaces]] },
-      { letter:"A", title:T("Alineación", "Alignment"), rows:[[T("Le habla a", "Speaks to"), a.publico.concat(a.publicoDetalle ? [a.publicoDetalle] : []).join(", ")], [T("Quiere que sientan", "Wants people to feel"), a.objetivos.join(", ")]] },
+      { letter:"A", title:T("Alineación", "Alignment"), rows:[[T("Le habla a", "Speaks to"), a.publico.concat(a.publicoDetalle ? [a.publicoDetalle] : []).join(", ")], [T("Quiere que sientan", "Wants people to feel"), a.objetivos.join(", ")], [T("Por qué le importa a su cliente", "Why its customers should care"), a.porQueImporta]] },
       { letter:"6", title:T("Tu proyecto", "Your project"), rows:[[T("Resolver primero", "Solve first"), chosen("resolver")], [T("Inversión", "Investment"), chosen("inversion")], [T("Decide", "Decides"), chosen("decide")], [T("Empezar", "Start"), chosen("cuando")]] }
     ];
   }
