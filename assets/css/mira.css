@@ -89,6 +89,9 @@
 .chips-pick input:checked + span::before{background:var(--void);border-color:var(--void);transform:scale(1.2)}
 .chips-pick input:focus-visible + span{outline:2px solid var(--accent);outline-offset:3px}
 .chips-pick input:disabled + span{opacity:.35;cursor:not-allowed}
+/* bola 8: the copy by email is a separate yes/no, apart from the two choices */
+.chips-pick[data-name="copia"]{margin-top:26px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08)}
+.chips-pick[data-name="copia"] span::before{border-radius:3px}
 
 .q-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:36px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08)}
 .q-msg{flex:1;margin:0;text-align:center;color:var(--iron)}
